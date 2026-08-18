@@ -10,6 +10,10 @@
 #include "CPlayer.h"
 
 //Start program
+// DO WE HAVE ANY FUNCTIONS HERE!!! OR ARE THEY ALL IN CLASSES
+
+
+
 
 int main() {
 	//Code starts here
@@ -33,11 +37,17 @@ int main() {
 		numberOfBoardenemies = rand() % 4 + 7; // 7 to 10
 	}
 	for (int i = 0; i < numberOfBoardenemies; i++) {
-		Human[i] = new CHuman(rand());
-		// regenerate if overlapping coords
+		int thisID = rand() % 7 + 1;
+		if (thisID > 4) {
+			Human[i] = new CHuman(rand(), thisID);
+			// regenerate if overlapping coords
 
+		}
+		else {
+			Human[i] = new CCanTalk(rand(), thisID, CEntity::getLevel());
+		}
 	}
-	
+
 	char playBoardWidth[120][17];
 	// PLAYING area for fighting board is only 104 x 11
 	for (int o = 0; o < 17; o++) {

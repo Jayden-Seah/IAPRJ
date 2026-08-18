@@ -4,7 +4,7 @@ class Respawn
 private:
 
 public:
-
+	
 	bool IsDead;
 
 	void Respawning();

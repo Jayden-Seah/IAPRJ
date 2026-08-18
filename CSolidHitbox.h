@@ -3,5 +3,8 @@
 class CSolidHitbox :
     public CObject
 {
+public:
+    bool isEntityOverlapping(CSolidHitbox (*target));
+    bool isEntityOutofBounds();
 };
 

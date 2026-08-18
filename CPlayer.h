@@ -3,5 +3,10 @@
 class CPlayer :
     public CEntity
 {
+    int defense;
+    float maxHP;
+
+public:
+
 };
 

@@ -1,5 +1,5 @@
 #include "Respawn.h"
 
-if (HP <= 0) {
+if (player->getHealth()) {
 	void Respawning::Respawning
 }

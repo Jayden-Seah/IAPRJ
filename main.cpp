@@ -8,34 +8,36 @@ int main() {
 	//Array used -> Layout built from top to bottom
 	//Top of the layout to bottom
 	std::string topDown[11] = {
-		"|                              |             |",
-		"|                              |    Stats:   |",
-		"|                              |             |",
-		"|                              |             |",
-		"|                              |             |",
-		"|                              |             |",
-		"|                              |             |",
-		"|                              |             |",
-		"|                              |             |",
-		"|                              |             |",
-		"|                              |             |",
+		"|                                                                                                        |             |",
+		"|                                                                                                        |    Stats:   |",
+		"|                                                                                                        |             |",
+		"|                                                                                                        |             |",
+		"|                                                                                                        |             |",
+		"|                                                                                                        |             |",
+		"|                                                                                                        |             |",
+		"|                                                                                                        |             |",
+		"|                                                                                                        |             |",
+		"|                                                                                                        |             |",
+		"|                                                                                                        |             |",
 
 			
 	};
 	//At the textbox level down
-	std::string midDown[3] = {
-		"|                              |             |",
-		"|         TEXTBOX              |             |",
-		"|                              |             |",
+	std::string midDown[3] = {	
+		"|                                                                                                        |             |",
+		"|                                            TEXTBOX                                                     |             |",
+		"|                                                                                                        |             |",
 	};
 
-	std::cout << "______________________________________________" << std::endl;
+	for (int i = 0; i < 120;i++) {
+		std::cout << "_" << std::endl;
+	}
 	for (int i = 0; i < 11;i++) {//Top to textbox level
 		std::cout << topDown[i] << std::endl;
 	}
-	std::cout << "|______________________________|             |" << std::endl;
+	std::cout << "|________________________________________________________________________________________________________|             |" << std::endl;
 	for (int i = 0;i < 3;i++) {
 		std::cout << midDown[i] << std::endl;
 	}
-	std::cout << "|______________________________|_____________|" << std::endl;
+	std::cout << "|________________________________________________________________________________________________________|_____________|" << std::endl;
 }

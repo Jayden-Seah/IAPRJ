@@ -1,5 +1,5 @@
 #include "Effects.h"
 
 void Effects::passive() {
-	Passived->setATK = karma * 0.1;
+	Passived->setAttack(int atk) = karma * 0.1;
 }

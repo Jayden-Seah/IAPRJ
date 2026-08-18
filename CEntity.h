@@ -8,20 +8,20 @@ class CEntity :
     int attackRange;
     static int onLevel; // -1, 0 or 1. Default 0
 public:
-    CEntity();
+
 
   bool isPlayerInAttackRange();
 
   int getAttack();
-  int getHealth();
+  float getHealth();
   int getAttackRange();
-  int getLevel();
+ static int getLevel();
 
 
   void setAttack(int atk);
   void sethealth(float hp);
   void setAttackRange(int atkr);
- void setPsychosisLevel(int lvl);
+ static void setPsychosisLevel(int lvl);
 
 };
 

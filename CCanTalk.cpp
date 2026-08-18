@@ -1,8 +1,10 @@
 #include "CCanTalk.h"
 #include <iostream>
+
+std::string CCanTalk::yh = "yh";
+
 CCanTalk::CCanTalk()
 {
-	yh = "yh";
 	DialogueCount = 0;
 	maxDialogue = 0;
 }

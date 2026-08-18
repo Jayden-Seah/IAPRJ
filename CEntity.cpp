@@ -1,9 +1,6 @@
 #include "CEntity.h"
 
-CEntity::CEntity()
-{
-    onLevel = 0;
-}
+int CEntity::onLevel = 0;
 
 bool CEntity::isPlayerInAttackRange()
 {
@@ -15,7 +12,7 @@ int CEntity::getAttack()
     return attack;
 }
 
-int CEntity::getHealth()
+float CEntity::getHealth()
 {
     return health;
 }
@@ -45,7 +42,7 @@ void CEntity::setAttackRange(int atkr)
     attackRange = atkr;
 }
 
-void CEntity::setPsychosisLevel(int lvl)
+ void CEntity::setPsychosisLevel(int lvl)
 {
      onLevel = lvl;
 }

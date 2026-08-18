@@ -1,43 +1,53 @@
 #include <iostream>
+#include <conio.h>
 
 //Start program
 
 int main() {
 	//Code starts here
-
-	//Array used -> Layout built from top to bottom
-	//Top of the layout to bottom
-	std::string topDown[11] = {
-		"|                                                                                                        |             |",
-		"|                                                                                                        |    Stats:   |",
-		"|                                                                                                        |             |",
-		"|                                                                                                        |             |",
-		"|                                                                                                        |             |",
-		"|                                                                                                        |             |",
-		"|                                                                                                        |             |",
-		"|                                                                                                        |             |",
-		"|                                                                                                        |             |",
-		"|                                                                                                        |             |",
-		"|                                                                                                        |             |",
-
-			
-	};
-	//At the textbox level down
-	std::string midDown[3] = {	
-		"|                                                                                                        |             |",
-		"|                                            TEXTBOX                                                     |             |",
-		"|                                                                                                        |             |",
-	};
-
-	for (int i = 0; i < 120;i++) {
-		std::cout << "_" << std::endl;
+	bool boardState = false; // true = grid board. false = fighting/talking area
+	// 1, 104, 1, 13, 1 (stats area after the 2nd 1) || 
+// 104 SPACES (WIDTH), 11 SPACES (HEIGHT)
+	// PRINTING THE BOARD OF THE GAME
+	char playBoardWidth[120][17];
+	// PLAYING area for fighting board is only 104 x 11
+	for (int o = 0; o < 17; o++) {
+		for (int i = 0;i < 120; i++) {
+			if (o == 0 or o== 16) {
+				playBoardWidth[i][o] = '-';
+			}
+			else if (o == 11){
+				if (i == 0 or i == 104 or i == 119) {
+					playBoardWidth[i][o] = '|';
+				}
+				else if (i > 104){
+					playBoardWidth[i][o] = ' ';
+				}
+				else {
+					playBoardWidth[i][o] = '-';
+				}
+			}
+			else {
+				if (i==0 or i==104 or i==119) {
+					playBoardWidth[i][o] = '|';
+				}
+				else {
+					playBoardWidth[i][o] = ' ';
+				}
+			}
+		}
 	}
-	for (int i = 0; i < 11;i++) {//Top to textbox level
-		std::cout << topDown[i] << std::endl;
+
+	for (int o = 0; o < 17; o++) {
+		for (int i = 0; i < 120; i++) {
+			std::cout << playBoardWidth[i][o];
+		}
+		std::cout << std::endl;
 	}
-	std::cout << "|________________________________________________________________________________________________________|             |" << std::endl;
-	for (int i = 0;i < 3;i++) {
-		std::cout << midDown[i] << std::endl;
-	}
-	std::cout << "|________________________________________________________________________________________________________|_____________|" << std::endl;
+
+
+
+
+
+
 }

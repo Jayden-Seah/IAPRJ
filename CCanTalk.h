@@ -9,7 +9,7 @@ class CCanTalk :
     static std::string yh;
 
 public:
-    CCanTalk();
+    CCanTalk(int ID, int lv);
     void dialogue();
 };
 

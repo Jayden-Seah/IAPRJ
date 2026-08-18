@@ -1,14 +1,43 @@
 #include <iostream>
 #include <conio.h>
+#include <chrono>
+#include "CEntity.h"
+#include "CCanTalk.h"
+#include "CSolidHitbox.h"
+#include "CHuman.h"
+#include "CObject.h"
+#include "CItems.h"
+#include "CPlayer.h"
 
 //Start program
 
 int main() {
 	//Code starts here
+	srand(static_cast<int>(time(0)));
+	CEntity* Player = new CPlayer;
 	bool boardState = false; // true = grid board. false = fighting/talking area
-	// 1, 104, 1, 13, 1 (stats area after the 2nd 1) || 
-// 104 SPACES (WIDTH), 11 SPACES (HEIGHT)
-	// PRINTING THE BOARD OF THE GAME
+	
+
+
+	// UPON board flip run thhis in a for loop 
+	//RANDOMLY create entities, more entities per stage if karma is higher (karma 100 start)
+	int numberOfBoardenemies;
+	CEntity* Human[10];
+	for (int i = 0; i < 10; i++) {
+		Human[i] = nullptr;
+	}
+	if (static_cast<CPlayer*>(Player)->getKarma() < 50) {
+		numberOfBoardenemies = rand() % 5 + 3; //3 to 7
+	}
+	else {
+		numberOfBoardenemies = rand() % 4 + 7; // 7 to 10
+	}
+	for (int i = 0; i < numberOfBoardenemies; i++) {
+		Human[i] = new CHuman(rand());
+		// regenerate if overlapping coords
+
+	}
+	
 	char playBoardWidth[120][17];
 	// PLAYING area for fighting board is only 104 x 11
 	for (int o = 0; o < 17; o++) {
@@ -37,6 +66,8 @@ int main() {
 			}
 		}
 	}
+	// move objects and stuff here
+
 
 	for (int o = 0; o < 17; o++) {
 		for (int i = 0; i < 120; i++) {

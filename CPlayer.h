@@ -1,12 +1,14 @@
 #pragma once
 #include "CEntity.h"
 class CPlayer :
-    public CEntity
+	public CEntity
 {
-    int defense;
-    float maxHP;
+	int defense;
+	float maxHP;
+	float karma;
 
 public:
+	void setKarma(float k);
 
+	int getKarma();
 };
-

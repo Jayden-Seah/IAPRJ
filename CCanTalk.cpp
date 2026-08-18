@@ -3,45 +3,70 @@
 
 std::string CCanTalk::yh = "yh";
 
-CCanTalk::CCanTalk(int ID, int lv)
+CCanTalk::CCanTalk(int randvalue, int ID, int lv)
 {
+	int x = randvalue % 104 + 1;
+	int y = randvalue % 11 + 1;
+	setObjectHeight(2);
+	setCoordX(x);
+	setCoordY(y);
+	
 	switch (ID) {
 	case 1:
+
+
 		switch (lv) {
 		case 1:
 
+			break;
 		case 0:
 
+			break;
 		case -1:
 
+			break;
 		}
+		break;
 	case 2:
 		switch (lv) {
 		case 1:
 
+			break;
 		case 0:
+			
+			break;
 
 		case -1:
 
+			break;
 		}
+		break;
 	case 3:
 		switch (lv) {
 		case 1:
 
+			break;
 		case 0:
 
+			break;
 		case -1:
 
+			break;
 		}
+		break;
 	case 4:
 		switch (lv) {
 		case 1:
 
+			break;
 		case 0:
 
+			break;
 		case -1:
 
+			break;
 		}
+		break;
 	}
 }
 

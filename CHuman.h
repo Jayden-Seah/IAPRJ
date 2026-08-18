@@ -20,7 +20,8 @@ public:
    bool getRoamStatus();
    bool getRunningAwayStatus();
    int getDetectionRange();
-  int getHumanID();
+int getHumantagID();
+int getHumanTypeID();
 
    void createType1RedHuman(int randd);
    void createType2RedHuman(int randd);
@@ -31,6 +32,8 @@ public:
    void setRoamStatus(bool a);
    void setRunningAwayStatus(bool a);
    void setShooterStatus(bool a);
+   void setHumanTypeID(int a
+   );
    void resetHumanID();
   void increaseHumanID();
 };

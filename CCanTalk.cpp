@@ -5,15 +5,14 @@ std::string CCanTalk::yh = "yh";
 
 CCanTalk::CCanTalk(int randvalue, int ID, int lv)
 {
-	int x = randvalue % 104 + 1;
-	int y = randvalue % 11 + 1;
+	int x = randvalue % 103 + 1;
+	int y = randvalue % 8 + 2;
 	setObjectHeight(2);
 	setCoordX(x);
 	setCoordY(y);
-	
+	setHumanTypeID(ID);
 	switch (ID) {
 	case 1:
-
 
 		switch (lv) {
 		case 1:

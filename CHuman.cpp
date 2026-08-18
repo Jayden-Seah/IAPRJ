@@ -19,8 +19,8 @@ CHuman::CHuman(int randvalue, int randid)
 {
     currenthumanID = maxhumanID;
     maxhumanID++;
-    int x = randvalue % 104 + 1;
-    int y = randvalue % 11 + 1;
+    int x = randvalue % 103 + 1;
+    int y = randvalue % 8 + 2;
     setObjectHeight(2);
     setCoordX(x);
     setCoordY(y);
@@ -63,30 +63,33 @@ int CHuman::getDetectionRange()
     return DetectionRange;
 }
 
-int CHuman::getHumanID()
+int CHuman::getHumantagID()
 {
     return currenthumanID;
 }
-
+int CHuman::getHumanTypeID()
+{
+    return humanID;
+}
 void CHuman::createType1RedHuman(int randd) // default chaser
 {
     int lvl = getLevel();
     switch (lvl) {
     case 0:
         setAttack(randd % 4 + 2);
-        sethealth(randd % 4 + 2);
+        sethealth((randd % 4 + 2) + 0.0f);
         setAttackRange(randd % 4 + 2);
         DetectionRange = 3;
         break;
     case 1:
         setAttack(randd % 4 + 2);
-        sethealth(randd % 4 + 2);
+        sethealth(randd % 4 + 2 + 0.0f);
         setAttackRange(randd % 4 + 2);
         DetectionRange = 3;
         break;
     case -1:
         setAttack(randd % 4 + 2);
-        sethealth(randd % 4 + 2);
+        sethealth(randd % 4 + 2 + 0.0f);
         setAttackRange(randd % 4 + 2);
         DetectionRange = 3;
         break;
@@ -98,31 +101,39 @@ void CHuman::createType2RedHuman(int randd)
     int lvl = getLevel();
     switch (lvl) {
     case 0:
-
+        setAttack(randd % 4 + 2);
+        sethealth(randd % 4 + 2 + 0.0f);
+        setAttackRange(randd % 4 + 2);
+        DetectionRange = 3;
+        isEntityFollowingPlayer = false;
+        isEntityShooter = true;
+        isEntityFreeToRoam = false;
         break;
     case 1:
-
+        setAttack(randd % 4 + 2);
+        sethealth(randd % 4 + 2 + 0.0f);
+        setAttackRange(randd % 4 + 2);
+        DetectionRange = 3;
+        isEntityFreeToRoam = false;
         break;
     case -1:
-
+        setAttack(randd % 4 + 2);
+        sethealth(randd % 4 + 2 + 0.0f);
+        setAttackRange(randd % 4 + 2);
+        DetectionRange = 3;
+        isEntityFollowingPlayer = false;
+        isEntityShooter = true;
+        isEntityFreeToRoam = false;
         break;
     }
 }
 
 void CHuman::createTypeExplodingHuman(int randd)
 {
-    int lvl = getLevel();
-    switch (lvl) {
-    case 0:
-
-        break;
-    case 1:
-
-        break;
-    case -1:
-
-        break;
-    }
+    setAttack(90);
+    sethealth(1);
+    setAttackRange(5);
+    isEntityFreeToRoam = false;
 }
 
 void CHuman::setDetectionRange(int a)
@@ -148,6 +159,11 @@ void CHuman::setRunningAwayStatus(bool a)
 void CHuman::setShooterStatus(bool a)
 {
     isEntityShooter = a;
+}
+
+void CHuman::setHumanTypeID(int a)
+{
+    humanID = a;
 }
 
 void CHuman::resetHumanID()

@@ -36,14 +36,20 @@ int main() {
 	else {
 		numberOfBoardenemies = rand() % 4 + 7; // 7 to 10
 	}
-	// temp code for testing
-	numberOfBoardenemies = 1;
+
+	// FIRST create all humans on board (FOR TEST CREATE BOARD ENTITIES INSTEAD LATER)
 	for (int i = 0; i < numberOfBoardenemies; i++) {
 		int thisID = rand() % 7 + 1;
 		if (thisID > 4) {
 			Human[i] = new CHuman(rand(), thisID);
 			// regenerate if overlapping coords
-
+			for (int o = 0;o < i; o++) {
+				if ((i != o)) {
+					if ((Human[i]->isEntityOverlapping(Human[o]))) {
+						Human[i] = new CHuman(rand(), thisID);
+					}
+				}
+			}
 		}
 		else {
 			Human[i] = new CCanTalk(rand(), thisID, CEntity::getLevel());
@@ -80,7 +86,42 @@ int main() {
 		}
 	}
 	// move objects and stuff here
-
+	for (int i = 0; i < numberOfBoardenemies; i++) {
+		int kl = static_cast<CHuman*>(Human[i])->getHumanTypeID();
+		if (kl == 0) {
+			kl = static_cast<CCanTalk*>(Human[i])->getHumanTypeID();
+		}
+		switch (kl) {
+		case 1:
+			playBoardWidth[Human[i]->getCoordX()][Human[i]->getCoordY()] = "\033[92mA\033[0m";
+			playBoardWidth[Human[i]->getCoordX()][Human[i]->getCoordY() - 1] = "\033[92mO\033[0m";
+			break;
+		case 2:
+			playBoardWidth[Human[i]->getCoordX()][Human[i]->getCoordY()] = "\033[92mA\033[0m";
+			playBoardWidth[Human[i]->getCoordX()][Human[i]->getCoordY() - 1] = "\033[92mO\033[0m";
+			break;
+		case 3:
+			playBoardWidth[Human[i]->getCoordX()][Human[i]->getCoordY()] = "\033[31mA\033[0m";
+			playBoardWidth[Human[i]->getCoordX()][Human[i]->getCoordY() - 1] = "\033[31mO\033[0m";
+			break;
+		case 4:
+			playBoardWidth[Human[i]->getCoordX()][Human[i]->getCoordY()] = "\033[31mA\033[0m";
+			playBoardWidth[Human[i]->getCoordX()][Human[i]->getCoordY() - 1] = "\033[31mO\033[0m";
+			break;
+		case 5:
+			playBoardWidth[Human[i]->getCoordX()][Human[i]->getCoordY()] = "\033[91mA\033[0m";
+			playBoardWidth[Human[i]->getCoordX()][Human[i]->getCoordY() - 1] = "\033[91mO\033[0m";
+			break;
+		case 6:
+			playBoardWidth[Human[i]->getCoordX()][Human[i]->getCoordY()] = "\033[91mA\033[0m";
+			playBoardWidth[Human[i]->getCoordX()][Human[i]->getCoordY() - 1] = "\033[91mO\033[0m";
+			break;
+		case 7:
+			playBoardWidth[Human[i]->getCoordX()][Human[i]->getCoordY()] = "\033[47m\033[30mA\033[0m";
+			playBoardWidth[Human[i]->getCoordX()][Human[i]->getCoordY() - 1] = "\033[47m\033[30mO\033[0m";
+			break;
+		}
+	}
 
 
 	for (int o = 0; o < 17; o++) {

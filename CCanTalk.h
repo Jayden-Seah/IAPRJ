@@ -7,9 +7,10 @@ class CCanTalk :
     int DialogueCount;
     int maxDialogue;
     static std::string yh;
+    std::string actualDialogue;
 
 public:
-    CCanTalk(int ID, int lv);
+    CCanTalk(int randvalue, int ID, int lv);
     void dialogue();
 };
 

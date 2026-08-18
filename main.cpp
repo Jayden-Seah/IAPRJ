@@ -10,6 +10,10 @@
 #include "CPlayer.h"
 
 //Start program
+// DO WE HAVE ANY FUNCTIONS HERE!!! OR ARE THEY ALL IN CLASSES
+
+
+
 
 int main() {
 	//Code starts here
@@ -32,41 +36,51 @@ int main() {
 	else {
 		numberOfBoardenemies = rand() % 4 + 7; // 7 to 10
 	}
+	// temp code for testing
+	numberOfBoardenemies = 1;
 	for (int i = 0; i < numberOfBoardenemies; i++) {
-		Human[i] = new CHuman(rand());
-		// regenerate if overlapping coords
+		int thisID = rand() % 7 + 1;
+		if (thisID > 4) {
+			Human[i] = new CHuman(rand(), thisID);
+			// regenerate if overlapping coords
 
+		}
+		else {
+			Human[i] = new CCanTalk(rand(), thisID, CEntity::getLevel());
+		}
 	}
-	
-	char playBoardWidth[120][17];
+
+	// using string so we can add color with escape codes
+	std::string playBoardWidth[120][17];
 	// PLAYING area for fighting board is only 104 x 11
 	for (int o = 0; o < 17; o++) {
 		for (int i = 0;i < 120; i++) {
 			if (o == 0 or o== 16) {
-				playBoardWidth[i][o] = '-';
+				playBoardWidth[i][o] = "-";
 			}
 			else if (o == 11){
 				if (i == 0 or i == 104 or i == 119) {
-					playBoardWidth[i][o] = '|';
+					playBoardWidth[i][o] = "|";
 				}
 				else if (i > 104){
-					playBoardWidth[i][o] = ' ';
+					playBoardWidth[i][o] = " ";
 				}
 				else {
-					playBoardWidth[i][o] = '-';
+					playBoardWidth[i][o] = "-";
 				}
 			}
 			else {
 				if (i==0 or i==104 or i==119) {
-					playBoardWidth[i][o] = '|';
+					playBoardWidth[i][o] = "|";
 				}
 				else {
-					playBoardWidth[i][o] = ' ';
+					playBoardWidth[i][o] = " ";
 				}
 			}
 		}
 	}
 	// move objects and stuff here
+
 
 
 	for (int o = 0; o < 17; o++) {

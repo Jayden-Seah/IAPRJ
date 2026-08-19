@@ -9,10 +9,12 @@
 #include "CItems.h"
 #include "CPlayer.h"
 #include <random>//Random library
-
+#include <thread>
 //Start program
 // DO WE HAVE ANY FUNCTIONS HERE!!! OR ARE THEY ALL IN CLASSES
-
+void clearScreen() {
+	system("cls");
+}
 
 std::default_random_engine generator(std::random_device{}());//default random engine creates the random value, generator is just the name for it , std random device gives it a random starting point without it itll be the same evry time
 
@@ -60,84 +62,96 @@ int main() {
 		}
 	}
 
+
 	int rows = 120;
 	int cols = 17;
 
-	std::vector<std::vector<std::string>> board(rows, std::vector<std::string>(cols, { ' ' }));
-	// PLAYING area for fighting board is only 104 x 11
-	for (int o = 0; o < 17; o++) {
-		for (int i = 0;i < 120; i++) {
-			if (o == 0 or o == 16) {
-				board[i][o] = "-";
-			}
-			else if (o == 11) {
-				if (i == 0 or i == 104 or i == 119) {
-					board[i][o] = "|";
-				}
-				else if (i > 104) {
-					board[i][o] = " ";
-				}
-				else {
+	do {
+		std::vector<std::vector<std::string>> board(rows, std::vector<std::string>(cols, { ' ' }));
+		// PLAYING area for fighting board is only 104 x 11
+		for (int o = 0; o < 17; o++) {
+			for (int i = 0;i < 120; i++) {
+				if (o == 0 or o == 16) {
 					board[i][o] = "-";
 				}
-			}
-			else {
-				if (i == 0 or i == 104 or i == 119) {
-					board[i][o] = "|";
+				else if (o == 11) {
+					if (i == 0 or i == 104 or i == 119) {
+						board[i][o] = "|";
+					}
+					else if (i > 104) {
+						board[i][o] = " ";
+					}
+					else {
+						board[i][o] = "-";
+					}
 				}
 				else {
-					board[i][o] = " ";
+					if (i == 0 or i == 104 or i == 119) {
+						board[i][o] = "|";
+					}
+					else {
+						board[i][o] = " ";
+					}
 				}
 			}
 		}
-	}
-	// move objects and stuff here
-	for (int i = 0; i < numberOfBoardenemies; i++) {
-		int kl = static_cast<CHuman*>(Human[i])->getHumanTypeID();
-		if (kl == 0) {
-			kl = static_cast<CCanTalk*>(Human[i])->getHumanTypeID();
-		}
-		switch (kl) {
-		case 1:
-			board[Human[i]->getCoordX()][Human[i]->getCoordY()] = "\033[92mA\033[0m";
-			board[Human[i]->getCoordX()][Human[i]->getCoordY() - 1] = "\033[92mO\033[0m";
-			break;
-		case 2:
-			board[Human[i]->getCoordX()][Human[i]->getCoordY()] = "\033[92mA\033[0m";
-			board[Human[i]->getCoordX()][Human[i]->getCoordY() - 1] = "\033[92mO\033[0m";
-			break;
-		case 3:
-			board[Human[i]->getCoordX()][Human[i]->getCoordY()] = "\033[31mA\033[0m";
-			board[Human[i]->getCoordX()][Human[i]->getCoordY() - 1] = "\033[31mO\033[0m";
-			break;
-		case 4:
-			board[Human[i]->getCoordX()][Human[i]->getCoordY()] = "\033[31mA\033[0m";
-			board[Human[i]->getCoordX()][Human[i]->getCoordY() - 1] = "\033[31mO\033[0m";
-			break;
-		case 5:
-			board[Human[i]->getCoordX()][Human[i]->getCoordY()] = "\033[91mA\033[0m";
-			board[Human[i]->getCoordX()][Human[i]->getCoordY() - 1] = "\033[91mO\033[0m";
-			break;
-		case 6:
-			board[Human[i]->getCoordX()][Human[i]->getCoordY()] = "\033[91mA\033[0m";
-			board[Human[i]->getCoordX()][Human[i]->getCoordY() - 1] = "\033[91mO\033[0m";
-			break;
-		case 7:
-			board[Human[i]->getCoordX()][Human[i]->getCoordY()] = "\033[47m\033[30mA\033[0m";
-			board[Human[i]->getCoordX()][Human[i]->getCoordY() - 1] = "\033[47m\033[30mO\033[0m";
+		// move objects and stuff here
+
+		// MOVE ENEMIES
+		while (true) {
+			for (int i = 0; i < numberOfBoardenemies; i++) {
+				int randdir = random(generator) % 4 + 1;
+				Human[i]->humanWander(randdir);
+				std::cout << Human[i]->getRoamStatus() << std::endl;
+			}
+			std::this_thread::sleep_for(std::chrono::milliseconds(250));
+			clearScreen();
 			break;
 		}
-	}
-
-
-	for (int o = 0; o < 17; o++) {
-		for (int i = 0; i < 120; i++) {
-			std::cout << board[i][o];
+		// ptint ENEMIES
+		for (int i = 0; i < numberOfBoardenemies; i++) {
+			int kl = (Human[i])->getHumanTypeID();
+			switch (kl) {
+			case 1:
+				board[Human[i]->getCoordX()][Human[i]->getCoordY()] = "\033[92mA\033[0m";
+				board[Human[i]->getCoordX()][Human[i]->getCoordY() - 1] = "\033[92mO\033[0m";
+				break;
+			case 2:
+				board[Human[i]->getCoordX()][Human[i]->getCoordY()] = "\033[92mA\033[0m";
+				board[Human[i]->getCoordX()][Human[i]->getCoordY() - 1] = "\033[92mO\033[0m";
+				break;
+			case 3:
+				board[Human[i]->getCoordX()][Human[i]->getCoordY()] = "\033[31mA\033[0m";
+				board[Human[i]->getCoordX()][Human[i]->getCoordY() - 1] = "\033[31mO\033[0m";
+				break;
+			case 4:
+				board[Human[i]->getCoordX()][Human[i]->getCoordY()] = "\033[31mA\033[0m";
+				board[Human[i]->getCoordX()][Human[i]->getCoordY() - 1] = "\033[31mO\033[0m";
+				break;
+			case 5:
+				board[Human[i]->getCoordX()][Human[i]->getCoordY()] = "\033[91mA\033[0m";
+				board[Human[i]->getCoordX()][Human[i]->getCoordY() - 1] = "\033[91mO\033[0m";
+				break;
+			case 6:
+				board[Human[i]->getCoordX()][Human[i]->getCoordY()] = "\033[91mA\033[0m";
+				board[Human[i]->getCoordX()][Human[i]->getCoordY() - 1] = "\033[91mO\033[0m";
+				break;
+			case 7:
+				board[Human[i]->getCoordX()][Human[i]->getCoordY()] = "\033[47m\033[30mA\033[0m";
+				board[Human[i]->getCoordX()][Human[i]->getCoordY() - 1] = "\033[47m\033[30mO\033[0m";
+				break;
+			}
 		}
-		std::cout << std::endl;
-	}
 
 
+		for (int o = 0; o < 17; o++) {
+			for (int i = 0; i < 120; i++) {
+				std::cout << board[i][o];
+			}
+			std::cout << std::endl;
+		}
+
+	} while (boardState == false);
 
 
 

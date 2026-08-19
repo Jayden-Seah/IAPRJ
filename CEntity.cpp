@@ -1,5 +1,5 @@
 #include "CEntity.h"
-
+#include <iostream>
 int CEntity::onLevel = 0;
 
 bool CEntity::isPlayerInAttackRange()
@@ -27,6 +27,11 @@ int CEntity::getLevel()
     return onLevel;
 }
 
+bool CEntity::getRoamStatus()
+{
+    return false;
+}
+
 void CEntity::setAttack(int atk)
 {
     attack = atk;
@@ -47,21 +52,31 @@ void CEntity::setAttackRange(int atkr)
      onLevel = lvl;
 }
 
- void CEntity::moveInput(char dir)
+ void CEntity::moveInput(int dir)
  {
      switch (dir) {
-     case 'W': // -1
+     case 1: // -1
          setCoordY(getCoordY() - 1);
          break;
-     case 'A': // -1
+     case 2: // -1
          setCoordX(getCoordX() - 1);
          break;
-     case 'S': // 1
+     case 3: // 1
          setCoordY(getCoordY() + 1);
          break;
-     case 'D': // 1
+     case 4: // 1
          setCoordX(getCoordX() + 1);
          break;
      }
+ }
+
+ void CEntity::humanWander(int randir)
+ {
+
+ }
+
+ int CEntity::getHumanTypeID()
+ {
+     return 0;
  }
 

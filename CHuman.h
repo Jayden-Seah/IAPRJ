@@ -37,6 +37,5 @@ int getHumanTypeID();
 
    void resetHumanID();
   void increaseHumanID();
-  void humanWander(int randir);
 };
 

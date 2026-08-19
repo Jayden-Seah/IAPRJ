@@ -21,10 +21,7 @@ CCanTalk::CCanTalk(int randvalue, int ID, int lv)
 		setRoamStatus(false);
 		switch (lv) {
 		case 1:
-			maxDialogue = 2;
-			DialogueCount = 0;
-			actualDialogue = "hi this is test dialogue from GreenNPC1.";
-			break;
+		
 			break;
 		case 0:
 			maxDialogue = 2;
@@ -32,10 +29,7 @@ CCanTalk::CCanTalk(int randvalue, int ID, int lv)
 			actualDialogue = "hi this is test dialogue from GreenNPC1.";
 			break;
 		case -1:
-			maxDialogue = 2;
-			DialogueCount = 0;
-			actualDialogue = "hi this is test dialogue from GreenNPC1.";
-			break;
+
 			break;
 		}
 		break;
@@ -45,23 +39,14 @@ CCanTalk::CCanTalk(int randvalue, int ID, int lv)
 		sethealth(1);
 		switch (lv) {
 		case 1:
-			maxDialogue = 2;
-			DialogueCount = 0;
-			actualDialogue = "hi this is test dialogue from GreenNPC2.";
-			break;
+
 			break;
 		case 0:
-			maxDialogue = 2;
-			DialogueCount = 0;
-			actualDialogue = "hi this is test dialogue from GreenNPC2.";
-			break;
+			
 			break;
 
 		case -1:
-			maxDialogue = 2;
-			DialogueCount = 0;
-			actualDialogue = "hi this is test dialogue from GreenNPC2.";
-			break;
+
 			break;
 		}
 		break;
@@ -165,5 +150,4 @@ std::string CCanTalk::getDialogue(float karma)
 		returnedDialogue = yh + actualDialogue;
 	}
 	return returnedDialogue;
-	DialogueCount++;
 }

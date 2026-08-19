@@ -1,5 +1,5 @@
 #include "CSolidHitbox.h"
-#include <iostream>
+
 bool CSolidHitbox::isEntityOverlapping(CSolidHitbox(*target)) // overlapping = true, not overlapping (good) = false
 {
 	for (int i = 0; i < getObjectHeight(); i++) { // 
@@ -20,12 +20,12 @@ bool CSolidHitbox::isEntityOutofBounds() // if entity is out of bounds on either
 		setCoordX(1);
 		return true;
 	}
-	for (int i = 0; i < 1; i++) {
-		if (getCoordY() >= 10) {
+	for (int i = 0; i < getObjectHeight(); i++) {
+		if (getCoordY()-i >= 10) {
 			setCoordY(9);
 			return true;
 		}
-		else if (getCoordY() <= 0) {
+		else if (getCoordY() - i <= 0) {
 			setCoordY(2);
 			return true;
 		}

@@ -8,16 +8,20 @@
 #include "CObject.h"
 #include "CItems.h"
 #include "CPlayer.h"
+#include <random>//Random library
 
 //Start program
 // DO WE HAVE ANY FUNCTIONS HERE!!! OR ARE THEY ALL IN CLASSES
 
 
+std::default_random_engine generator(std::random_device{}());//default random engine creates the random value, generator is just the name for it , std random device gives it a random starting point without it itll be the same evry time
 
+
+std::uniform_int_distribution<int> random(2, 1001);// uniform gives every num a equal chance, int is whole num, and distribution effectively says, give me a num from x to y
 
 int main() {
 	//Code starts here
-	srand(static_cast<int>(time(0)));
+	//srand(static_cast<int>(time(0)));
 	CEntity* Player = new CPlayer;
 	bool boardState = false; // true = grid board. false = fighting/talking area
 	
@@ -31,28 +35,28 @@ int main() {
 		Human[i] = nullptr;
 	}
 	if (static_cast<CPlayer*>(Player)->getKarma() < 50) {
-		numberOfBoardenemies = rand() % 5 + 3; //3 to 7
+		numberOfBoardenemies = random(generator) % 5 + 3; //3 to 7
 	}
 	else {
-		numberOfBoardenemies = rand() % 4 + 7; // 7 to 10
+		numberOfBoardenemies = random(generator) % 4 + 7; // 7 to 10
 	}
 
 	// FIRST create all humans on board (FOR TEST CREATE BOARD ENTITIES INSTEAD LATER)
 	for (int i = 0; i < numberOfBoardenemies; i++) {
-		int thisID = rand() % 7 + 1;
+		int thisID = random(generator) % 7 + 1;
 		if (thisID > 4) {
-			Human[i] = new CHuman(rand(), thisID);
+			Human[i] = new CHuman(random(generator), thisID);
 			// regenerate if overlapping coords
 			for (int o = 0;o < i; o++) {
 				if ((i != o)) {
 					if ((Human[i]->isEntityOverlapping(Human[o]))) {
-						Human[i] = new CHuman(rand(), thisID);
+						Human[i] = new CHuman(random(generator), thisID);
 					}
 				}
 			}
 		}
 		else {
-			Human[i] = new CCanTalk(rand(), thisID, CEntity::getLevel());
+			Human[i] = new CCanTalk(random(generator), thisID, CEntity::getLevel());
 		}
 	}
 

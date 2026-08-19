@@ -2,8 +2,9 @@
 class Effects
 {
 private:
-	float Passived;
+	
 public:
+    float Passived;
 
 	void passive();
 

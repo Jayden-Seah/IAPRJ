@@ -74,7 +74,7 @@ void CEntity::setAttackRange(int atkr)
      }
  }
 
- void CEntity::humanWander(int randir)
+ void CEntity::humanWander()
  {
 
  }

@@ -9,7 +9,7 @@ class CEntity :
     static int onLevel; // -1, 0 or 1. Default 0
 public:
 
-
+    CEntity();
   bool isPlayerInAttackRange();
 
   int getAttack();
@@ -17,7 +17,7 @@ public:
   int getAttackRange();
  static int getLevel();
 
-
+ virtual bool getRoamStatus();
   void setAttack(int atk);
   void sethealth(float hp);
   void setAttackRange(int atkr);
@@ -25,5 +25,6 @@ public:
  void moveInput(int dir); //1234 (WASD)
  virtual void humanWander(int randir);
  virtual int getHumanTypeID();
+
 };
 

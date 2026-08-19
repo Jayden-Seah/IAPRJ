@@ -2,6 +2,10 @@
 #include <iostream>
 int CEntity::onLevel = 0;
 
+CEntity::CEntity()
+{
+}
+
 bool CEntity::isPlayerInAttackRange()
 {
     return false;
@@ -25,6 +29,11 @@ int CEntity::getAttackRange()
 int CEntity::getLevel()
 {
     return onLevel;
+}
+
+bool CEntity::getRoamStatus()
+{
+    return false;
 }
 
 void CEntity::setAttack(int atk)

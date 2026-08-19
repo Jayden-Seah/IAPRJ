@@ -8,6 +8,8 @@ class CPlayer :
 	float karma;
 
 public:
+	CPlayer(int randv);
+
 	void setKarma(float k);
 
 	int getKarma();

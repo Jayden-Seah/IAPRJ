@@ -20,7 +20,7 @@ CHuman::CHuman(int randvalue, int randid)
     currenthumanID = maxhumanID;
     maxhumanID++;
     int x = randvalue % 103 + 1;
-    int y = randvalue % 8 + 2;
+    int y = randvalue % 8 + 2; // 2 to 9
     setObjectHeight(2);
     setCoordX(x);
     setCoordY(y);

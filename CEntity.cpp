@@ -47,3 +47,21 @@ void CEntity::setAttackRange(int atkr)
      onLevel = lvl;
 }
 
+ void CEntity::moveInput(char dir)
+ {
+     switch (dir) {
+     case 'W': // -1
+         setCoordY(getCoordY() - 1);
+         break;
+     case 'A': // -1
+         setCoordX(getCoordX() - 1);
+         break;
+     case 'S': // 1
+         setCoordY(getCoordY() + 1);
+         break;
+     case 'D': // 1
+         setCoordX(getCoordX() + 1);
+         break;
+     }
+ }
+

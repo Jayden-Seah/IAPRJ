@@ -24,6 +24,8 @@ CCanTalk::CCanTalk(int randvalue, int ID, int lv)
 		
 			break;
 		case 0:
+			maxDialogue = 2;
+			DialogueCount = 0;
 			actualDialogue = "hi this is test dialogue from GreenNPC1.";
 			break;
 		case -1:
@@ -77,6 +79,75 @@ CCanTalk::CCanTalk(int randvalue, int ID, int lv)
 	}
 }
 
-void CCanTalk::dialogue()
+void CCanTalk::changeDialogue()
 {
+	switch (getHumanTypeID()) {
+	case 1:
+		
+		switch (getLevel()) {
+		case 1:
+
+			break;
+		case 0:
+			
+			break;
+		case -1:
+
+			break;
+		}
+		break;
+	case 2:
+	
+		switch (getLevel()) {
+		case 1:
+
+			break;
+		case 0:
+
+			break;
+
+		case -1:
+
+			break;
+		}
+		break;
+	case 3:
+		switch (getLevel()) {
+		case 1:
+
+			break;
+		case 0:
+
+			break;
+		case -1:
+
+			break;
+		}
+		break;
+	case 4:
+		switch (getLevel()) {
+		case 1:
+
+			break;
+		case 0:
+
+			break;
+		case -1:
+
+			break;
+		}
+		break;
+	}
+}
+
+std::string CCanTalk::getDialogue(float karma)
+{
+	std::string returnedDialogue;
+	if (karma > 50) {
+		returnedDialogue = actualDialogue;
+	}
+	else {
+		returnedDialogue = yh + actualDialogue;
+	}
+	return returnedDialogue;
 }

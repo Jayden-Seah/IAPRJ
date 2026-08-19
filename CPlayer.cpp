@@ -2,6 +2,7 @@
 
 CPlayer::CPlayer(int randv)
 {
+	setObjectHeight(1);
 	setCoordY(6);
 	switch (randv) {
 	case 0:
@@ -23,6 +24,6 @@ void CPlayer::setKarma(float k) {
 	karma = k;
 }
 
-int CPlayer::getKarma() {
+float CPlayer::getKarma() {
 	return karma;
 }

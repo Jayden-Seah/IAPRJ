@@ -9,7 +9,7 @@ class CEntity :
     static int onLevel; // -1, 0 or 1. Default 0
 public:
 
-
+    CEntity();
   bool isPlayerInAttackRange();
 
   int getAttack();

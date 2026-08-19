@@ -12,5 +12,5 @@ public:
 
 	void setKarma(float k);
 
-	int getKarma();
+	float getKarma();
 };

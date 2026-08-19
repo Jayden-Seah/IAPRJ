@@ -1,8 +1,8 @@
 #include "SpareOrKill.h"
 #include "CPlayer.h"
 
-int SpareOrKill::defaultKarmaGain = 5;          // not fixed, can be changed later
-int SpareOrKill::defaultKarmaLoss = 10;         // not fixed, can be changed later
+int SpareOrKill::defaultKarmaGain = 5;     // can be changed later
+int SpareOrKill::defaultKarmaLoss = 10;     // can be changed later
 
 void SpareOrKill::applyKarmaChange(CPlayer* player, int karmaAmount)
 {
@@ -10,31 +10,51 @@ void SpareOrKill::applyKarmaChange(CPlayer* player, int karmaAmount)
 
     int newKarma = player->getKarma() + karmaAmount;
 
-    // Karma bounds between 0 (Evil) and 100 (Good)
+    // Checks Karma between 0 (Evil) and 100 (Good)
     if (newKarma > 100) newKarma = 100;
     if (newKarma < 0) newKarma = 0;
 
     player->setKarma(newKarma);
-    player->updateKarmaStats(); // Recalculates MaxHP = 70 + (Karma * 0.3)
+    player->updateKarmaStats(); // Recalculates max health formula
 }
 
-void SpareOrKill::processInteraction(CPlayer* player, CCanTalk* npc, int choice)
+void SpareOrKill::processInteraction(CPlayer* player, CCanTalk* npc, char board[10][104], int choice)
 {
     if (player == nullptr || npc == nullptr) return;
+
+    // Get exact grid coordinates from CSolidHitbox base class
+    int targetX = npc->getCoordX();
+    int targetY = npc->getCoordY();
 
     // Option 1: Talk / Spare NPC
     if (choice == 1)
     {
-        std::cout << "You chose to spare the entity." << std::endl;
-        npc->dialogue(); // Play dialogue from CCanTalk
+        std::cout << npc->getDialogue(static_cast<float>(player->getKarma())) << std::endl;
+        
         applyKarmaChange(player, defaultKarmaGain);
-        npc->setRoamStatus(true);
+        
+        // NPC disappears off the board (runs away)
+        npc->setRoamStatus(false);
+        npc->sethealth(0.0f);
+        
+        // Remove Symbol From Board
+        if (targetY >= 0 && targetY < 10 && targetX >= 0 && targetX < 104)
+        {
+            board[targetY][targetX] = ' ';
+        }
     }
     // Option 2: Attack / Kill NPC
     else if (choice == 2)
     {
-        std::cout << "You attacked and eliminated the entity!" << std::endl;
-        npc->sethealth(0.0f); // target dies
+        std::cout << "You attacked and eliminated the human!" << std::endl;
+        
+        npc->sethealth(0.0f);
         applyKarmaChange(player, -defaultKarmaLoss);
+
+        // Turn NPC tile into 'X' to show a body/corpse on the Board
+        if (targetY >= 0 && targetY < 10 && targetX >= 0 && targetX < 104)
+        {
+            board[targetY][targetX] = 'X';
+        }
     }
 }

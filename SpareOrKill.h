@@ -12,9 +12,9 @@ private:
     static int defaultKarmaLoss;
 
 public:
-    // Process interaction between Player and a Talkable Human NPC
-    static void processInteraction(CPlayer* player, CCanTalk* npc, int choice);
+    // Process interaction between CPlayer and a talkable CCanTalk NPC on the board grid
+    static void processInteraction(CPlayer* player, CCanTalk* npc, char board[10][104], int choice);
 
-    // Modify player karma and automatically recalculate stats
+    // Updates player Karma and recalculates stats
     static void applyKarmaChange(CPlayer* player, int karmaAmount);
 };

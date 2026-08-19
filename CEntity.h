@@ -22,6 +22,8 @@ public:
   void sethealth(float hp);
   void setAttackRange(int atkr);
  static void setPsychosisLevel(int lvl);
- void moveInput(char dir); //WASD dirs
+ void moveInput(int dir); //1234 (WASD)
+ virtual void humanWander(int randir);
+ virtual int getHumanTypeID();
 };
 

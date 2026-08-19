@@ -1,17 +1,20 @@
 #include "Effects.h"
-#include <iostream>
+
+#include "CEntity.h"
 
 
 
 void Effects::passive() {
-	Passived->setAttackRange(int atkr) = 1;
+
 }
 
 void Effects::upgrade() {
-	if (bool upg1 = true) {
+	if (upg1 = true) {
 
 	}
-	if else (bool upg2 = true) {
+	else if (upg2 = true) {
 
 	}
 }
+
+

@@ -19,11 +19,64 @@ std::default_random_engine generator(std::random_device{}());//default random en
 
 std::uniform_int_distribution<int> random(2, 1001);// uniform gives every num a equal chance, int is whole num, and distribution effectively says, give me a num from x to y
 
+//Group Data -> 
+struct DialogueInt {
+	std::string speaker;
+	std::string text;
+};
+
+//Clear the screen
+void clearScreen() {
+#ifdef _WIN32
+	std::system("cls");
+#else
+	std::system("clear");
+#endif
+}
+
+// Writes dialogue text into the bottom strip of the existing board grid
+// Bottom strip region: i (row) = 1..103, o (col) = 12..15
+void drawDialogueInBoard(std::vector<std::vector<std::string>>& board,
+	const std::string& speaker,
+	const std::string& text) {
+	const int contentStartI = 1;
+	const int contentEndI = 103;   // leaves i=104 as border
+	const int contentStartO = 12;
+	const int contentEndO = 15;    // o=16 is the bottom border
+
+	// Clear the strip first (so old text doesn't linger between frames)
+	for (int o = contentStartO; o <= contentEndO; o++) {
+		for (int i = contentStartI; i < contentEndI; i++) {
+			board[i][o] = " ";
+		}
+	}
+
+	// Write speaker name on the first content row
+	std::string speakerText = speaker + ":";
+	for (int c = 0; c < (int)speakerText.size() && (contentStartI + 1 + c) < contentEndI; c++) {
+		board[contentStartI + 1 + c][contentStartO] = std::string(1, speakerText[c]);
+	}
+
+	// Write the dialogue text, wrapping across the remaining rows
+	int row = 1; // row 0 (contentStartO) is used by speaker name
+	int col = 0;
+	int maxCols = contentEndI - contentStartI - 2; // small left padding
+	for (char c : text) {
+		if (col >= maxCols) {
+			row++;
+			col = 0;
+		}
+		if (contentStartO + row > contentEndO) break; // ran out of vertical space
+		board[contentStartI + 1 + col][contentStartO + row] = std::string(1, c);
+		col++;
+	}
+}
+
 int main() {
 	//Code starts here
 	//srand(static_cast<int>(time(0)));
 	CEntity* Player = new CPlayer(random(generator) % 2);
-	bool boardState = false; // true = grid board. false = fighting/talking area
+	bool boardState = true; // true = grid board. false = fighting/talking area
 	bool isDialogueActive = false;
 
 	// KEYBINDING HERE
@@ -185,7 +238,7 @@ int main() {
 				break;
 			case 3:
 				board[Human[i]->getCoordX()][Human[i]->getCoordY()] = "\033[31mA\033[0m";
-				board[Human[i]->getCoordX()][Human[i]->getCoordY() - 1] = "\033[31mO\033[0m";
+				board[Human[i]->getCoordX()][Human[i]->getCoordY() - 1] = "\033[31mA\033[0m";
 				break;
 			case 4:
 				board[Human[i]->getCoordX()][Human[i]->getCoordY()] = "\033[31mA\033[0m";
@@ -222,7 +275,57 @@ int main() {
 
 	} while (boardState == false);
 
+	//TextBox
+	std::vector<std::vector<std::string>> textBoxBoard(rows, std::vector<std::string>(cols, { ' ' }));
+	for (int o = 0; o < 17; o++) {
+		for (int i = 0; i < 120; i++) {
+			if (o == 0 or o == 16) {
+				textBoxBoard[i][o] = "-";
+			}
+			else if (o == 11) {
+				if (i == 0 or i == 104 or i == 119) {
+					textBoxBoard[i][o] = "|";
+				}
+				else if (i > 104) {
+					textBoxBoard[i][o] = " ";
+				}
+				else {
+					textBoxBoard[i][o] = "-";
+				}
+			}
+			else {
+				if (i == 0 or i == 104 or i == 119) {
+					textBoxBoard[i][o] = "|";
+				}
+				else {
+					textBoxBoard[i][o] = " ";
+				}
+			}
+		}
+	}
 
+	std::vector<DialogueInt> script = {
+		{"March 7th", "Hey, are you listening to me?! Trailblazer!"},
+		{"Dan Heng",  "Calm down, March. They just woke up."},
+		{"March 7th", "Oh, right! Welcome back to the Express!"}
+	};
 
+	for (const auto& line : script) {
+		std::string revealedText = "";
+		for (char c : line.text) {
+			revealedText += c;
+			drawDialogueInBoard(textBoxBoard, line.speaker, revealedText);
+
+			clearScreen();
+			for (int o = 0; o < 17; o++) {
+				for (int i = 0; i < 120; i++) {
+					std::cout << textBoxBoard[i][o];
+				}
+				std::cout << std::endl;
+			}
+			std::this_thread::sleep_for(std::chrono::milliseconds(30));
+		}
+		std::cin.get();
+	}
 
 }

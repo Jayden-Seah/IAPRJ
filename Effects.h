@@ -8,5 +8,10 @@ public:
 
 	void passive();
 
+	void upgrade();
+
+	bool upg1 = false;
+
+	bool upg2 = false;
 };
 

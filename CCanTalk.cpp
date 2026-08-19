@@ -6,7 +6,7 @@ std::string CCanTalk::yh = "yh";
 CCanTalk::CCanTalk(int randvalue, int ID, int lv)
 {
 	int x = randvalue % 103 + 1;
-	int y = randvalue % 8 + 2;
+	int y = randvalue % 8 + 2; // 2 3 4 5 6 7 8 9
 	setObjectHeight(2);
 	setCoordX(x);
 	setCoordY(y);

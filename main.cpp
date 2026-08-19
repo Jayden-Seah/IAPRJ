@@ -10,6 +10,7 @@
 #include "CPlayer.h"
 #include <random>//Random library
 #include <thread>
+#include <cctype>
 //Start program
 // DO WE HAVE ANY FUNCTIONS HERE!!! OR ARE THEY ALL IN CLASSES
 
@@ -25,26 +26,45 @@ int main() {
 	bool boardState = false; // true = grid board. false = fighting/talking area
 	bool isDialogueActive = false;
 
+	// KEYBINDING HERE
+	char upKey = 'W';
+	char downKey = 'S';
+	char leftKey = 'A';
+	char rightKey = 'D';
+	char currentDirCast = ' ';
 
 	// UPON board flip run thhis in a for loop 
 	//RANDOMLY create entities, more entities per stage if karma is higher (karma 100 start)
 	int numberOfBoardenemies;
 	int numberOfBlocks; // enviromental hazards
 	CEntity* Human[10];
+	CSolidHitbox* EnvironmentalObjects[10];
 	for (int i = 0; i < 10; i++) {
 		Human[i] = nullptr;
+		EnvironmentalObjects[i] = nullptr;
 	}
 	if (static_cast<CPlayer*>(Player)->getKarma() < 50) {
-		numberOfBoardenemies = random(generator) % 5 + 3; //3 to 7
-		numberOfBlocks = random(generator) % 5 + 4;
+		numberOfBoardenemies = random(generator) % 1 + 3; //1 to 3
+		numberOfBlocks = random(generator) % 5 + 4; // 4 to 8
 	}
 	else {
-		numberOfBoardenemies = random(generator) % 4 + 7; // 7 to 10
-		numberOfBlocks = random(generator) % 5 + 6;
+		numberOfBoardenemies = random(generator) % 3 + 4; // 3 to 7
+		numberOfBlocks = random(generator) % 5 + 6; // 6 to 10
 	}
 
-	// FIRST create all humans on board (FOR TEST CREATE BOARD ENTITIES INSTEAD LATER)
 
+
+	// object creation
+	for (int i = 0; i < numberOfBlocks; i++) {
+		EnvironmentalObjects[i] = new CSolidHitbox(random(generator));
+		for (int o = 0;o < i; o++) {
+			if ((i != o)) {
+				if ((EnvironmentalObjects[i]->isEntityOverlapping(EnvironmentalObjects[o]))) {
+					EnvironmentalObjects[i] = new CSolidHitbox(random(generator));
+				}
+			}
+		}
+	}
 
 
 	for (int i = 0; i < numberOfBoardenemies; i++) {
@@ -59,12 +79,17 @@ int main() {
 					}
 				}
 			}
+			for (int t = 0; t < numberOfBlocks; t++) {
+				if (Human[i]->isEntityOverlapping(EnvironmentalObjects[t])) {
+					Human[i] = new CHuman(random(generator), thisID);
+				}
+			}
 		}
 		else {
 			Human[i] = new CCanTalk(random(generator), thisID, CEntity::getLevel());
 		}
 	}
-	
+
 
 
 	int rows = 120;
@@ -100,14 +125,43 @@ int main() {
 			}
 		}
 		// move objects and stuff here
+		if (_kbhit()) {   // only getch if a keys pressed so doesnt doom gameflow
+			currentDirCast = _getch();
+			currentDirCast = (char)toupper(currentDirCast);
+		}
 
 		// MOVE ENEMIES AND CHECK FOR PLAYER KEY AND MOVE (define getch beforehand)
+		// So, what happens is a loop occurs when dialogue is NOT active that allows for all entities to move every 0.25s (including player
+		// when we add that check later). Collision check also happens here but randomly, after a few seconds the program hangs and stops working.
+		// we suspect maybe theres an overload of something but we are unsure whats wrong
 		while (isDialogueActive == false) {
 			for (int i = 0; i < numberOfBoardenemies; i++) {
 				int randdir = random(generator) % 4 + 1;
+				for (int o = 0; o < numberOfBoardenemies; o++) {
+					if (Human[i]->isEntityGoingToOverlapInTheFuture(randdir, Human[o])) {
+						randdir = random(generator) % 4 + 1;
+					}
+				}
+				for (int o = 0; o < numberOfBlocks; o++) {
+					if (Human[i]->isEntityGoingToOverlapInTheFuture(randdir, EnvironmentalObjects[o])) {
+						randdir = random(generator) % 4 + 1;
+					}
+				}
 				Human[i]->humanWander(randdir);
-				std::cout << Human[i]->getRoamStatus() << std::endl;
 			}
+			if (currentDirCast == upKey) {
+				Player->moveInput(1);
+			}
+			else if (currentDirCast == downKey) {
+				Player->moveInput(3);
+			}
+			else if (currentDirCast == rightKey) {
+				Player->moveInput(4);
+			}
+			else if (currentDirCast == leftKey) {
+				Player->moveInput(2);
+			}
+			currentDirCast = ' ';
 			std::this_thread::sleep_for(std::chrono::milliseconds(250));
 			system("cls");
 			break;
@@ -148,6 +202,10 @@ int main() {
 		}
 
 		board[Player->getCoordX()][Player->getCoordY()] = "Y";
+
+		for (int i = 0; i < numberOfBlocks; i++) {
+			board[EnvironmentalObjects[i]->getCoordX()][EnvironmentalObjects[i]->getCoordY()] = "#";
+		}
 
 
 		for (int o = 0; o < 17; o++) {

@@ -2,6 +2,10 @@
 #include <iostream>
 int CEntity::onLevel = 0;
 
+CEntity::CEntity()
+{
+}
+
 bool CEntity::isPlayerInAttackRange()
 {
     return false;

@@ -31,6 +31,7 @@ int main() {
 	char downKey = 'S';
 	char leftKey = 'A';
 	char rightKey = 'D';
+	char interactKey = 'T';
 	char currentDirCast = ' ';
 
 	// UPON board flip run thhis in a for loop 
@@ -130,6 +131,10 @@ int main() {
 			currentDirCast = (char)toupper(currentDirCast);
 		}
 
+		if (currentDirCast == 'T') {
+
+		}
+
 		// MOVE ENEMIES AND CHECK FOR PLAYER KEY AND MOVE (define getch beforehand)
 		// So, what happens is a loop occurs when dialogue is NOT active that allows for all entities to move every 0.25s (including player
 		// when we add that check later). Collision check also happens here but randomly, after a few seconds the program hangs and stops working.
@@ -147,7 +152,7 @@ int main() {
 						randdir = random(generator) % 4 + 1;
 					}
 				}
-				Human[i]->humanWander(randdir);
+				Human[i]->humanWander();
 			}
 			if (currentDirCast == upKey) {
 				Player->moveInput(1);

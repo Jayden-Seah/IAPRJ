@@ -10,9 +10,15 @@ CHuman::CHuman()
     isEntityFollowingPlayer = false;
     isEntityRunningFromPlayer = false;
     isEntityShooter = false; 
-    isEntityFreeToRoam = false;
+    isEntityPatrolling = false;
     humanID = 0;
     currenthumanID = 0;
+
+}
+
+CHuman::~CHuman()
+{
+    delete enemyPatrolType;
 }
 
 CHuman::CHuman(int randvalue, int randid)
@@ -28,8 +34,12 @@ CHuman::CHuman(int randvalue, int randid)
     isEntityFollowingPlayer = true;
     isEntityRunningFromPlayer = false;
     isEntityShooter = false;
-    isEntityFreeToRoam = true;
+    isEntityPatrolling = true;
     humanID = randid;
+    enemyPatrolType = new int;
+    *enemyPatrolType = 1;
+    dirFlip = new bool;
+    *dirFlip = false;
     switch (humanID) {
     case 5:
         createType1RedHuman(randvalue);
@@ -50,7 +60,7 @@ bool CHuman::getFollowStatus()
 
 bool CHuman::getRoamStatus()
 {
-    return isEntityFreeToRoam;
+    return isEntityPatrolling;
 }
 
 bool CHuman::getRunningAwayStatus()
@@ -71,6 +81,10 @@ int CHuman::getHumanTypeID()
 {
     return humanID;
 }
+int* CHuman::getEnemyPatrolType()
+{
+    return enemyPatrolType;
+}
 void CHuman::createType1RedHuman(int randd) // default chaser
 {
     int lvl = getLevel();
@@ -80,6 +94,8 @@ void CHuman::createType1RedHuman(int randd) // default chaser
         sethealth((randd % 4 + 2) + 0.0f);
         setAttackRange(randd % 4 + 2);
         DetectionRange = 3;
+        *enemyPatrolType = 1;
+        *dirFlip = false;
         break;
     case 1:
         setAttack(randd % 4 + 2);
@@ -107,14 +123,14 @@ void CHuman::createType2RedHuman(int randd)
         DetectionRange = 3;
         isEntityFollowingPlayer = false;
         isEntityShooter = true;
-        isEntityFreeToRoam = false;
+        isEntityPatrolling = false;
         break;
     case 1:
         setAttack(randd % 4 + 2);
         sethealth(randd % 4 + 2 + 0.0f);
         setAttackRange(randd % 4 + 2);
         DetectionRange = 3;
-        isEntityFreeToRoam = false;
+        isEntityPatrolling = false;
         break;
     case -1:
         setAttack(randd % 4 + 2);
@@ -123,7 +139,7 @@ void CHuman::createType2RedHuman(int randd)
         DetectionRange = 3;
         isEntityFollowingPlayer = false;
         isEntityShooter = true;
-        isEntityFreeToRoam = false;
+        isEntityPatrolling = false;
         break;
     }
 }
@@ -133,7 +149,7 @@ void CHuman::createTypeExplodingHuman(int randd)
     setAttack(90);
     sethealth(1);
     setAttackRange(5);
-    isEntityFreeToRoam = false;
+    isEntityPatrolling = false;
 }
 
 void CHuman::setDetectionRange(int a)
@@ -148,7 +164,7 @@ void CHuman::setFollowStatus(bool a)
 
 void CHuman::setRoamStatus(bool a)
 {
-    isEntityFreeToRoam = a;
+    isEntityPatrolling = a;
 }
 
 void CHuman::setRunningAwayStatus(bool a)
@@ -176,23 +192,34 @@ void CHuman::increaseHumanID()
     currenthumanID++;
 }
 
-void CHuman::humanWander(int randir)
+void CHuman::humanWander()
 {
-    bool validMove = false;
-    int amountofTimesRan = 0;
-    if (isEntityFreeToRoam == true) {
-        do {
-            if (amountofTimesRan > 0) {
-                randir += 1;
-                moveInput(randir % 4);
+    if (isEntityPatrolling == true) {
+        int x = getCoordX();
+        int y = getCoordY();
+        switch (*getEnemyPatrolType()) {
+        case 1: // move up and down
+            if (*dirFlip == true) { // move up
+                if (getCoordY() < 3) {
+                    *dirFlip = false;
+                }
+                else {
+                    setCoordY(getCoordY() - 1);
+                }
             }
-            else {
-                moveInput(randir);
+            else { // move down
+                if (getCoordY() > 9) {
+                    *dirFlip = true;
+                }
+                else {
+                    setCoordY(getCoordY() + 1);
+                }
             }
-            validMove = true;
-            if (isEntityOutofBounds() == true) {// i can only check for out of bounds here, manual overlap check later
-                validMove = false;
-            }
-        } while (validMove == false);
+            break;
+        case 2: // move left to right
+            break;
+        case 3: // move in an arc
+            break;
+        }
     }
 }

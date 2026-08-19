@@ -8,12 +8,15 @@ class CHuman :
     static int maxhumanID; // used for max human spawns and give each human a unique id. Resets on room finish/loss
     int currenthumanID;
     bool isEntityFollowingPlayer;
-    bool isEntityFreeToRoam;
+    bool isEntityPatrolling;
+    int* enemyPatrolType; // MAKE sure a patrolling entity has an enemypatrol type of kill yourself adelle
+    bool* dirFlip;
     bool isEntityRunningFromPlayer;
     bool isEntityShooter;
      
 public:
     CHuman();
+    ~CHuman();
     CHuman(int randvalue, int randid);
 
     bool getFollowStatus();
@@ -22,6 +25,7 @@ public:
    int getDetectionRange();
 int getHumantagID();
 int getHumanTypeID();
+int* getEnemyPatrolType();
 
    void createType1RedHuman(int randd);
    void createType2RedHuman(int randd);
@@ -37,6 +41,6 @@ int getHumanTypeID();
 
    void resetHumanID();
   void increaseHumanID();
-  void humanWander(int randir);
+  void humanWander();
 };
 

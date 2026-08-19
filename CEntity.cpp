@@ -27,6 +27,11 @@ int CEntity::getLevel()
     return onLevel;
 }
 
+bool CEntity::getRoamStatus()
+{
+    return false;
+}
+
 void CEntity::setAttack(int atk)
 {
     attack = atk;

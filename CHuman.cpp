@@ -176,4 +176,16 @@ void CHuman::increaseHumanID()
     currenthumanID++;
 }
 
-
+void CHuman::humanWander(int randir)
+{
+    bool validMove = false;
+    if (isEntityFreeToRoam == true) {
+        do {
+            moveInput(randir);
+            validMove = true;
+            if (isEntityOutofBounds() == true) {// i can only check for out of bounds here, manual overlap check later
+                validMove = false;
+            }
+        } while (validMove == false);
+    }
+}

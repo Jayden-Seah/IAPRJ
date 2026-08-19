@@ -13,13 +13,18 @@ CCanTalk::CCanTalk(int randvalue, int ID, int lv)
 	setHumanTypeID(ID);
 	switch (ID) {
 	case 1:
-
+		setAttack(0);
+		setAttackRange(0);
+		sethealth(1);
+		setDetectionRange(0);
+		setFollowStatus(false);
+		setRoamStatus(false);
 		switch (lv) {
 		case 1:
-
+		
 			break;
 		case 0:
-
+			actualDialogue = "hi this is test dialogue from GreenNPC1.";
 			break;
 		case -1:
 
@@ -27,6 +32,9 @@ CCanTalk::CCanTalk(int randvalue, int ID, int lv)
 		}
 		break;
 	case 2:
+		setAttack(0);
+		setAttackRange(0);
+		sethealth(1);
 		switch (lv) {
 		case 1:
 

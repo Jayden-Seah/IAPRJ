@@ -22,6 +22,6 @@ public:
   void sethealth(float hp);
   void setAttackRange(int atkr);
  static void setPsychosisLevel(int lvl);
-
+ void moveInput(char dir); //WASD dirs
 };
 

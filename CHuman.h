@@ -32,8 +32,9 @@ int getHumanTypeID();
    void setRoamStatus(bool a);
    void setRunningAwayStatus(bool a);
    void setShooterStatus(bool a);
-   void setHumanTypeID(int a
-   );
+   void setHumanTypeID(int a);
+ 
+
    void resetHumanID();
   void increaseHumanID();
 };

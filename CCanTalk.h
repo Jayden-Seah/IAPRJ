@@ -8,9 +8,10 @@ class CCanTalk :
     int maxDialogue;
     static std::string yh;
     std::string actualDialogue;
-
+    bool* IsEnemyHostile;
 public:
     CCanTalk(int randvalue, int ID, int lv);
-    void dialogue();
+    void changeDialogue();
+    std::string getDialogue(float karma);
 };
 

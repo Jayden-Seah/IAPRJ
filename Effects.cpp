@@ -4,6 +4,12 @@
 
 
 
+Effects::Effects()
+{
+	upg1 = false;
+	upg2 = false;
+}
+
 void Effects::passive() {
 
 }

@@ -230,6 +230,7 @@ int main() {
 			currentDirCast = ' ';
 			std::this_thread::sleep_for(std::chrono::milliseconds(250));
 			system("cls");
+			
 		}
 
 		// print ENEMIES
@@ -296,13 +297,14 @@ int main() {
 						std::cout << std::endl;
 					}
 					std::this_thread::sleep_for(std::chrono::milliseconds(30));
+					
+				}
+				noOfDiag++;
+				if (noOfDiag == 3) {
+					isDialogueActive = false;
 				}
 				std::cin.get();
-				noOfDiag++;
-				std::cout << noOfDiag << std::endl;
-			}
-			if (noOfDiag == 3) {
-				isDialogueActive = false;
+				
 			}
 		}
 

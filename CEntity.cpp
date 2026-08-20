@@ -15,7 +15,7 @@ bool CEntity::isEntityInAttackRange(CEntity* target)
     int atkr = getAttackRange();
      
     for (int i = 0; i < atkr; i++) {
-        if ((((x * (atkr-i)) == x2) and (y == y2)) or (((y * (atkr-1)) == y2) and (x == x2))) {
+        if ((((x + (atkr-i)) == x2) and (y == y2)) or (((y + (atkr-i)) == y2) and (x == x2))) {
             return true;
         }
     }
@@ -84,12 +84,18 @@ void CEntity::setAttackRange(int atkr)
          break;
      }
  }
-
+ void CEntity::attacking(CEntity* target)
+ {
+     if (isEntityInAttackRange(target)) {
+         int s = target->getHealth() - getAttack();
+         target->sethealth(s);
+     }
+ }
 
 
  void CEntity::humanWander()
  {
-
+     
  }
 
  int CEntity::getHumanTypeID()

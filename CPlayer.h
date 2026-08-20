@@ -8,13 +8,11 @@ class CPlayer :
 	float karma;
 
 public:
+
 	CPlayer(int randv);
 
-	void attacking(CEntity* target);
 
 	void setKarma(float k);
-
-	void setDefence(int d);
 
 	float getKarma();
 };

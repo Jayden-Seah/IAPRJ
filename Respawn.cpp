@@ -4,12 +4,19 @@
 #include "CObject.h"
 
 
+
 void Respawn::Respawning() {
 	//delete everything and recreate
-	void setKarma(float k);
+	setKarma(100);
 
-	void setCoordX(int x);
-	void setCoordY(int y);
+	setCoordX(103);
+	setCoordY(1);
 
-	void setHealth();
+	sethealth(100);
+}
+
+void Respawn::SecretRespawn() {
+	if (getKarma()) {
+
+	}
 }

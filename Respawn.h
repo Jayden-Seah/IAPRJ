@@ -1,5 +1,7 @@
 #pragma once
-class Respawn
+#include "CEntity.h"
+#include "CPlayer.h"
+class Respawn:public CPlayer
 {
 private:
 

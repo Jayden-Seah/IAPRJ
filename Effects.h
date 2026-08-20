@@ -13,5 +13,7 @@ public:
 	bool upg1 = false;
 
 	bool upg2 = false;
+
+	void unupgrade();
 };
 

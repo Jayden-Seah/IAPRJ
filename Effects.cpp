@@ -18,3 +18,9 @@ void Effects::upgrade() {
 }
 
 
+void Effects::unupgrade() {
+	upg1 = false;
+	upg2 = false;
+}
+
+

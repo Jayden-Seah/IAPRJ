@@ -14,5 +14,7 @@ public:
 
 	void setKarma(float k);
 
+	void setDefence(int d);
+
 	float getKarma();
 };

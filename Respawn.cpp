@@ -13,10 +13,18 @@ void Respawn::Respawning() {
 	setCoordY(1);
 
 	sethealth(100);
+	setAttack(20);
+	setAttackRange(1);
+	setDefence(5);
+	
+
 }
 
 void Respawn::SecretRespawn() {
 	if (getKarma()) {
+		setCoordX(103);
+		setCoordY(1);
 
+		sethealth(100);
 	}
 }

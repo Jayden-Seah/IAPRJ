@@ -37,7 +37,7 @@ void clearScreen() {
 
 // Writes dialogue text into the bottom strip of the existing board grid
 // Bottom strip region: i (row) = 1..103, o (col) = 12..15
-void drawDialogueInBoard(std::vector<std::vector<std::string>>& board,const std::string& speaker,const std::string& text) {
+void drawDialogueInBoard(std::vector<std::vector<std::string>>& board, const std::string& speaker, const std::string& text) {
 	const int contentStartI = 1;
 	const int contentEndI = 103;   // leaves i=104 as border
 	const int contentStartO = 12;
@@ -45,7 +45,7 @@ void drawDialogueInBoard(std::vector<std::vector<std::string>>& board,const std:
 
 	// Clear the strip first (so old text doesn't linger between frames)
 	for (int o = contentStartO; o <= contentEndO; o++) {
-		for (int i = contentStartI; i < contentEndI; i++) {	
+		for (int i = contentStartI; i < contentEndI; i++) {
 			board[i][o] = " ";
 		}
 	}
@@ -184,7 +184,16 @@ int main() {
 		}
 
 		if (currentDirCast == 'T') {
-			isDialogueActive = true;
+			for (int f = 0; f < numberOfBoardenemies; f++) {
+				if ((Human[f]->getHumanTypeID() > 0) and (Human[f]->getHumanTypeID() < 5)) { // 1-4
+					for (int g = 0; g < 4; g++) {
+						if (Player->isEntityGoingToOverlapInTheFuture(g + 1, Human[f])) {
+							isDialogueActive = true;
+						}
+					}
+				}
+			}
+
 		}
 
 		// MOVE ENEMIES AND CHECK FOR PLAYER KEY AND MOVE (define getch beforehand)
@@ -221,7 +230,7 @@ int main() {
 			currentDirCast = ' ';
 			std::this_thread::sleep_for(std::chrono::milliseconds(250));
 			system("cls");
-		}		
+		}
 
 		// print ENEMIES
 		for (int i = 0; i < numberOfBoardenemies; i++) {
@@ -290,7 +299,7 @@ int main() {
 				}
 				std::cin.get();
 				noOfDiag++;
-				std::cout << noOfDiag<<std::endl;
+				std::cout << noOfDiag << std::endl;
 			}
 			if (noOfDiag == 3) {
 				isDialogueActive = false;

@@ -112,6 +112,44 @@ void drawDialogueInBoard(std::vector<std::vector<std::string>>& board, const std
 	}
 }
 
+void statsInBoard(std::vector<std::vector<std::string>>& board, const std::string hp, const std::string attack, const std::string def, const std::string karma) {//same logic as for the dialogue except that the stats will only change if the player karma increases/decreases(e.g)
+	const int statsStart = 105;
+	const int statsEnd = 119;
+	const int statsTop = 1;
+	const int statsBottom = 15;
+
+	//Clear
+	for (int o = statsTop; o <= statsBottom; o++) {
+		for (int i = statsStart; i < statsEnd; i++) {
+			board[i][o] = " ";
+		}
+	}
+
+
+	std::string playerStats = "Stats: "; // Title
+	std::string hptext = "HP: " + hp;
+	std::string attacktext = "ATK: " + attack;
+	std::string deftext = "DEF: " + def;
+	std::string karmatext = "KARMA: " + karma;
+
+	for (int c = 0; c < static_cast<int>(playerStats.size()) && (statsStart + 1 + c) < statsEnd; c++) {//places each character accordingly into the array of spaces.
+		board[statsStart + 1 + c][statsTop] = std::string(1, playerStats[c]);
+	}
+	for (int c = 0; c < static_cast<int>(hptext.size()) && (statsStart + 1 + c) < statsEnd; c++) {//places each character accordingly into the array of spaces.
+		board[statsStart + 1 + c][statsTop + 1] = std::string(1, hptext[c]);
+	}
+	for (int c = 0; c < static_cast<int>(attacktext.size()) && (statsStart + 1 + c) < statsEnd; c++) {//places each character accordingly into the array of spaces.
+		board[statsStart + 1 + c][statsTop + 2] = std::string(1, attacktext[c]);
+	}
+	for (int c = 0; c < static_cast<int>(deftext.size()) && (statsStart + 1 + c) < statsEnd; c++) {//places each character accordingly into the array of spaces.
+		board[statsStart + 1 + c][statsTop + 3] = std::string(1, deftext[c]);
+	}
+	for (int c = 0; c < static_cast<int>(karmatext.size()) && (statsStart + 1 + c) < statsEnd; c++) {//places each character accordingly into the array of spaces.
+		board[statsStart + 1 + c][statsTop + 4] = std::string(1, karmatext[c]);
+	}
+
+}
+
 int main() {
 	//Code starts here
 	//srand(static_cast<int>(time(0)));
@@ -311,6 +349,12 @@ int main() {
 		for (int i = 0; i < numberOfBlocks; i++) {
 			board[EnvironmentalObjects[i]->getCoordX()][EnvironmentalObjects[i]->getCoordY()] = "#";
 		}
+
+		//Stats board:
+		//Fake value -> placeholder
+		std::string value = "0";
+
+		statsInBoard(board, value, value, value, value);
 
 		if (isDialogueActive) {
 			//TextBox

@@ -31,6 +31,16 @@ void CPlayer::setKarma(float k) {
 	karma = k;
 }
 
+void CPlayer::setDefence(int d)
+{
+	defense = d;
+}
+
+int CPlayer::getDefence()
+{
+	return defense;
+}
+
 float CPlayer::getKarma() {
 	return karma;
 }

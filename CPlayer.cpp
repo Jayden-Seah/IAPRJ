@@ -12,7 +12,6 @@ CPlayer::CPlayer(int randv)
 		setCoordX(103);
 		break;
 	}
-	maxHP = 100.0f;
 	karma = 50.0f;
 	sethealth(100.0f);
 	setAttack(20);
@@ -36,6 +35,10 @@ void CPlayer::setDefence(int d)
 	defense = d;
 }
 
+void CPlayer::setmaxHP(float mhp) {
+	mhp = 75 + (karma * 0.5);
+}
+
 int CPlayer::getDefence()
 {
 	return defense;
@@ -43,4 +46,8 @@ int CPlayer::getDefence()
 
 float CPlayer::getKarma() {
 	return karma;
+}
+
+float CPlayer::getmaxHP() {
+	return maxHP;
 }

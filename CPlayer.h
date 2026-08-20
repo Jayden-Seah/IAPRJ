@@ -14,6 +14,9 @@ public:
 
 	void setKarma(float k);
 
+	void setmaxHP(float mhp);
+	float getmaxHP();
+
 	void setDefence(int d);
 	int getDefence();
 

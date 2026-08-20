@@ -1,3 +1,5 @@
+#define _USE_MATH_DEFINES
+#include <cmath>
 #include <iostream>
 #include <conio.h>
 #include <chrono>
@@ -8,9 +10,11 @@
 #include "CObject.h"
 #include "CItems.h"
 #include "CPlayer.h"
+#include "Effects.h"
 #include <random>//Random library
 #include <thread>
 #include <cctype>
+
 
 //Start program
 // DO WE HAVE ANY FUNCTIONS HERE!!! OR ARE THEY ALL IN CLASSES
@@ -33,7 +37,44 @@ void clearScreen() {
 	std::system("clear");
 #endif
 }
-
+// func for aoe vfx, if you ahve time make it directional ig? its not that bad
+void drawVFX(std::vector<std::vector<std::string>>& board, int coorx, int coory, int atk, int atkr) {
+	CEntity* VFX[8];
+	for (int i = 0; i < 4; i++) {
+		VFX[i] = new Effects(coorx, coory, cos((i * 90) * M_PI / 180.f), sin((i * 90) * M_PI / 180.f), atkr, atk); // 0, 90, 180, 270
+	}
+	for (int i = 0; i < 4; i++) {
+		int yd = 0;
+		int xd = 0;
+		switch (i) {
+		case 0:
+			yd = -1;
+			xd = 1;
+			break;
+		case 1:
+			xd = -1;
+			yd = -1;
+			break;
+		case 2:
+			yd = 1;
+			xd = 1;
+			break;
+		case 3:
+			xd = -1;
+			yd = 1;
+			break;
+		}
+		VFX[i+4] = new Effects(coorx, coory, xd, yd, atkr, atk);
+	}
+	for (int i = 0; i < 8; i++) {
+		board[VFX[i]->getCoordX()][VFX[i]->getCoordY()] = "*";
+	}
+	std::this_thread::sleep_for(std::chrono::milliseconds(100));
+	for (int i = 0; i < 8; i++) {
+		delete VFX[i];
+	}
+	return;
+}
 
 // Writes dialogue text into the bottom strip of the existing board grid
 // Bottom strip region: i (row) = 1..103, o (col) = 12..15
@@ -84,6 +125,7 @@ int main() {
 	char leftKey = 'A';
 	char rightKey = 'D';
 	char interactKey = 'T';
+	char attackKey = 'R';
 	char currentDirCast = ' ';
 
 	// UPON board flip run thhis in a for loop 
@@ -204,18 +246,12 @@ int main() {
 		// when we add that check later). Collision check also happens here but randomly, after a few seconds the program hangs and stops working.
 		// we suspect maybe theres an overload of something but we are unsure whats wrong
 		if (isDialogueActive == false) {
+
+			if (currentDirCast == attackKey) {
+				drawVFX(board, Player->getCoordX(), Player->getCoordY(), Player->getAttack(), Player->getAttackRange());
+			}
+
 			for (int i = 0; i < numberOfBoardenemies; i++) {
-				int randdir = random(generator) % 4 + 1;
-				for (int o = 0; o < numberOfBoardenemies; o++) {
-					if (Human[i]->isEntityGoingToOverlapInTheFuture(randdir, Human[o])) {
-						randdir = random(generator) % 4 + 1;
-					}
-				}
-				for (int o = 0; o < numberOfBlocks; o++) {
-					if (Human[i]->isEntityGoingToOverlapInTheFuture(randdir, EnvironmentalObjects[o])) {
-						randdir = random(generator) % 4 + 1;
-					}
-				}
 				Human[i]->humanWander();
 			}
 			if (currentDirCast == upKey) {

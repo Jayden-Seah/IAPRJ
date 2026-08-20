@@ -1,5 +1,6 @@
 #include "CPlayer.h"
 
+
 CPlayer::CPlayer(int randv)
 {
 	setObjectHeight(1);
@@ -14,16 +15,13 @@ CPlayer::CPlayer(int randv)
 	}
 	maxHP = 100.0f;
 	karma = 50.0f;
+	defense = 5;
 	sethealth(100.0f);
 	setAttack(20);
 	setAttackRange(1);
-	setDefence(5);
 }
 
-void CPlayer::attacking(CEntity* target)
-{
 
-}
 
 
 

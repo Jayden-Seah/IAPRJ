@@ -6,20 +6,17 @@ CEntity::CEntity()
 {
 }
 
+CEntity::~CEntity()
+{
+}
+
 bool CEntity::isEntityInAttackRange(CEntity* target)
 {
-    int x = getCoordX();
-    int y = getCoordY();
-    int x2 = target->getCoordX();
-    int y2 = target->getCoordY();
+    int dx = abs(getCoordX() - target->getCoordX());
+    int dy = abs(getCoordY() - target->getCoordY());
     int atkr = getAttackRange();
-     
-    for (int i = 0; i < atkr; i++) {
-        if ((((x + (atkr-i)) == x2) and (y == y2)) or (((y + (atkr-i)) == y2) and (x == x2))) {
-            return true;
-        }
-    }
-    return false;
+
+    return (dx + dy) <= atkr;
 }
 
 int CEntity::getAttack()

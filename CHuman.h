@@ -13,6 +13,7 @@ class CHuman :
     bool* dirFlip;
     bool isEntityRunningFromPlayer;
     bool isEntityShooter;
+    static int numberOfKilledHumans;
      
 public:
     CHuman();
@@ -38,7 +39,8 @@ int* getEnemyPatrolType();
    void setShooterStatus(bool a);
    void setHumanTypeID(int a);
  
-
+   static void resetkilledHumans();
+   static int getKilledHumans();
    void resetHumanID();
   void increaseHumanID();
   void humanWander();

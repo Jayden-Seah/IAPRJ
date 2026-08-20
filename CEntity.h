@@ -10,6 +10,7 @@ class CEntity :
 public:
 
     CEntity();
+    virtual ~CEntity();
     bool isEntityInAttackRange(CEntity* target);
 
   int getAttack();

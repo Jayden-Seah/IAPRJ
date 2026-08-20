@@ -24,8 +24,11 @@ public:
  static void setPsychosisLevel(int lvl);
  void moveInput(int dir); //1234 (WASD)
 
+
+ virtual void attacking(CEntity* target);
  virtual void humanWander();
  virtual int getHumanTypeID();
+
 
 };
 

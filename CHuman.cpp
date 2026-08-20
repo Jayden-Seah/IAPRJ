@@ -3,6 +3,7 @@
 #include <iostream>
 
 int CHuman::maxhumanID = 0; 
+int CHuman::numberOfKilledHumans = 0;
 
 CHuman::CHuman()
 {
@@ -18,6 +19,8 @@ CHuman::CHuman()
 
 CHuman::~CHuman()
 {
+    numberOfKilledHumans++;
+    std::cout << "AA" << std::endl;
     delete enemyPatrolType;
 }
 
@@ -180,6 +183,16 @@ void CHuman::setShooterStatus(bool a)
 void CHuman::setHumanTypeID(int a)
 {
     humanID = a;
+}
+
+void CHuman::resetkilledHumans()
+{
+    numberOfKilledHumans = 0;
+}
+
+int CHuman::getKilledHumans()
+{
+    return numberOfKilledHumans;
 }
 
 void CHuman::resetHumanID()

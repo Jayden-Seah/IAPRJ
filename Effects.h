@@ -1,5 +1,8 @@
 #pragma once
-class Effects
+#include "CEntity.h"
+
+class Effects :
+	public CEntity
 {
 private:
 	bool upg1;
@@ -8,7 +11,9 @@ private:
 public:
 	Effects();
 
-    float Passived;
+	Effects(int xpos, int ypos,int ydiff, int xdiff, int atkr, int atk); // Summon player/enemy attack vfx, use isentityoverlapping to check if entity is getting hit
+
+	void attacking(CEntity* target);
 
 	void passive();
 

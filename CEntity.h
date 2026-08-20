@@ -10,7 +10,7 @@ class CEntity :
 public:
 
     CEntity();
-  bool isPlayerInAttackRange();
+    bool isEntityInAttackRange(CEntity* target);
 
   int getAttack();
   float getHealth();
@@ -25,7 +25,7 @@ public:
  void moveInput(int dir); //1234 (WASD)
 
 
- virtual void attacking(CEntity* target);
+
  virtual void humanWander();
  virtual int getHumanTypeID();
 

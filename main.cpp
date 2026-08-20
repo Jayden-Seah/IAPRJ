@@ -308,15 +308,13 @@ int main() {
 				isDialogueActive = false;
 			}
 		}
-		else{
-			for (int o = 0; o < 17; o++) {
-				for (int i = 0; i < 120; i++) {
-					std::cout << board[i][o];
-				}
-				std::cout << std::endl;
+
+		for (int o = 0; o < 17; o++) {
+			for (int i = 0; i < 120; i++) {
+				std::cout << board[i][o];
 			}
+			std::cout << std::endl;
 		}
-		
 
 	} while (boardState == false);
 

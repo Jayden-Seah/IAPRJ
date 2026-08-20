@@ -6,8 +6,19 @@ CEntity::CEntity()
 {
 }
 
-bool CEntity::isPlayerInAttackRange()
+bool CEntity::isEntityInAttackRange(CEntity* target)
 {
+    int x = getCoordX();
+    int y = getCoordY();
+    int x2 = target->getCoordX();
+    int y2 = target->getCoordY();
+    int atkr = getAttackRange();
+     
+    for (int i = 0; i < atkr; i++) {
+        if ((((x * (atkr-i)) == x2) and (y == y2)) or (((y * (atkr-1)) == y2) and (x == x2))) {
+            return true;
+        }
+    }
     return false;
 }
 
@@ -75,10 +86,6 @@ void CEntity::setAttackRange(int atkr)
  }
 
 
-
- void CEntity::attacking(CEntity* target)
- {
- }
 
  void CEntity::humanWander()
  {

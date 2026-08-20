@@ -10,8 +10,6 @@ class CPlayer :
 public:
 	CPlayer(int randv);
 
-	void attacking(CEntity* target);
-
 	void setKarma(float k);
 
 	float getKarma();

@@ -186,12 +186,9 @@ int main() {
 		if (currentDirCast == 'T') {
 			for (int f = 0; f < numberOfBoardenemies; f++) {
 				if ((Human[f]->getHumanTypeID() > 0) and (Human[f]->getHumanTypeID() < 5)) { // 1-4
-					if ((static_cast<CCanTalk*>(Human[f])->getTalkStatus() == false)) {
-						for (int g = 0; g < 4; g++) {
-							if (Player->isEntityGoingToOverlapInTheFuture(g + 1, Human[f])) {
-								isDialogueActive = true;
-								static_cast<CCanTalk*>(Human[f])->setTalkStatus(true);
-							}
+					for (int g = 0; g < 4; g++) {
+						if (Player->isEntityGoingToOverlapInTheFuture(g + 1, Human[f])) {
+							isDialogueActive = true;
 						}
 					}
 				}

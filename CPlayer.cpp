@@ -20,13 +20,6 @@ CPlayer::CPlayer(int randv)
 	setAttackRange(1);
 }
 
-void CPlayer::attacking(CEntity* target)
-{
-
-}
-
-
-
 void CPlayer::setKarma(float k) {
 	karma = k;
 }

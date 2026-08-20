@@ -9,7 +9,7 @@ class CEntity :
     static int onLevel; // -1, 0 or 1. Default 0
 public:
 
-    CEntity();
+   CEntity();
   bool isPlayerInAttackRange();
 
   int getAttack();
@@ -24,11 +24,8 @@ public:
  static void setPsychosisLevel(int lvl);
  void moveInput(int dir); //1234 (WASD)
 
-
- virtual void attacking(CEntity* target);
  virtual void humanWander();
  virtual int getHumanTypeID();
-
 
 };
 

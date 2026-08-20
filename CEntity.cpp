@@ -74,12 +74,6 @@ void CEntity::setAttackRange(int atkr)
      }
  }
 
-
-
- void CEntity::attacking(CEntity* target)
- {
- }
-
  void CEntity::humanWander()
  {
 

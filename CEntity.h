@@ -23,7 +23,7 @@ public:
   void setAttackRange(int atkr);
  static void setPsychosisLevel(int lvl);
  void moveInput(int dir); //1234 (WASD)
-
+ void attacking(CEntity* target);
 
 
  virtual void humanWander();

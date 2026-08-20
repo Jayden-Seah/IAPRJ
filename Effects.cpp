@@ -23,13 +23,7 @@ Effects::Effects(int xpos, int ypos, int ydiff, int xdiff, int atkr, int atk) //
 	setAttack(atk);
 }
 
-void Effects::attacking(CEntity* target)
-{
-	if (isEntityInAttackRange(target)) {
-		int s = target->getHealth() - getAttack();
-		target->sethealth(s);
-	}
-}
+
 
 void Effects::passive() {
 

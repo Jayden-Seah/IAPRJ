@@ -64,7 +64,7 @@ void drawVFX(std::vector<std::vector<std::string>>& board, int coorx, int coory,
 			yd = 1;
 			break;
 		}
-		VFX[i+4] = new Effects(coorx, coory, xd, yd, atkr, atk);
+		VFX[i + 4] = new Effects(coorx, coory, xd, yd, atkr, atk);
 	}
 	for (int i = 0; i < 8; i++) {
 		board[VFX[i]->getCoordX()][VFX[i]->getCoordY()] = "*";
@@ -292,17 +292,33 @@ int main() {
 			for (int i = 0; i < numberOfBoardenemies; i++) {
 				Human[i]->humanWander();
 			}
+			bool allowPlayerMovement = true;
+			int currentDirInt = 0;
 			if (currentDirCast == upKey) {
-				Player->moveInput(1);
+				currentDirInt = 1;
 			}
 			else if (currentDirCast == downKey) {
-				Player->moveInput(3);
+				currentDirInt = 3;
 			}
 			else if (currentDirCast == rightKey) {
-				Player->moveInput(4);
+				currentDirInt = 4;
 			}
 			else if (currentDirCast == leftKey) {
-				Player->moveInput(2);
+				currentDirInt = 2;
+			}
+			for (int o = 0; o < numberOfBoardenemies; o++) {
+				if (Player->isEntityGoingToOverlapInTheFuture(currentDirInt, Human[o])) {
+					allowPlayerMovement = false;
+				}
+			}
+			for (int o = 0; o < numberOfBoardenemies; o++) {
+				if (Player->isEntityGoingToOverlapInTheFuture(currentDirInt, EnvironmentalObjects[o])) {
+					allowPlayerMovement = false;
+				}
+			}
+			if (allowPlayerMovement) {
+				Player->moveInput(currentDirInt);
+				Player->isEntityOutofBounds();
 			}
 			currentDirCast = ' ';
 			std::this_thread::sleep_for(std::chrono::milliseconds(250));
@@ -388,7 +404,7 @@ int main() {
 				isDialogueActive = false;
 			}
 		}
-		else{
+		else {
 			for (int o = 0; o < 17; o++) {
 				for (int i = 0; i < 120; i++) {
 					std::cout << board[i][o];
@@ -396,7 +412,7 @@ int main() {
 				std::cout << std::endl;
 			}
 		}
-		
+
 
 	} while (boardState == false);
 

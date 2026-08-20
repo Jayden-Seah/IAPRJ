@@ -69,6 +69,7 @@ void drawVFX(std::vector<std::vector<std::string>>& board, int coorx, int coory,
 	for (int i = 0; i < 8; i++) {
 		board[VFX[i]->getCoordX()][VFX[i]->getCoordY()] = "*";
 	}
+	
 	std::this_thread::sleep_for(std::chrono::milliseconds(100));
 	for (int i = 0; i < 8; i++) {
 		delete VFX[i];
@@ -168,252 +169,277 @@ int main() {
 
 	// UPON board flip run thhis in a for loop 
 	//RANDOMLY create entities, more entities per stage if karma is higher (karma 100 start)
-	int numberOfBoardenemies;
-	int numberOfBlocks; // enviromental hazards
-	CEntity* Human[10];
-	CSolidHitbox* EnvironmentalObjects[10];
-	for (int i = 0; i < 10; i++) {
-		Human[i] = nullptr;
-		EnvironmentalObjects[i] = nullptr;
-	}
-	if (static_cast<CPlayer*>(Player)->getKarma() < 50) {
-		numberOfBoardenemies = random(generator) % 1 + 3; //1 to 3
-		numberOfBlocks = random(generator) % 5 + 4; // 4 to 8
-	}
-	else {
-		numberOfBoardenemies = random(generator) % 3 + 4; // 3 to 7
-		numberOfBlocks = random(generator) % 5 + 6; // 6 to 10
-	}
+
+	if (boardState == false) {
+		int numberOfBoardenemies;
+		int numberOfBlocks; // enviromental hazards
+		CEntity* Human[10];
+		CSolidHitbox* EnvironmentalObjects[10];
+		for (int i = 0; i < 10; i++) {
+			Human[i] = nullptr;
+			EnvironmentalObjects[i] = nullptr;
+		}
+		if (static_cast<CPlayer*>(Player)->getKarma() < 50) {
+			numberOfBoardenemies = random(generator) % 1 + 3; //1 to 3
+			numberOfBlocks = random(generator) % 5 + 4; // 4 to 8
+		}
+		else {
+			numberOfBoardenemies = random(generator) % 3 + 4; // 3 to 7
+			numberOfBlocks = random(generator) % 5 + 6; // 6 to 10
+		}
 
 
 
-	// object creation
-	for (int i = 0; i < numberOfBlocks; i++) {
-		EnvironmentalObjects[i] = new CSolidHitbox(random(generator));
-		for (int o = 0;o < i; o++) {
-			if ((i != o)) {
-				if ((EnvironmentalObjects[i]->isEntityOverlapping(EnvironmentalObjects[o]))) {
-					EnvironmentalObjects[i] = new CSolidHitbox(random(generator));
+		// object creation
+		for (int i = 0; i < numberOfBlocks; i++) {
+			EnvironmentalObjects[i] = new CSolidHitbox(random(generator));
+			for (int o = 0;o < i; o++) {
+				if ((i != o)) {
+					if ((EnvironmentalObjects[i]->isEntityOverlapping(EnvironmentalObjects[o]))) {
+						EnvironmentalObjects[i] = new CSolidHitbox(random(generator));
+					}
 				}
 			}
 		}
-	}
 
 
-	for (int i = 0; i < numberOfBoardenemies; i++) {
-		int thisID = random(generator) % 7 + 1;
-		if (thisID > 4) {
-			Human[i] = new CHuman(random(generator), thisID);
-			// regenerate if overlapping coords, check for ALL objects 
-			for (int o = 0;o < i; o++) {
-				if ((i != o)) {
-					if ((Human[i]->isEntityOverlapping(Human[o]))) {
+		for (int i = 0; i < numberOfBoardenemies; i++) {
+			int thisID = random(generator) % 7 + 1;
+			if (thisID > 4) {
+				Human[i] = new CHuman(random(generator), thisID);
+				// regenerate if overlapping coords, check for ALL objects 
+				for (int o = 0;o < i; o++) {
+					if ((i != o)) {
+						if ((Human[i]->isEntityOverlapping(Human[o]))) {
+							Human[i] = new CHuman(random(generator), thisID);
+						}
+					}
+				}
+				for (int t = 0; t < numberOfBlocks; t++) {
+					if (Human[i]->isEntityOverlapping(EnvironmentalObjects[t])) {
 						Human[i] = new CHuman(random(generator), thisID);
 					}
 				}
 			}
-			for (int t = 0; t < numberOfBlocks; t++) {
-				if (Human[i]->isEntityOverlapping(EnvironmentalObjects[t])) {
-					Human[i] = new CHuman(random(generator), thisID);
-				}
+			else {
+				Human[i] = new CCanTalk(random(generator), thisID, CEntity::getLevel());
 			}
 		}
-		else {
-			Human[i] = new CCanTalk(random(generator), thisID, CEntity::getLevel());
-		}
-	}
 
 
 
-	int rows = 120;
-	int cols = 17;
+		int rows = 120;
+		int cols = 17;
 
-	do {
-		std::vector<std::vector<std::string>> board(rows, std::vector<std::string>(cols, { ' ' }));
-		// PLAYING area for fighting board is only 104 x 11
-		for (int o = 0; o < 17; o++) {
-			for (int i = 0;i < 120; i++) {
-				if (o == 0 or o == 16) {
-					board[i][o] = "-";
-				}
-				else if (o == 11) {
-					if (i == 0 or i == 104 or i == 119) {
-						board[i][o] = "|";
-					}
-					else if (i > 104) {
-						board[i][o] = " ";
-					}
-					else {
+		do {
+			std::vector<std::vector<std::string>> board(rows, std::vector<std::string>(cols, { ' ' }));
+			// PLAYING area for fighting board is only 104 x 11
+			for (int o = 0; o < 17; o++) {
+				for (int i = 0;i < 120; i++) {
+					if (o == 0 or o == 16) {
 						board[i][o] = "-";
 					}
-				}
-				else {
-					if (i == 0 or i == 104 or i == 119) {
-						board[i][o] = "|";
+					else if (o == 11) {
+						if (i == 0 or i == 104 or i == 119) {
+							board[i][o] = "|";
+						}
+						else if (i > 104) {
+							board[i][o] = " ";
+						}
+						else {
+							board[i][o] = "-";
+						}
 					}
 					else {
-						board[i][o] = " ";
+						if (i == 0 or i == 104 or i == 119) {
+							board[i][o] = "|";
+						}
+						else {
+							board[i][o] = " ";
+						}
 					}
 				}
 			}
-		}
-		// move objects and stuff here
-		if (_kbhit()) {   // only getch if a keys pressed so doesnt doom gameflow
-			currentDirCast = _getch();
-			currentDirCast = (char)toupper(currentDirCast);
-		}
+			// move objects and stuff here
+			if (_kbhit()) {   // only getch if a keys pressed so doesnt doom gameflow
+				currentDirCast = _getch();
+				currentDirCast = (char)toupper(currentDirCast);
+			}
 
-		if (currentDirCast == 'T') {
-			for (int f = 0; f < numberOfBoardenemies; f++) {
-				if ((Human[f]->getHumanTypeID() > 0) and (Human[f]->getHumanTypeID() < 5)) { // 1-4
-					if ((static_cast<CCanTalk*>(Human[f])->getTalkStatus() == false)) {
-						for (int g = 0; g < 4; g++) {
-							if (Player->isEntityGoingToOverlapInTheFuture(g + 1, Human[f])) {
-								isDialogueActive = true;
-								static_cast<CCanTalk*>(Human[f])->setTalkStatus(true);
+			if (currentDirCast == 'T') {
+				for (int f = 0; f < numberOfBoardenemies; f++) {
+					if (Human[f] != nullptr) {
+					if ((Human[f]->getHumanTypeID() > 0) and (Human[f]->getHumanTypeID() < 5)) { // 1-4
+						if ((static_cast<CCanTalk*>(Human[f])->getTalkStatus() == false)) {
+							for (int g = 0; g < 4; g++) {
+								if (Player->isEntityGoingToOverlapInTheFuture(g + 1, Human[f])) {
+									isDialogueActive = true;
+									static_cast<CCanTalk*>(Human[f])->setTalkStatus(true);
+								}
+							}
+						}
+						}
+					}
+				}
+
+			}
+
+			// MOVE ENEMIES AND CHECK FOR PLAYER KEY AND MOVE (define getch beforehand)
+			// So, what happens is a loop occurs when dialogue is NOT active that allows for all entities to move every 0.25s (including player
+			// when we add that check later). Collision check also happens here but randomly, after a few seconds the program hangs and stops working.
+			// we suspect maybe theres an overload of something but we are unsure whats wrong
+			if (isDialogueActive == false) {
+
+				if (currentDirCast == attackKey) {
+					drawVFX(board, Player->getCoordX(), Player->getCoordY(), Player->getAttack(), Player->getAttackRange());
+					for (int i = 0; i < numberOfBoardenemies; i++) {
+						if (Human[i] != nullptr) {
+							Player->attacking(Human[i]);
+							if (Human[i]->getHealth() <= 0) {
+								delete Human[i];
+								Human[i] = nullptr;
 							}
 						}
 					}
 				}
-			}
 
-		}
-
-		// MOVE ENEMIES AND CHECK FOR PLAYER KEY AND MOVE (define getch beforehand)
-		// So, what happens is a loop occurs when dialogue is NOT active that allows for all entities to move every 0.25s (including player
-		// when we add that check later). Collision check also happens here but randomly, after a few seconds the program hangs and stops working.
-		// we suspect maybe theres an overload of something but we are unsure whats wrong
-		if (isDialogueActive == false) {
-
-			if (currentDirCast == attackKey) {
-				drawVFX(board, Player->getCoordX(), Player->getCoordY(), Player->getAttack(), Player->getAttackRange());
-			}
-
-			for (int i = 0; i < numberOfBoardenemies; i++) {
-				Human[i]->humanWander();
-			}
-			bool allowPlayerMovement = true;
-			int currentDirInt = 0;
-			if (currentDirCast == upKey) {
-				currentDirInt = 1;
-			}
-			else if (currentDirCast == downKey) {
-				currentDirInt = 3;
-			}
-			else if (currentDirCast == rightKey) {
-				currentDirInt = 4;
-			}
-			else if (currentDirCast == leftKey) {
-				currentDirInt = 2;
-			}
-			for (int o = 0; o < numberOfBoardenemies; o++) {
-				if (Player->isEntityGoingToOverlapInTheFuture(currentDirInt, Human[o])) {
-					allowPlayerMovement = false;
-				}
-			}
-			for (int o = 0; o < numberOfBoardenemies; o++) {
-				if (Player->isEntityGoingToOverlapInTheFuture(currentDirInt, EnvironmentalObjects[o])) {
-					allowPlayerMovement = false;
-				}
-			}
-			if (allowPlayerMovement) {
-				Player->moveInput(currentDirInt);
-				Player->isEntityOutofBounds();
-			}
-			currentDirCast = ' ';
-			std::this_thread::sleep_for(std::chrono::milliseconds(250));
-			system("cls");
-		}
-
-		// print ENEMIES
-		for (int i = 0; i < numberOfBoardenemies; i++) {
-			int kl = (Human[i])->getHumanTypeID();
-			switch (kl) {
-			case 1:
-				board[Human[i]->getCoordX()][Human[i]->getCoordY()] = "\033[92mA\033[0m";
-				board[Human[i]->getCoordX()][Human[i]->getCoordY() - 1] = "\033[92mO\033[0m";
-				break;
-			case 2:
-				board[Human[i]->getCoordX()][Human[i]->getCoordY()] = "\033[92mA\033[0m";
-				board[Human[i]->getCoordX()][Human[i]->getCoordY() - 1] = "\033[92mO\033[0m";
-				break;
-			case 3:
-				board[Human[i]->getCoordX()][Human[i]->getCoordY()] = "\033[31mA\033[0m";
-				board[Human[i]->getCoordX()][Human[i]->getCoordY() - 1] = "\033[31mA\033[0m";
-				break;
-			case 4:
-				board[Human[i]->getCoordX()][Human[i]->getCoordY()] = "\033[31mA\033[0m";
-				board[Human[i]->getCoordX()][Human[i]->getCoordY() - 1] = "\033[31mO\033[0m";
-				break;
-			case 5:
-				board[Human[i]->getCoordX()][Human[i]->getCoordY()] = "\033[91mA\033[0m";
-				board[Human[i]->getCoordX()][Human[i]->getCoordY() - 1] = "\033[91mO\033[0m";
-				break;
-			case 6:
-				board[Human[i]->getCoordX()][Human[i]->getCoordY()] = "\033[91mA\033[0m";
-				board[Human[i]->getCoordX()][Human[i]->getCoordY() - 1] = "\033[91mO\033[0m";
-				break;
-			case 7:
-				board[Human[i]->getCoordX()][Human[i]->getCoordY()] = "\033[47m\033[30mA\033[0m";
-				board[Human[i]->getCoordX()][Human[i]->getCoordY() - 1] = "\033[47m\033[30mO\033[0m";
-				break;
-			}
-		}
-
-		board[Player->getCoordX()][Player->getCoordY()] = "Y";
-
-		for (int i = 0; i < numberOfBlocks; i++) {
-			board[EnvironmentalObjects[i]->getCoordX()][EnvironmentalObjects[i]->getCoordY()] = "#";
-		}
-
-		//Stats board:
-		//Fake value -> placeholder
-		std::string value = "0";
-
-		statsInBoard(board, value, value, value, value);
-
-		if (isDialogueActive) {
-			//TextBox
-			int noOfDiag = 0;
-
-			std::vector<DialogueInt> script = {
-				{"March 7th", "Hey, are you listening to me?! Trailblazer!"},
-				{"Dan Heng",  "Calm down, March. They just woke up."},
-				{"March 7th", "Oh, right! Welcome back to the Express!"}
-			};
-
-			for (const auto& line : script) {
-				std::string revealedText = "";
-				for (char c : line.text) {
-					revealedText += c;
-					drawDialogueInBoard(board, line.speaker, revealedText);
-					clearScreen();
-					for (int o = 0; o < 17; o++) {
-						for (int i = 0; i < 120; i++) {
-							std::cout << board[i][o];
-						}
-						std::cout << std::endl;
+				for (int i = 0; i < numberOfBoardenemies; i++) {
+					if (Human[i] != nullptr) {
+						Human[i]->humanWander();
 					}
-					std::this_thread::sleep_for(std::chrono::milliseconds(30));
 				}
-				std::cin.get();
-				noOfDiag++;
-				std::cout << noOfDiag << std::endl;
-			}
-			if (noOfDiag == 3) {
-				isDialogueActive = false;
-			}
-		}
-		else {
-			for (int o = 0; o < 17; o++) {
-				for (int i = 0; i < 120; i++) {
-					std::cout << board[i][o];
+				bool allowPlayerMovement = true;
+				int currentDirInt = 0;
+				if (currentDirCast == upKey) {
+					currentDirInt = 1;
 				}
-				std::cout << std::endl;
+				else if (currentDirCast == downKey) {
+					currentDirInt = 3;
+				}
+				else if (currentDirCast == rightKey) {
+					currentDirInt = 4;
+				}
+				else if (currentDirCast == leftKey) {
+					currentDirInt = 2;
+				}
+				for (int o = 0; o < numberOfBoardenemies; o++) {
+					if (Human[o] != nullptr) {
+						if (Player->isEntityGoingToOverlapInTheFuture(currentDirInt, Human[o])) {
+							allowPlayerMovement = false;
+						}
+					}
+				}
+				for (int o = 0; o < numberOfBoardenemies; o++) {
+					if (Player->isEntityGoingToOverlapInTheFuture(currentDirInt, EnvironmentalObjects[o])) {
+						allowPlayerMovement = false;
+					}
+				}
+				if (allowPlayerMovement) {
+					Player->moveInput(currentDirInt);
+					Player->isEntityOutofBounds();
+				}
+				currentDirCast = ' ';
+				std::this_thread::sleep_for(std::chrono::milliseconds(250));
+				system("cls");
 			}
-		}
+
+			// print ENEMIES
+			for (int i = 0; i < numberOfBoardenemies; i++) {
+				if (Human[i] != nullptr) {
+					int kl = (Human[i])->getHumanTypeID();
+					switch (kl) {
+					case 1:
+						board[Human[i]->getCoordX()][Human[i]->getCoordY()] = "\033[92mA\033[0m";
+						board[Human[i]->getCoordX()][Human[i]->getCoordY() - 1] = "\033[92mO\033[0m";
+						break;
+					case 2:
+						board[Human[i]->getCoordX()][Human[i]->getCoordY()] = "\033[92mA\033[0m";
+						board[Human[i]->getCoordX()][Human[i]->getCoordY() - 1] = "\033[92mO\033[0m";
+						break;
+					case 3:
+						board[Human[i]->getCoordX()][Human[i]->getCoordY()] = "\033[31mA\033[0m";
+						board[Human[i]->getCoordX()][Human[i]->getCoordY() - 1] = "\033[31mA\033[0m";
+						break;
+					case 4:
+						board[Human[i]->getCoordX()][Human[i]->getCoordY()] = "\033[31mA\033[0m";
+						board[Human[i]->getCoordX()][Human[i]->getCoordY() - 1] = "\033[31mO\033[0m";
+						break;
+					case 5:
+						board[Human[i]->getCoordX()][Human[i]->getCoordY()] = "\033[91mA\033[0m";
+						board[Human[i]->getCoordX()][Human[i]->getCoordY() - 1] = "\033[91mO\033[0m";
+						break;
+					case 6:
+						board[Human[i]->getCoordX()][Human[i]->getCoordY()] = "\033[91mA\033[0m";
+						board[Human[i]->getCoordX()][Human[i]->getCoordY() - 1] = "\033[91mO\033[0m";
+						break;
+					case 7:
+						board[Human[i]->getCoordX()][Human[i]->getCoordY()] = "\033[47m\033[30mA\033[0m";
+						board[Human[i]->getCoordX()][Human[i]->getCoordY() - 1] = "\033[47m\033[30mO\033[0m";
+						break;
+					}
+				}
+			}
+
+			board[Player->getCoordX()][Player->getCoordY()] = "Y";
+
+			for (int i = 0; i < numberOfBlocks; i++) {
+				board[EnvironmentalObjects[i]->getCoordX()][EnvironmentalObjects[i]->getCoordY()] = "#";
+			}
+
+			//Stats board:
+			//Fake value -> placeholder
+			std::string value = "0";
+
+			statsInBoard(board, value, value, value, value);
+
+			if (isDialogueActive) {
+				//TextBox
+				int noOfDiag = 0;
+
+				std::vector<DialogueInt> script = {
+					{"March 7th", "Hey, are you listening to me?! Trailblazer!"},
+					{"Dan Heng",  "Calm down, March. They just woke up."},
+					{"March 7th", "Oh, right! Welcome back to the Express!"}
+				};
+
+				for (const auto& line : script) {
+					std::string revealedText = "";
+					for (char c : line.text) {
+						revealedText += c;
+						drawDialogueInBoard(board, line.speaker, revealedText);
+						clearScreen();
+						for (int o = 0; o < 17; o++) {
+							for (int i = 0; i < 120; i++) {
+								std::cout << board[i][o];
+							}
+							std::cout << std::endl;
+						}
+						std::this_thread::sleep_for(std::chrono::milliseconds(30));
+					}
+					std::cin.get();
+					noOfDiag++;
+					std::cout << noOfDiag << std::endl;
+				}
+				if (noOfDiag == 3) {
+					isDialogueActive = false;
+				}
+			}
+			else {
+				for (int o = 0; o < 17; o++) {
+					for (int i = 0; i < 120; i++) {
+						std::cout << board[i][o];
+					}
+					std::cout << std::endl;
+				}
+			}
 
 
-	} while (boardState == false);
+		} while (boardState == false);
+	}
+	if (boardState == true) {
+		do {
+
+		} while (boardState == true);
+	}
 
 }

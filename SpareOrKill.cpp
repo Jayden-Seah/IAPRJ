@@ -15,7 +15,7 @@ void SpareOrKill::applyKarmaChange(CPlayer* player, int karmaAmount)
     if (newKarma < 0) newKarma = 0;
 
     player->setKarma(newKarma);
-    player->updateKarmaStats(); // Recalculates max health formula
+    //player->updateKarmaStats(); // Recalculates max health formula
 }
 
 void SpareOrKill::processInteraction(CPlayer* player, CCanTalk* npc, char board[10][104], int choice)

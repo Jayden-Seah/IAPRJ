@@ -113,7 +113,7 @@ void drawDialogueInBoard(std::vector<std::vector<std::string>>& board, const std
 	}
 }
 
-void statsInBoard(std::vector<std::vector<std::string>>& board, const std::string hp, const std::string attack, const std::string def, const std::string karma) {//same logic as for the dialogue except that the stats will only change if the player karma increases/decreases(e.g)
+void statsInBoard(std::vector<std::vector<std::string>>& board, int hp,  int attack, int def, int karma) {//same logic as for the dialogue except that the stats will only change if the player karma increases/decreases(e.g)
 	const int statsStart = 105;
 	const int statsEnd = 119;
 	const int statsTop = 1;
@@ -128,10 +128,10 @@ void statsInBoard(std::vector<std::vector<std::string>>& board, const std::strin
 
 
 	std::string playerStats = "Stats: "; // Title
-	std::string hptext = "HP: " + hp;
-	std::string attacktext = "ATK: " + attack;
-	std::string deftext = "DEF: " + def;
-	std::string karmatext = "KARMA: " + karma;
+	std::string hptext = "HP: " + std::to_string(hp);
+	std::string attacktext = "ATK: " + std::to_string(attack);
+	std::string deftext = "DEF: " + std::to_string(def);
+	std::string karmatext = "KARMA: " + std::to_string(karma);
 
 	for (int c = 0; c < static_cast<int>(playerStats.size()) && (statsStart + 1 + c) < statsEnd; c++) {//places each character accordingly into the array of spaces.
 		board[statsStart + 1 + c][statsTop] = std::string(1, playerStats[c]);
@@ -387,10 +387,8 @@ int main() {
 			}
 
 			//Stats board:
-			//Fake value -> placeholder
-			std::string value = "0";
 
-			statsInBoard(board, value, value, value, value);
+			statsInBoard(board, Player->getHealth(), Player->getAttack(), static_cast<CPlayer*>(Player)->getDefence(), static_cast<CPlayer*>(Player)->getKarma());
 
 			if (isDialogueActive) {
 				//TextBox

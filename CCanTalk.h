@@ -4,17 +4,20 @@
 class CCanTalk :
     public CHuman
 {
-    int DialogueCount;
-    int maxDialogue;
+
     static std::string yh;
-    std::string actualDialogue;
-    bool* IsEnemyHostile;
+    std::string actualDialogue[4];
     bool hasAlreadyTalked;
+    static const int MAX_NAMES = 6; // change this number for max names
+    static std::string NameList[MAX_NAMES];
+    std::string entityName;
+
 public:
     CCanTalk(int randvalue, int ID, int lv);
-    void changeDialogue();
-    std::string getDialogue(float karma);
+    std::string getNames();
+    std::string getDialogue(float karma, int dialogueNumber);
     bool getTalkStatus();
     void setTalkStatus(bool e);
+    void becomeHostile(CEntity* target); // push back Player , then starts chasing Player
 };
 

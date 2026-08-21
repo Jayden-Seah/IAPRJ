@@ -30,10 +30,10 @@ void Effects::passive() {
 }
 
 void Effects::upgrade() {
-	if (upg1 = false) {
+	if (upg1 = true) {
 
 	}
-	else if (upg1 && !upg2) {
+	else if (upg2 = true) {
 
 	}
 }

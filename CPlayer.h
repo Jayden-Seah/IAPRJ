@@ -6,6 +6,8 @@ class CPlayer :
 	int defense;
 	float maxHP;
 	float karma;
+	int boardcoordX;
+	int boardcoordY;
 
 public:
 	CPlayer(int randv);
@@ -21,4 +23,10 @@ public:
 	int getDefence();
 
 	float getKarma();
+
+	void randomizePlayerStart(int randv);
+	int getBcoordX();
+	int getBcoordY();
+	void setBcoordX(int f);
+	void setBcoordY(int f);
 };

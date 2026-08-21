@@ -5,6 +5,7 @@
 int CHuman::maxhumanID = 0; 
 int CHuman::numberOfKilledHumans = 0;
 
+
 CHuman::CHuman()
 {
     DetectionRange = 0;
@@ -235,4 +236,8 @@ void CHuman::humanWander()
             break;
         }
     }
+}
+
+void CHuman::chaseEntity(CEntity* target)
+{
 }

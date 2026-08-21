@@ -63,17 +63,16 @@ CCanTalk::CCanTalk(int randvalue, int ID, int lv)
 			actualDialogue[3] = "";
 			break;
 		case 0:
-			actualDialogue[0] = "";
-			actualDialogue[1] = "";
-			actualDialogue[2] = "";
-			actualDialogue[3] = "";
+			actualDialogue[0] = "You keep staring at the floor, waiting for the static to stop.";
+			actualDialogue[1] = "Removing us won't make the noise in your head any quieter.";
+			actualDialogue[2] = "Go on.";
+			actualDialogue[3] = "Make your choice so we can both stop pretending.";
 			break;
 
 		case -1:
 			actualDialogue[0] = "";
 			actualDialogue[1] = "";
 			actualDialogue[2] = "";
-			actualDialogue[3] = "";
 			break;
 		}
 		break;
@@ -86,18 +85,17 @@ CCanTalk::CCanTalk(int randvalue, int ID, int lv)
 			actualDialogue[3] = "";
 			break;
 		case 0:
-			actualDialogue[0] = "";
-			actualDialogue[1] = "";
-			actualDialogue[2] = "";
-			actualDialogue[3] = "";
+			actualDialogue[0] = "You think moving forward means erasing everything behind you.";
+			actualDialogue[1] = "Every time you hesitate, the pulse outside skips a beat.";
+			actualDialogue[2] = "Put your weight into it... either drop the act or finish it.";
 			break;
 		case -1:
 			actualDialogue[0] = "";
 			actualDialogue[1] = "";
 			actualDialogue[2] = "";
-			actualDialogue[3] = "";
 			break;
 		}
+		actualDialogue[3] = "1. SPARE                                                  2. KILL";
 		break;
 	case 4:
 		switch (lv) {
@@ -105,21 +103,19 @@ CCanTalk::CCanTalk(int randvalue, int ID, int lv)
 			actualDialogue[0] = "";
 			actualDialogue[1] = "";
 			actualDialogue[2] = "";
-			actualDialogue[3] = "";
 			break;
 		case 0:
-			actualDialogue[0] = "";
-			actualDialogue[1] = "";
-			actualDialogue[2] = "";
-			actualDialogue[3] = "";
+			actualDialogue[0] = "We were fine sitting in the dark until your judgment came in here.";
+			actualDialogue[1] = "You aren't defending yourself. You're just trying to shut it all down";
+			actualDialogue[2] = "Look closely... Do you really want to do this?";
 			break;
 		case -1:
 			actualDialogue[0] = "";
 			actualDialogue[1] = "";
 			actualDialogue[2] = "";
-			actualDialogue[3] = "";
 			break;
 		}
+		actualDialogue[3] = "1. SPARE                                                  2. KILL";
 		break;
 	}
 }
@@ -130,7 +126,7 @@ std::string CCanTalk::getNames() {
 std::string CCanTalk::getDialogue(float karma, int dialogueNumber)
 {
 	std::string returnedDialogue;
-	if (karma > 50) {
+	if ((karma > 50) or (dialogueNumber == 3 and (getHumanTypeID() == 4 or getHumanTypeID() == 3))) {
 		returnedDialogue = actualDialogue[dialogueNumber];
 	}
 	else {

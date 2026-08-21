@@ -156,8 +156,10 @@ int main() {
 	//srand(static_cast<int>(time(0)));
 	bool boardState = true; // true = grid board. false = fighting/talking area
 	bool isDialogueActive = false;
-	bool playerHasEnded = false;
+	bool playerHasEnded = true;
 	bool playerHasDied = false;
+	bool isInStartScreen = true;
+	bool isInOptions = true; // start screen v2 
 	bool hasPlayerUnlockedTile[7][7];
 	bool hasPlayerFinishedTile[7][7];
 	int getDialogueFromHumanNumber = 10;
@@ -168,18 +170,141 @@ int main() {
 		}
 	}
 	// KEYBINDING HERE
-	char upKey = 'W';
-	char downKey = 'S';
-	char leftKey = 'A';
-	char rightKey = 'D';
-	char interactKey = 'T';
-	char attackKey = 'R';
+	const int max_keybinds = 6;
+	// 0: interact, 1: attack, 2: up, 3: down, 4: left, 5: right
+	char keybindings[max_keybinds] = { // default keybinds
+		'T',
+		'R',
+		'W',
+		'S',
+		'A',
+		'D'
+	};
 	char currentDirCast = ' ';
 
 	// UPON board flip run thhis in a for loop 
 	//RANDOMLY create entities, more entities per stage if karma is higher (karma 100 start)
 	CEntity* Player = new CPlayer(random(generator) % 2);
 
+	while (isInOptions) {
+		do {
+			// printing main menu
+			std::cout << "                               _____    __   __   __    __    __   __    __   __    __   " << std::endl;
+			std::cout << "                             /\\___/\\  /_/\\ /\\_\\ /\\_\\  /_/\\  /\\_\\ /\\_\\  /_/\\ /_/\\  /\\_\\    " << std::endl;
+			std::cout << "                            / / _ \\ \\ ) ) \\ ( ( \\/_/  ) ) \\/ ( (( ( (  ) ) )) ) \\/ ( (" << std::endl;
+			std::cout << "                            \\ \\(_)/ //_/   \\ \\_\\ /\\_\\/_/ \\  / \\_\\\\ \\ \\/ / //_/ \\  / \\_\\  " << std::endl;
+			std::cout << "                            / / _ \\ \\\\ \\ \\   / // / /\\ \\ \\\\// / / \\ \\  / / \\ \\ \\\\// / /  " << std::endl;
+			std::cout << "                           ( (_( )_) ))_) \\ (_(( (_(  )_) )( (_(  ( (__) )  )_) )( (_(" << std::endl;
+			std::cout << "                            \\/_/ \\_\\/ \\_\\/ \\/_/ \\/_/  \\_\\/  \\/_/   \\/__\\/   \\_\\/  \\/_/  " << std::endl;
+			std::cout << "                             _     _   __    __   __    _____    _____  __ __      _____" << std::endl;
+			std::cout << "                            /_/\\ /\\_\\ /\\_\\  /_/\\ /\\_\\  /\\ __/\\ /\\_____\\/_/\\__/\\  /\\_____\\ " << std::endl;
+			std::cout << "                            ) ) ) ( ( \\/_/  ) ) \\ ( (  ) )__\\/( (_____/) ) ) ) )( (_____/" << std::endl;
+			std::cout << "                           /_/ / \\ \\_\\ /\\_\\/_/   \\ \\_\\/ / /    \\ \\__\\ /_/ /_/_/  \\ \\__\\ " << std::endl;
+			std::cout << "                           \\ \\ \\_/ / // / /\\ \\ \\   / /\\ \\ \\_   / /__/_\\ \\ \\ \\ \\  / /__/_" << std::endl;
+			std::cout << "                            \\ \\   / /( (_(  )_) \\ (_(  ) )__/\\( (_____\\)_) ) \\ \\( (_____\\ " << std::endl;
+			std::cout << "                             \\_\\_/_/  \\/_/  \\_\\/ \\/_/  \\/___\\/ \\/_____/\\_\\/ \\_\\/ \\/_____/ " << std::endl;
+			for (int i = 0; i < 4; i++) {
+				std::cout << std::endl;
+			}
+			std::cout << "                                                'TTTTTTTTTTTTT'" << std::endl;
+			std::cout << "                                           	/HHH        \\HHHHHn\\" << std::endl;
+			std::cout << "                                           	|HHH             \\HHHHn\\" << std::endl;
+			std::cout << "                                          	|HHH                >HHH>" << std::endl;
+			std::cout << "                                           	|HHH             /HHHHn/" << std::endl;
+			std::cout << "                                           	\\HHH       /HHHHHn/" << std::endl;
+			std::cout << "                                           	  ---------------" << std::endl;
+
+
+			std::cout << std::endl;
+
+			std::cout << "                                                    -------------------" << std::endl;
+			std::cout << "                                                    H - S E T T I N G S" << std::endl;
+			std::cout << "                                                    -------------------" << std::endl;
+
+			int yippeeKey = _getch();
+
+			if (yippeeKey == 13) {
+				isInStartScreen = false;
+				boardState = true;
+				playerHasEnded = false;
+				isInOptions = false;
+			}
+
+			yippeeKey = (char)toupper(yippeeKey);
+			if (yippeeKey == 72) {
+				isInStartScreen = false;
+				playerHasEnded = true;
+			}
+			clearScreen();
+		} while (isInStartScreen);
+
+		// options screen: NOT inStartScreen, playerHasEnded TRUE
+		if (isInStartScreen == false and playerHasEnded == true) {
+			bool pickingKey = false;
+			char pointer[max_keybinds] =
+			{
+				'>',
+				' ',
+				' ',
+				' ',
+				' ',
+				' ',
+			};
+			int selectedStringNumber = 0; //always selects first string on options enter
+			std::string Options[max_keybinds] = {
+				" Current Interact Key:        ",
+				" Current Attack Key:          ",
+				" Current Up Key:              ",
+				" Current Down Key:            ",
+				" Current Left Key:            ",
+				" Current Right Key:           "
+			};
+
+			do {
+				// to add more keybinds add extra char pointer
+				std::cout << "Press Enter on selected Keybind then Press a key(only alphabet PLEASE) to change the keybinds." << std::endl;
+				std::cout << "Press Up and Down key to change the Targeted key." << std::endl;
+
+				for (int m = 0; m < max_keybinds; m++) {
+					std::cout << pointer[m] << Options[m] << keybindings[m] << std::endl;
+				}
+				int pickedKey = _getch();
+
+				if (pickingKey == false) {
+					if (pickedKey == 0 || pickedKey == 224) { // updown
+						pickedKey = _getch(); // up and down arrows are part of an extended library of getch so a bit of funny things needed
+						if (pickedKey == 72) {
+							if (selectedStringNumber != 0) {
+								selectedStringNumber -= 1;
+							}
+						}
+						else if (pickedKey == 80) {
+							if (selectedStringNumber != (max_keybinds - 1)) {
+								selectedStringNumber += 1;
+							}
+						}
+					}
+					else if (pickedKey == 13) { // enter
+						pickingKey = true;
+					}
+					else if (pickedKey == 27) { //exit
+						isInStartScreen = true;
+					}
+				}
+				else { // key is being PICKED NOW so change keybind
+					keybindings[selectedStringNumber] = pickedKey;
+					keybindings[selectedStringNumber] = (char)toupper(keybindings[selectedStringNumber]);
+					pickingKey = false;
+				}
+				for (int i = 0; i < max_keybinds; i++) {
+					pointer[i] = ' ';
+				}
+				pointer[selectedStringNumber] = '>';
+
+				clearScreen();
+			} while (isInStartScreen == false and playerHasEnded == true);
+		}
+	}
 	while (playerHasEnded == false) { // create a new player manually when player dies
 		if (playerHasDied) {
 			Player = new CPlayer(random(generator) % 2);
@@ -281,7 +406,7 @@ int main() {
 					currentDirCast = (char)toupper(currentDirCast);
 				}
 
-				if (currentDirCast == 'T') {
+				if (currentDirCast == keybindings[0]) {
 					for (int f = 0; f < numberOfBoardenemies; f++) {
 						if (Human[f] != nullptr) {
 							if ((Human[f]->getHumanTypeID() > 0) and (Human[f]->getHumanTypeID() < 5)) { // 1-4
@@ -307,7 +432,7 @@ int main() {
 				// we suspect maybe theres an overload of something but we are unsure whats wrong
 				if (isDialogueActive == false) {
 
-					if (currentDirCast == attackKey) {
+					if (currentDirCast == keybindings[1]) {
 						currentDirCast = ' ';
 						drawVFX(board, Player->getCoordX(), Player->getCoordY(), Player->getAttack(), Player->getAttackRange());
 						for (int i = 0; i < numberOfBoardenemies; i++) {
@@ -329,16 +454,16 @@ int main() {
 					}
 					bool allowPlayerMovement = true;
 					int currentDirInt = 0;
-					if (currentDirCast == upKey) {
+					if (currentDirCast == keybindings[2]) {
 						currentDirInt = 1;
 					}
-					else if (currentDirCast == downKey) {
+					else if (currentDirCast == keybindings[3]) {
 						currentDirInt = 3;
 					}
-					else if (currentDirCast == rightKey) {
+					else if (currentDirCast == keybindings[5]) {
 						currentDirInt = 4;
 					}
-					else if (currentDirCast == leftKey) {
+					else if (currentDirCast == keybindings[4]) {
 						currentDirInt = 2;
 					}
 					for (int o = 0; o < numberOfBoardenemies; o++) {
@@ -398,6 +523,7 @@ int main() {
 						}
 					}
 				}
+			
 
 				board[Player->getCoordX()][Player->getCoordY()] = "Y";
 
@@ -497,6 +623,12 @@ int main() {
 					Player = nullptr;
 					playerHasDied = true;
 					boardState = true;
+					for (int i = 0; i < 7; i++) {
+						for (int y = 0; y < 7; y++) {
+							hasPlayerUnlockedTile[i][y] = false;
+							hasPlayerFinishedTile[i][y] = false;
+						}
+					}
 				}
 
 			} while (boardState == false);
@@ -571,23 +703,23 @@ int main() {
 				char keydir = _getch();
 				keydir = (char)toupper(keydir);
 
-				if (keydir == upKey) {
+				if (keydir == keybindings[2]) {
 					
 					if (static_cast<CPlayer*>(Player)->getBcoordY() != 0) {
 						static_cast<CPlayer*>(Player)->setBcoordY(static_cast<CPlayer*>(Player)->getBcoordY() - 1);
 					}
 				}
-				else if (keydir == downKey) {
+				else if (keydir == keybindings[3]) {
 					if (static_cast<CPlayer*>(Player)->getBcoordY() != (cols-1)) {
 						static_cast<CPlayer*>(Player)->setBcoordY(static_cast<CPlayer*>(Player)->getBcoordY() + 1);
 					}
 				}
-				else if (keydir == leftKey) {
+				else if (keydir == keybindings[4]) {
 					if (static_cast<CPlayer*>(Player)->getBcoordX() != 0) {
 						static_cast<CPlayer*>(Player)->setBcoordX(static_cast<CPlayer*>(Player)->getBcoordX() - 1);
 					}
 				}
-				else if (keydir == rightKey) {
+				else if (keydir == keybindings[5]) {
 					if (static_cast<CPlayer*>(Player)->getBcoordX() != (rows-1)) {
 						static_cast<CPlayer*>(Player)->setBcoordX(static_cast<CPlayer*>(Player)->getBcoordX() + 1);
 					}

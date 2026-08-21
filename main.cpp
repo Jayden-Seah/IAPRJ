@@ -1,8 +1,8 @@
 #define _USE_MATH_DEFINES
-#include <cmath>
 #include <iostream>
 #include <conio.h>
 #include <chrono>
+#include <cmath>
 #include "CEntity.h"
 #include "CCanTalk.h"
 #include "CSolidHitbox.h"
@@ -10,12 +10,10 @@
 #include "CObject.h"
 #include "CItems.h"
 #include "CPlayer.h"
-#include "Effects.h"
 #include <random>//Random library
 #include <thread>
 #include <cctype>
-#include "Respawn.h"
-
+#include "Effects.h"
 
 //Start program
 // DO WE HAVE ANY FUNCTIONS HERE!!! OR ARE THEY ALL IN CLASSES
@@ -68,9 +66,9 @@ void drawVFX(std::vector<std::vector<std::string>>& board, int coorx, int coory,
 		VFX[i + 4] = new Effects(coorx, coory, xd, yd, atkr, atk);
 	}
 	for (int i = 0; i < 8; i++) {
-		board[VFX[i]->getCoordX()][VFX[i]->getCoordY()] = "*";
+		board[VFX[i]->getCoordX()][VFX[i]->getCoordY()] = "#";
 	}
-	
+
 	std::this_thread::sleep_for(std::chrono::milliseconds(100));
 	for (int i = 0; i < 8; i++) {
 		delete VFX[i];
@@ -85,6 +83,7 @@ void drawDialogueInBoard(std::vector<std::vector<std::string>>& board, const std
 	const int contentEndI = 103;   // leaves i=104 as border
 	const int contentStartO = 12;
 	const int contentEndO = 15;    // o=16 is the bottom border
+
 
 	// Clear the strip first (so old text doesn't linger between frames)
 	for (int o = contentStartO; o <= contentEndO; o++) {
@@ -155,10 +154,19 @@ void statsInBoard(std::vector<std::vector<std::string>>& board, int hp, int atta
 int main() {
 	//Code starts here
 	//srand(static_cast<int>(time(0)));
-	bool boardState = false; // true = grid board. false = fighting/talking area
+	bool boardState = true; // true = grid board. false = fighting/talking area
 	bool isDialogueActive = false;
 	bool playerHasEnded = false;
-
+	bool playerHasDied = false;
+	bool hasPlayerUnlockedTile[7][7];
+	bool hasPlayerFinishedTile[7][7];
+	int getDialogueFromHumanNumber = 10;
+	for (int i = 0; i < 7; i++) {
+		for (int y = 0; y < 7; y++) {
+			hasPlayerUnlockedTile[i][y] = false;
+			hasPlayerFinishedTile[i][y] = false;
+		}
+	}
 	// KEYBINDING HERE
 	char upKey = 'W';
 	char downKey = 'S';
@@ -170,10 +178,14 @@ int main() {
 
 	// UPON board flip run thhis in a for loop 
 	//RANDOMLY create entities, more entities per stage if karma is higher (karma 100 start)
+	CEntity* Player = new CPlayer(random(generator) % 2);
 
-	while (playerHasEnded == false) {
+	while (playerHasEnded == false) { // create a new player manually when player dies
+		if (playerHasDied) {
+			Player = new CPlayer(random(generator) % 2);
+			playerHasDied = false;
+		}
 		if (boardState == false) {
-			CEntity* Player = new CPlayer(random(generator) % 2);
 			int numberOfBoardenemies;
 			int numberOfBlocks; // enviromental hazards
 			CEntity* Human[10];
@@ -284,7 +296,9 @@ int main() {
 							}
 						}
 					}
-
+				}
+				if (currentDirCast == 'O') {
+					Player->sethealth(0);
 				}
 
 				// MOVE ENEMIES AND CHECK FOR PLAYER KEY AND MOVE (define getch beforehand)
@@ -398,11 +412,28 @@ int main() {
 				if (isDialogueActive) {
 					//TextBox
 					int noOfDiag = 0;
-
+					if (getDialogueFromHumanNumber == 10) {
+						for (int d = 0; d < numberOfBoardenemies; d++) {
+							bool foundMatch = false;
+							for (int b = 0; b < 4; b++) {
+								if (Player->isEntityGoingToOverlapInTheFuture(b + 1, Human[d])) {
+									getDialogueFromHumanNumber = d;
+									foundMatch = true;
+									break;
+								}
+							}
+							if (foundMatch = true) {
+								break;
+							}
+						}
+					}
+						 
+					
 					std::vector<DialogueInt> script = {
-						{"March 7th", "Hey, are you listening to me?! Trailblazer!"},
-						{"Dan Heng",  "Calm down, March. They just woke up."},
-						{"March 7th", "Oh, right! Welcome back to the Express!"}
+						{Human[getDialogueFromHumanNumber]->getNames(),Human[getDialogueFromHumanNumber]->getDialogue(static_cast<CPlayer*>(Player)->getKarma(), 0)},
+						{Human[getDialogueFromHumanNumber]->getNames(),Human[getDialogueFromHumanNumber]->getDialogue(static_cast<CPlayer*>(Player)->getKarma(), 1)},
+						{Human[getDialogueFromHumanNumber]->getNames(),Human[getDialogueFromHumanNumber]->getDialogue(static_cast<CPlayer*>(Player)->getKarma(), 2)},
+						{Human[getDialogueFromHumanNumber]->getNames(),Human[getDialogueFromHumanNumber]->getDialogue(static_cast<CPlayer*>(Player)->getKarma(), 3)}
 					};
 
 					for (const auto& line : script) {
@@ -423,8 +454,9 @@ int main() {
 						noOfDiag++;
 						std::cout << noOfDiag << std::endl;
 					}
-					if (noOfDiag == 3) {
+					if (noOfDiag >= 4) {
 						isDialogueActive = false;
+						getDialogueFromHumanNumber = 10;
 					}
 				}
 				else {
@@ -443,19 +475,130 @@ int main() {
 						delete EnvironmentalObjects[i];
 						EnvironmentalObjects[i] = nullptr;
 					}
-					
-				}if (Player->getHealth() <= 0) {
-					playerHasEnded = true;
-					void Respawning();
-					void unupgrade();
 				}
-					
+				if (Player->getHealth() <= 0) {
+					while (Player->getCoordY() < 15) {
+						Player->setCoordY(Player->getCoordY() + 1);
+
+						board[Player->getCoordX()][Player->getCoordY()] = "Y";
+
+						board[Player->getCoordX()][Player->getCoordY()-1] = " ";
+						for (int o = 0; o < 17; o++) {
+							for (int i = 0; i < 120; i++) {
+								std::cout << board[i][o];
+							}
+							std::cout << std::endl;
+						}
+						clearScreen();
+						std::this_thread::sleep_for(std::chrono::milliseconds(50));
+						// reset everything here ty
+					}
+					delete Player;
+					Player = nullptr;
+					playerHasDied = true;
+					boardState = true;
+				}
 
 			} while (boardState == false);
 		}
-		if (boardState == true) {
-			
+		if ((boardState == true) and (playerHasDied == false)) { // traversel board, when you finish a stage on boards false, flip boolean to end up here
+			clearScreen(); // clear current board
+			int rows = 0;
+			int cols = 0;
+			switch (CEntity::getLevel()) {
+			case 0:
+				rows = 5;
+				cols = 5;
+				break;
+			case 1:
+				rows = 7;
+				cols = 7;
+				break;
+			case -1:
+				rows = 7;
+				cols = 7;
+				break;
+			}
 			do {
+				// print board, level 0 5x5 grid, level 1 and -1 is a 7x7 grid
+
+				for (int i = 0; i < 4; i++) {
+					int bx = static_cast<CPlayer*>(Player)->getBcoordX();
+					int by = static_cast<CPlayer*>(Player)->getBcoordY();
+					switch (i) {
+					case 0:
+						bx -= 1;
+						break;
+					case 1:
+						by -= 1;
+						break;
+					case 2:
+						bx += 1;
+						break;
+					case 3:
+						by += 1;
+						break;
+					}
+					if ((bx < rows and bx > -1) and (by < cols and by > -1)) { // if within boundaries
+						hasPlayerUnlockedTile[bx][by] = true;
+					}
+				}
+
+				std::vector<std::vector<std::string>> board(rows, std::vector<std::string>(cols, { ' ' }));
+				for (int o = 0; o < cols; o++) {
+					for (int i = 0; i < rows; i++) {
+						board[i][o] = " *";
+						if (hasPlayerUnlockedTile[i][o]) {
+							board[i][o] = " x";
+						}
+						if (hasPlayerFinishedTile[i][o]) {
+							board[i][o] = " o";
+						}
+					}
+				}
+
+				board[static_cast<CPlayer*>(Player)->getBcoordX()][static_cast<CPlayer*>(Player)->getBcoordY()] = " Y";
+				
+
+				// print board
+				for (int o = 0; o < cols; o++) {
+					std::cout << "                                                             ";
+					for (int i = 0; i < rows; i++) {
+						std::cout << board[i][o];
+					}
+					std::cout << std::endl;
+				}
+				char keydir = _getch();
+				keydir = (char)toupper(keydir);
+
+				if (keydir == upKey) {
+					
+					if (static_cast<CPlayer*>(Player)->getBcoordY() != 0) {
+						static_cast<CPlayer*>(Player)->setBcoordY(static_cast<CPlayer*>(Player)->getBcoordY() - 1);
+					}
+				}
+				else if (keydir == downKey) {
+					if (static_cast<CPlayer*>(Player)->getBcoordY() != (cols-1)) {
+						static_cast<CPlayer*>(Player)->setBcoordY(static_cast<CPlayer*>(Player)->getBcoordY() + 1);
+					}
+				}
+				else if (keydir == leftKey) {
+					if (static_cast<CPlayer*>(Player)->getBcoordX() != 0) {
+						static_cast<CPlayer*>(Player)->setBcoordX(static_cast<CPlayer*>(Player)->getBcoordX() - 1);
+					}
+				}
+				else if (keydir == rightKey) {
+					if (static_cast<CPlayer*>(Player)->getBcoordX() != (rows-1)) {
+						static_cast<CPlayer*>(Player)->setBcoordX(static_cast<CPlayer*>(Player)->getBcoordX() + 1);
+					}
+				}
+				if ((hasPlayerUnlockedTile[static_cast<CPlayer*>(Player)->getBcoordX()][static_cast<CPlayer*>(Player)->getBcoordY()] == true) and (hasPlayerFinishedTile[static_cast<CPlayer*>(Player)->getBcoordX()][static_cast<CPlayer*>(Player)->getBcoordY()] == false)) {
+					boardState = false;
+					hasPlayerFinishedTile[static_cast<CPlayer*>(Player)->getBcoordX()][static_cast<CPlayer*>(Player)->getBcoordY()] = true; //assume player finishes bc if player dies resets anyways
+				}
+				clearScreen();
+				// randomized events dont happen consistently so you cant see it so i can despawn the board
+				// before player gets sent, play randomized event anims here or smth 
 
 			} while (boardState == true);
 		}

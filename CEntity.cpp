@@ -19,6 +19,16 @@ bool CEntity::isEntityInAttackRange(CEntity* target)
     return (dx + dy) <= atkr;
 }
 
+std::string CEntity::getNames()
+{
+    return std::string();
+}
+
+std::string CEntity::getDialogue(float karma, int dialogueNumber)
+{
+    return std::string();
+}
+
 int CEntity::getAttack()
 {
     return attack;

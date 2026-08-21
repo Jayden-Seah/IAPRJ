@@ -14,6 +14,7 @@ class CHuman :
     bool isEntityRunningFromPlayer;
     bool isEntityShooter;
     static int numberOfKilledHumans;
+
      
 public:
     CHuman();
@@ -44,5 +45,6 @@ int* getEnemyPatrolType();
    void resetHumanID();
   void increaseHumanID();
   void humanWander();
+  void chaseEntity(CEntity* target);
 };
 

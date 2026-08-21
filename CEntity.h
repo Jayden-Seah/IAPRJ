@@ -1,5 +1,6 @@
 #pragma once
 #include "CSolidHitbox.h"
+#include <iostream>
 class CEntity :
     public CSolidHitbox
 {
@@ -13,6 +14,8 @@ public:
     virtual ~CEntity();
     bool isEntityInAttackRange(CEntity* target);
 
+    virtual std::string getNames();
+   virtual std::string getDialogue(float karma, int dialogueNumber);
   int getAttack();
   float getHealth();
   int getAttackRange();

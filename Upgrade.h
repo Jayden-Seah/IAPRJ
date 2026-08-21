@@ -1,7 +1,7 @@
 #pragma once
 #include "CEntity.h"
 #include "CPlayer.h"
-class Respawn:public CPlayer
+class Upgrade:public CPlayer
 {
 private:
 

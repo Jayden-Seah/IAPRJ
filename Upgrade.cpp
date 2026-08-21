@@ -1,11 +1,11 @@
-#include "Respawn.h"
+#include "Upgrade.h"
 #include "CEntity.h"
 #include "CPlayer.h"
 #include "CObject.h"
 
 
 
-void Respawn::Respawning() {
+void Upgrade::Respawning() {
 	//delete everything and recreate
 	setKarma(100);
 
@@ -20,7 +20,7 @@ void Respawn::Respawning() {
 
 }
 
-void Respawn::SecretRespawn() {
+void Upgrade::SecretRespawn() {
 	if (getKarma()) {
 		setCoordX(103);
 		setCoordY(1);

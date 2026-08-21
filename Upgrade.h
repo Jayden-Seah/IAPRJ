@@ -1,16 +1,17 @@
 #pragma once
 #include "CEntity.h"
 #include "CPlayer.h"
-class Upgrade:public CPlayer
+class Upgrade :public CPlayer
 {
-private:
+    static int killcount;
 
+    bool upg1;
+
+    bool upg2;
 public:
-	
-	bool IsDead;
 
-	void Respawning();
+    void upgrade();
 
-	void SecretRespawn();
-};
+    void unupgrade();
+}
 

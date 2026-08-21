@@ -5,26 +5,18 @@
 
 
 
-void Upgrade::Respawning() {
-	//delete everything and recreate
-	setKarma(100);
+void Upgrade::upgrade() {
+    if (upg1 = false) {
 
-	setCoordX(103);
-	setCoordY(1);
+    }
+    else if (upg1 && !upg2) {
 
-	sethealth(100);
-	setAttack(20);
-	setAttackRange(1);
-	setDefence(5);
-	
-
+    }
 }
 
-void Upgrade::SecretRespawn() {
-	if (getKarma()) {
-		setCoordX(103);
-		setCoordY(1);
 
-		sethealth(100);
-	}
+void Upgrade::unupgrade() {
+    killcount = 0;
+    upg1 = false;
+    upg2 = false;
 }

@@ -422,7 +422,7 @@ int main() {
 									break;
 								}
 							}
-							if (foundMatch = true) {
+							if (foundMatch == true) {
 								break;
 							}
 						}

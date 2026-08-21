@@ -445,9 +445,9 @@ int main() {
 					}
 					
 				}if (Player->getHealth() <= 0) {
-					delete Player;
 					playerHasEnded = true;
 					void Respawning();
+					void unupgrade();
 				}
 					
 

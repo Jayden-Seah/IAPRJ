@@ -159,6 +159,7 @@ int main() {
 	bool playerHasEnded = true;
 	bool playerHasDied = false;
 	bool isInStartScreen = true;
+	bool isPaused = false;
 	bool isInOptions = true; // start screen v2 
 	bool hasPlayerUnlockedTile[7][7];
 	bool hasPlayerFinishedTile[7][7];
@@ -266,7 +267,12 @@ int main() {
 				std::cout << "Press Up and Down key to change the Targeted key." << std::endl;
 
 				for (int m = 0; m < max_keybinds; m++) {
-					std::cout << pointer[m] << Options[m] << keybindings[m] << std::endl;
+					if (pickingKey == true and (m == selectedStringNumber)) {
+						std::cout << "\033[33m"  << pointer[m] << Options[m] << keybindings[m] << "\033[0m" << std::endl;
+					}
+					else {
+						std::cout << pointer[m] << Options[m] << keybindings[m] << std::endl;
+					}
 				}
 				int pickedKey = _getch();
 

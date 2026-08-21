@@ -14,6 +14,7 @@
 #include <random>//Random library
 #include <thread>
 #include <cctype>
+#include "Respawn.h"
 
 
 //Start program
@@ -442,13 +443,18 @@ int main() {
 						delete EnvironmentalObjects[i];
 						EnvironmentalObjects[i] = nullptr;
 					}
+					
+				}if (Player->getHealth() <= 0) {
 					delete Player;
+					playerHasEnded = true;
+					void Respawning();
 				}
+					
 
 			} while (boardState == false);
 		}
 		if (boardState == true) {
-			boardState = false;
+			
 			do {
 
 			} while (boardState == true);

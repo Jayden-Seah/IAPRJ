@@ -542,10 +542,12 @@ int main() {
 						for (int d = 0; d < numberOfBoardenemies; d++) {
 							bool foundMatch = false;
 							for (int b = 0; b < 4; b++) {
-								if (Player->isEntityGoingToOverlapInTheFuture(b + 1, Human[d])) {
-									getDialogueFromHumanNumber = d;
-									foundMatch = true;
-									break;
+								if (Human[d] != nullptr) {
+									if (Player->isEntityGoingToOverlapInTheFuture(b + 1, Human[d])) {
+										getDialogueFromHumanNumber = d;
+										foundMatch = true;
+										break;
+									}
 								}
 							}
 							if (foundMatch == true) {

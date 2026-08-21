@@ -4,13 +4,14 @@
 class Respawn:public CPlayer
 {
 private:
+	bool upg1;
 
+	bool upg2;
 public:
 	
-	bool IsDead;
+	void upgrade();
 
-	void Respawning();
-
-	void SecretRespawn();
+	void unupgrade();
+};
 };
 

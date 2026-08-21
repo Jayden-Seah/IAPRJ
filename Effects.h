@@ -5,19 +5,14 @@ class Effects :
 	public CEntity
 {
 private:
-	bool upg1;
 
-	bool upg2;
 public:
 	Effects();
 
-	Effects(int xpos, int ypos,int ydiff, int xdiff, int atkr, int atk); // Summon player/enemy attack vfx, use isentityoverlapping to check if entity is getting hit
+	Effects(int xpos, int ypos, int ydiff, int xdiff, int atkr, int atk); // Summon player/enemy attack vfx, use isentityoverlapping to check if entity is getting hit
 
 
 	void passive();
 
-	void upgrade();
-
-	void unupgrade();
 };
 

@@ -14,6 +14,7 @@
 #include <thread>
 #include <cctype>
 #include "Effects.h"
+#include <windows.h>//Windows library	
 
 //Start program
 // DO WE HAVE ANY FUNCTIONS HERE!!! OR ARE THEY ALL IN CLASSES
@@ -29,12 +30,18 @@ struct DialogueInt {
 	std::string text;
 };
 
+//Allows ANSI color and cursor codes to work
+void enableVirtualTerminal() {
+	HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+	DWORD mode;
+	GetConsoleMode(hOut, &mode);
+	SetConsoleMode(hOut, mode | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
+}
+
+
+
 void clearScreen() {
-#ifdef _WIN32
-	std::system("cls");
-#else
-	std::system("clear");
-#endif
+	std::cout << "\033[H\033[2J";
 }
 // func for aoe vfx, if you ahve time make it directional ig? its not that bad
 void drawVFX(std::vector<std::vector<std::string>>& board, int coorx, int coory, int atk, int atkr) {
@@ -152,6 +159,8 @@ void statsInBoard(std::vector<std::vector<std::string>>& board, int hp, int atta
 }
 
 int main() {
+	enableVirtualTerminal();
+
 	//Code starts here
 	//srand(static_cast<int>(time(0)));
 	bool boardState = true; // true = grid board. false = fighting/talking area
@@ -490,7 +499,7 @@ int main() {
 					}
 					currentDirCast = ' ';
 					std::this_thread::sleep_for(std::chrono::milliseconds(250));
-					system("cls");
+					clearScreen();
 				}
 
 				// print ENEMIES
@@ -572,25 +581,34 @@ int main() {
 
 					for (const auto& line : script) {
 						std::string revealedText = "";
+
+						clearScreen();
+						for (int o = 0; o < 17; o++) {
+							for (int i = 0; i < 120; i++) {
+								std::cout << board[i][o];
+							}
+							std::cout << std::endl;
+							if (o == 11) {
+								std::cout << "\0337"; // DEC save cursor position -- right after row 11 (o=11), before dialogue strip starts
+							}
+						}
+
 						for (char c : line.text) {
 							revealedText += c;
 							drawDialogueInBoard(board, line.speaker, revealedText);
-							clearScreen();
-							for (int o = 0; o < 17; o++) {
+
+							std::cout << "\0338"; // DEC restore cursor position -- back to right after row 11
+							for (int o = 12; o <= 15; o++) {
 								for (int i = 0; i < 120; i++) {
 									std::cout << board[i][o];
 								}
-								std::cout << std::endl;
+								std::cout << "\033[K" << std::endl;
 							}
 							std::this_thread::sleep_for(std::chrono::milliseconds(30));
 						}
 						std::cin.get();
 						noOfDiag++;
 						std::cout << noOfDiag << std::endl;
-					}
-					if (noOfDiag >= 4) {
-						isDialogueActive = false;
-						getDialogueFromHumanNumber = 10;
 					}
 				}
 				else {

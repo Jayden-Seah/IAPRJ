@@ -8,7 +8,7 @@ class CCanTalk :
     static std::string yh;
     std::string actualDialogue[4];
     bool hasAlreadyTalked;
-    static const int MAX_NAMES = 6; // change this number for max names
+    static const int MAX_NAMES = 29; // change this number for max names
     static std::string NameList[MAX_NAMES];
     std::string entityName;
 

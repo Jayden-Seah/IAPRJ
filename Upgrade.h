@@ -9,21 +9,21 @@ class Upgrade :public CPlayer
 
     static int killcount;
 
-    bool upg1;
+    bool upg1 = false;
 
-    bool upg2;
+    bool upg2 = false;
 
-    bool upg3;
+    bool upg3 = false;
 
-    bool upg4;
+    bool upg4 = false;
 
-    bool upg5;
+    bool upg5 = false;
 
     int pt = 5;
 public:
 
     Upgrade(CPlayer& Player) : Player(Player) {
-        this->Player = Player;
+        
     }
 
     void upgrade();

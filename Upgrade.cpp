@@ -6,11 +6,21 @@
 int Upgrade::killcount = 0;
 
 void Upgrade::upgrade() {
-    if (upg1 = false) {
-
+    if (upg1 = false && killcount == 5) {
+        //each upg will increase atk by 5, unless we want it to be a random thing then sure ig
+        Player.setAttack(25);
     }
-    else if (upg1 && !upg2) {
-
+    else if (upg1 && !upg2 && killcount == 10) {
+        Player.setAttack(30);
+    }
+    else if (upg1 && upg2 && !upg3 && killcount == 20) {
+        Player.setAttack(35);
+    }
+    else if (upg1 && upg2 && upg3 && !upg4 && killcount == 30) {
+        Player.setAttack(40);
+    }
+    else if (upg1 && upg2 && upg3 && upg4 && !upg5 && killcount == 44) {
+        Player.setAttack(44);
     }
 }
 
@@ -19,4 +29,7 @@ void Upgrade::unupgrade() {
     killcount = 0;
     upg1 = false;
     upg2 = false;
+    upg3 = false;
+    upg4 = false;
+    upg5 = false;
 }

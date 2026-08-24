@@ -19,5 +19,6 @@ public:
     bool getTalkStatus();
     void setTalkStatus(bool e);
     void becomeHostile(CEntity* target); // push back Player , then starts chasing Player
+    std::string getARandomName(int randv);
 };
 

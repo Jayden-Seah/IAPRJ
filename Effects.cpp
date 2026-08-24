@@ -19,7 +19,7 @@ Effects::Effects(int xpos, int ypos, int ydiff, int xdiff, int atkr, int atk) //
 	setAttackRange(atkr);
 	setCoordX(xpos + xDifference);
 	setCoordY(ypos + yDifference);
-
+	setObjectHeight(1);
 	setAttack(atk);
 }
 
@@ -29,6 +29,19 @@ void Effects::passive() {
 
 }
 
-v
+void Effects::upgrade() {
+	if (upg1 = true) {
+
+	}
+	else if (upg2 = true) {
+
+	}
+}
+
+
+void Effects::unupgrade() {
+	upg1 = false;
+	upg2 = false;
+}
 
 

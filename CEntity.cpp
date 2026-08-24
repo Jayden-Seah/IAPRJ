@@ -93,12 +93,16 @@ void CEntity::setAttackRange(int atkr)
  }
  void CEntity::attacking(CEntity* target)
  {
-     if (isEntityInAttackRange(target)) {
-         int s = target->getHealth() - getAttack();
-         target->sethealth(s);
+     if (isEntityOverlapping(target)) {
+         static_cast<CEntity*>(target)->sethealth(static_cast<CEntity*>(target)->getHealth() - getAttack());
      }
  }
 
+
+ bool CEntity::detectPlayer(CEntity* target)
+ {
+     return false;
+ }
 
  void CEntity::humanWander()
  {

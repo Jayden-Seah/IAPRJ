@@ -29,7 +29,7 @@ public:
  void moveInput(int dir); //1234 (WASD)
  void attacking(CEntity* target);
 
-
+ virtual bool detectPlayer(CEntity* target);
  virtual void humanWander();
  virtual int getHumanTypeID();
 

@@ -44,7 +44,7 @@ void clearScreen() {
 	std::cout << "\033[H\033[2J";
 }
 // func for aoe vfx, if you ahve time make it directional ig? its not that bad
-void drawVFX(std::vector<std::vector<std::string>>& board, int coorx, int coory, int atk, int atkr) {
+void drawVFX(std::vector<std::vector<std::string>>& board, int coorx, int coory, int atk, int atkr, CSolidHitbox* target, std::string vfxindicator) {
 	CEntity* VFX[8];
 	for (int i = 0; i < 4; i++) {
 		VFX[i] = new Effects(coorx, coory, cos((i * 90) * M_PI / 180.f), sin((i * 90) * M_PI / 180.f), atkr, atk); // 0, 90, 180, 270
@@ -73,7 +73,10 @@ void drawVFX(std::vector<std::vector<std::string>>& board, int coorx, int coory,
 		VFX[i + 4] = new Effects(coorx, coory, xd, yd, atkr, atk);
 	}
 	for (int i = 0; i < 8; i++) {
-		board[VFX[i]->getCoordX()][VFX[i]->getCoordY()] = "#";
+		board[VFX[i]->getCoordX()][VFX[i]->getCoordY()] = vfxindicator; // make this customizable ltr
+		if (VFX[i]->isEntityOverlapping(target)) {
+			static_cast<CEntity*>(target)->sethealth(static_cast<CEntity*>(target)->getHealth() - atk);
+		}
 	}
 
 	std::this_thread::sleep_for(std::chrono::milliseconds(100));
@@ -180,7 +183,7 @@ int main() {
 		}
 	}
 	// KEYBINDING HERE
-	const int max_keybinds = 6;
+	const int max_keybinds = 7;
 	// 0: interact, 1: attack, 2: up, 3: down, 4: left, 5: right
 	char keybindings[max_keybinds] = { // default keybinds
 		'T',
@@ -188,7 +191,8 @@ int main() {
 		'W',
 		'S',
 		'A',
-		'D'
+		'D',
+		'B'
 	};
 	char currentDirCast = ' ';
 
@@ -259,6 +263,7 @@ int main() {
 				' ',
 				' ',
 				' ',
+				' '
 			};
 			int selectedStringNumber = 0; //always selects first string on options enter
 			std::string Options[max_keybinds] = {
@@ -267,7 +272,8 @@ int main() {
 				" Current Up Key:              ",
 				" Current Down Key:            ",
 				" Current Left Key:            ",
-				" Current Right Key:           "
+				" Current Right Key:           ",
+				" Current Pause Key:           "
 			};
 
 			do {
@@ -277,7 +283,7 @@ int main() {
 
 				for (int m = 0; m < max_keybinds; m++) {
 					if (pickingKey == true and (m == selectedStringNumber)) {
-						std::cout << "\033[33m"  << pointer[m] << Options[m] << keybindings[m] << "\033[0m" << std::endl;
+						std::cout << "\033[33m" << pointer[m] << Options[m] << keybindings[m] << "\033[0m" << std::endl;
 					}
 					else {
 						std::cout << pointer[m] << Options[m] << keybindings[m] << std::endl;
@@ -440,6 +446,11 @@ int main() {
 				if (currentDirCast == 'O') {
 					Player->sethealth(0);
 				}
+				if (currentDirCast == keybindings[6]) {
+					isDialogueActive = true;
+					isPaused = true;
+					currentDirCast = ' ';
+				}
 
 				// MOVE ENEMIES AND CHECK FOR PLAYER KEY AND MOVE (define getch beforehand)
 				// So, what happens is a loop occurs when dialogue is NOT active that allows for all entities to move every 0.25s (including player
@@ -449,10 +460,9 @@ int main() {
 
 					if (currentDirCast == keybindings[1]) {
 						currentDirCast = ' ';
-						drawVFX(board, Player->getCoordX(), Player->getCoordY(), Player->getAttack(), Player->getAttackRange());
 						for (int i = 0; i < numberOfBoardenemies; i++) {
 							if (Human[i] != nullptr) {
-								Player->attacking(Human[i]);
+								drawVFX(board, Player->getCoordX(), Player->getCoordY(), Player->getAttack(), Player->getAttackRange(), Human[i], "\033[34m#\033[0m");
 								if (Human[i]->getHealth() <= 0) {
 									delete Human[i];
 									Human[i] = nullptr;
@@ -538,7 +548,7 @@ int main() {
 						}
 					}
 				}
-			
+
 
 				board[Player->getCoordX()][Player->getCoordY()] = "Y";
 
@@ -552,66 +562,79 @@ int main() {
 
 				if (isDialogueActive) {
 					//TextBox
-					int noOfDiag = 0;
-					if (getDialogueFromHumanNumber == 10) {
-						for (int d = 0; d < numberOfBoardenemies; d++) {
-							bool foundMatch = false;
-							for (int b = 0; b < 4; b++) {
-								if (Human[d] != nullptr) {
-									if (Player->isEntityGoingToOverlapInTheFuture(b + 1, Human[d])) {
-										getDialogueFromHumanNumber = d;
-										foundMatch = true;
-										break;
+					if (isPaused == false) {
+						int noOfDiag = 0;
+						if (getDialogueFromHumanNumber == 10) {
+							for (int d = 0; d < numberOfBoardenemies; d++) {
+								bool foundMatch = false;
+								for (int b = 0; b < 4; b++) {
+									if (Human[d] != nullptr) {
+										if (Player->isEntityGoingToOverlapInTheFuture(b + 1, Human[d])) {
+											getDialogueFromHumanNumber = d;
+											foundMatch = true;
+											break;
+										}
 									}
 								}
-							}
-							if (foundMatch == true) {
-								break;
-							}
-						}
-					}
-						 
-					
-					std::vector<DialogueInt> script = {
-						{Human[getDialogueFromHumanNumber]->getNames(),Human[getDialogueFromHumanNumber]->getDialogue(static_cast<CPlayer*>(Player)->getKarma(), 0)},
-						{Human[getDialogueFromHumanNumber]->getNames(),Human[getDialogueFromHumanNumber]->getDialogue(static_cast<CPlayer*>(Player)->getKarma(), 1)},
-						{Human[getDialogueFromHumanNumber]->getNames(),Human[getDialogueFromHumanNumber]->getDialogue(static_cast<CPlayer*>(Player)->getKarma(), 2)},
-						{Human[getDialogueFromHumanNumber]->getNames(),Human[getDialogueFromHumanNumber]->getDialogue(static_cast<CPlayer*>(Player)->getKarma(), 3)}
-					};
-
-					for (const auto& line : script) {
-						std::string revealedText = "";
-
-						clearScreen();
-						for (int o = 0; o < 17; o++) {
-							for (int i = 0; i < 120; i++) {
-								std::cout << board[i][o];
-							}
-							std::cout << std::endl;
-							if (o == 11) {
-								std::cout << "\0337"; // DEC save cursor position -- right after row 11 (o=11), before dialogue strip starts
+								if (foundMatch == true) {
+									break;
+								}
 							}
 						}
 
-						for (char c : line.text) {
-							revealedText += c;
-							drawDialogueInBoard(board, line.speaker, revealedText);
 
-							std::cout << "\0338"; // DEC restore cursor position -- back to right after row 11
-							for (int o = 12; o <= 15; o++) {
+						std::vector<DialogueInt> script = {
+							{Human[getDialogueFromHumanNumber]->getNames(),Human[getDialogueFromHumanNumber]->getDialogue(static_cast<CPlayer*>(Player)->getKarma(), 0)},
+							{Human[getDialogueFromHumanNumber]->getNames(),Human[getDialogueFromHumanNumber]->getDialogue(static_cast<CPlayer*>(Player)->getKarma(), 1)},
+							{Human[getDialogueFromHumanNumber]->getNames(),Human[getDialogueFromHumanNumber]->getDialogue(static_cast<CPlayer*>(Player)->getKarma(), 2)},
+							{Human[getDialogueFromHumanNumber]->getNames(),Human[getDialogueFromHumanNumber]->getDialogue(static_cast<CPlayer*>(Player)->getKarma(), 3)}
+						};
+
+
+
+						for (const auto& line : script) {
+							std::string revealedText = "";
+
+							clearScreen();
+							for (int o = 0; o < 17; o++) {
 								for (int i = 0; i < 120; i++) {
 									std::cout << board[i][o];
 								}
-								std::cout << "\033[K" << std::endl;
+								std::cout << std::endl;
+								if (o == 11) {
+									std::cout << "\0337"; // DEC save cursor position -- right after row 11 (o=11), before dialogue strip starts
+								}
 							}
-							std::this_thread::sleep_for(std::chrono::milliseconds(30));
+
+							for (char c : line.text) {
+								revealedText += c;
+								drawDialogueInBoard(board, line.speaker, revealedText);
+
+								std::cout << "\0338"; // DEC restore cursor position -- back to right after row 11
+								for (int o = 12; o <= 15; o++) {
+									for (int i = 0; i < 120; i++) {
+										std::cout << board[i][o];
+									}
+									std::cout << "\033[K" << std::endl;
+								}
+								std::this_thread::sleep_for(std::chrono::milliseconds(30));
+							}
+							std::cin.get();
+							noOfDiag++;
+							if (noOfDiag == 4) {
+								isDialogueActive = false;
+							}
 						}
-						std::cin.get();
-						noOfDiag++;
-						std::cout << noOfDiag << std::endl;
 					}
-					if (noOfDiag == 4) {
-						isDialogueActive = false;
+					else { //PAUSE = TRUE
+						//std::vector<DialogueInt> script = {
+						//	{"PAUSED", "PRESS ESC TO RETURN TO GAME"}
+						//};
+						int unpausekey = _getch();
+						if (unpausekey == 27) {
+							isDialogueActive = false;
+							isPaused = false;
+						}
 					}
 				}
 				else {
@@ -637,7 +660,7 @@ int main() {
 
 						board[Player->getCoordX()][Player->getCoordY()] = "Y";
 
-						board[Player->getCoordX()][Player->getCoordY()-1] = " ";
+						board[Player->getCoordX()][Player->getCoordY() - 1] = " ";
 						for (int o = 0; o < 17; o++) {
 							for (int i = 0; i < 120; i++) {
 								std::cout << board[i][o];
@@ -719,7 +742,7 @@ int main() {
 				}
 
 				board[static_cast<CPlayer*>(Player)->getBcoordX()][static_cast<CPlayer*>(Player)->getBcoordY()] = " Y";
-				
+
 
 				// print board
 				for (int o = 0; o < cols; o++) {
@@ -733,13 +756,13 @@ int main() {
 				keydir = (char)toupper(keydir);
 
 				if (keydir == keybindings[2]) {
-					
+
 					if (static_cast<CPlayer*>(Player)->getBcoordY() != 0) {
 						static_cast<CPlayer*>(Player)->setBcoordY(static_cast<CPlayer*>(Player)->getBcoordY() - 1);
 					}
 				}
 				else if (keydir == keybindings[3]) {
-					if (static_cast<CPlayer*>(Player)->getBcoordY() != (cols-1)) {
+					if (static_cast<CPlayer*>(Player)->getBcoordY() != (cols - 1)) {
 						static_cast<CPlayer*>(Player)->setBcoordY(static_cast<CPlayer*>(Player)->getBcoordY() + 1);
 					}
 				}
@@ -749,7 +772,7 @@ int main() {
 					}
 				}
 				else if (keydir == keybindings[5]) {
-					if (static_cast<CPlayer*>(Player)->getBcoordX() != (rows-1)) {
+					if (static_cast<CPlayer*>(Player)->getBcoordX() != (rows - 1)) {
 						static_cast<CPlayer*>(Player)->setBcoordX(static_cast<CPlayer*>(Player)->getBcoordX() + 1);
 					}
 				}

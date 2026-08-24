@@ -610,6 +610,9 @@ int main() {
 						noOfDiag++;
 						std::cout << noOfDiag << std::endl;
 					}
+					if (noOfDiag == 4) {
+						isDialogueActive = false;
+					}
 				}
 				else {
 					for (int o = 0; o < 17; o++) {

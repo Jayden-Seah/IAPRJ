@@ -17,7 +17,6 @@ void Upgrade::upgrade() {
 
 void Upgrade::unupgrade() {
     killcount = 0;
-    int pi = event_dist(gene);
     upg1 = false;
     upg2 = false;
 }

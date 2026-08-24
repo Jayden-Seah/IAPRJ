@@ -44,10 +44,12 @@ void clearScreen() {
 	std::cout << "\033[H\033[2J";
 }
 // func for aoe vfx, if you ahve time make it directional ig? its not that bad
-void drawVFX(std::vector<std::vector<std::string>>& board, int coorx, int coory, int atk, int atkr, CSolidHitbox* target, std::string vfxindicator) {
+void drawVFX(std::vector<std::vector<std::string>>& board, int coorx, int coory, int atk, int atkr, CEntity *target, std::string vfxindicator) {
+
+	
 	CEntity* VFX[8];
 	for (int i = 0; i < 4; i++) {
-		VFX[i] = new Effects(coorx, coory, cos((i * 90) * M_PI / 180.f), sin((i * 90) * M_PI / 180.f), atkr, atk); // 0, 90, 180, 270
+		VFX[i] = new Effects(coorx, coory, cos((i * 90) * M_PI / 180), sin((i * 90) * M_PI / 180), atkr, atk); // 0, 90, 180, 270
 	}
 	for (int i = 0; i < 4; i++) {
 		int yd = 0;
@@ -72,14 +74,13 @@ void drawVFX(std::vector<std::vector<std::string>>& board, int coorx, int coory,
 		}
 		VFX[i + 4] = new Effects(coorx, coory, xd, yd, atkr, atk);
 	}
+
 	for (int i = 0; i < 8; i++) {
 		board[VFX[i]->getCoordX()][VFX[i]->getCoordY()] = vfxindicator; // make this customizable ltr
 		if (VFX[i]->isEntityOverlapping(target)) {
-			static_cast<CEntity*>(target)->sethealth(static_cast<CEntity*>(target)->getHealth() - atk);
+			target->sethealth(target->getHealth() - atk);
 		}
 	}
-
-	std::this_thread::sleep_for(std::chrono::milliseconds(100));
 	for (int i = 0; i < 8; i++) {
 		delete VFX[i];
 	}
@@ -474,6 +475,9 @@ int main() {
 
 					for (int i = 0; i < numberOfBoardenemies; i++) {
 						if (Human[i] != nullptr) {
+							if (Human[i]->detectPlayer(Player)) {
+								drawVFX(board, Human[i]->getCoordX(), Human[i]->getCoordY(), Human[i]->getAttack(), Human[i]->getAttackRange(), Player, "\033[31mO\033[0m");
+						}
 							Human[i]->humanWander();
 						}
 					}
@@ -731,9 +735,9 @@ int main() {
 				std::vector<std::vector<std::string>> board(rows, std::vector<std::string>(cols, { ' ' }));
 				for (int o = 0; o < cols; o++) {
 					for (int i = 0; i < rows; i++) {
-						board[i][o] = " *";
+						board[i][o] = " #";
 						if (hasPlayerUnlockedTile[i][o]) {
-							board[i][o] = " x";
+							board[i][o] = " .";
 						}
 						if (hasPlayerFinishedTile[i][o]) {
 							board[i][o] = " o";

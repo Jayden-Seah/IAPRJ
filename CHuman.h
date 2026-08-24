@@ -9,6 +9,7 @@ class CHuman :
     int currenthumanID;
     bool isEntityFollowingPlayer;
     bool isEntityPatrolling;
+    bool hasFoundPlayer;
     int* enemyPatrolType; // MAKE sure a patrolling entity has an enemypatrol type of kill yourself adelle
     bool* dirFlip;
     bool isEntityRunningFromPlayer;
@@ -45,6 +46,7 @@ int* getEnemyPatrolType();
    void resetHumanID();
   void increaseHumanID();
   void humanWander();
-  void chaseEntity(CEntity* target);
+  bool detectPlayer(CEntity* target);
+  bool chaseEntity(CEntity* target);
 };
 

@@ -12,9 +12,9 @@ CSolidHitbox::CSolidHitbox(int randv)
 	setCoordY(randv % 8 + 2);
 	setObjectHeight(1);
 }
-bool CSolidHitbox::isEntityOverlapping(CSolidHitbox(*target)) // overlapping = true, not overlapping (good) = false
+bool CSolidHitbox::isEntityOverlapping(CSolidHitbox* target) // overlapping = true, not overlapping (good) = false
 {
-	for (int i = 0; i < getObjectHeight(); i++) { // 
+	for (int i = 0; i < getObjectHeight(); i++) { // 1
 		if ((getCoordX() == target->getCoordX()) and (getCoordY()-i == target->getCoordY())) {
 			return true;
 		}

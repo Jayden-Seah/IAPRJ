@@ -42,6 +42,7 @@ CHuman::CHuman(int randvalue, int randid)
     humanID = randid;
     enemyPatrolType = new int;
     *enemyPatrolType = 1;
+    hasFoundPlayer = false;
     dirFlip = new bool;
     *dirFlip = false;
     switch (humanID) {
@@ -96,21 +97,21 @@ void CHuman::createType1RedHuman(int randd) // default chaser
     case 0:
         setAttack(randd % 4 + 2);
         sethealth((randd % 4 + 2) + 0.0f);
-        setAttackRange(randd % 4 + 2);
+        setAttackRange(1);
         DetectionRange = 3;
-        *enemyPatrolType = 1;
+        *enemyPatrolType = (randd % 2 + 1);
         *dirFlip = false;
         break;
     case 1:
         setAttack(randd % 4 + 2);
         sethealth(randd % 4 + 2 + 0.0f);
-        setAttackRange(randd % 4 + 2);
+        setAttackRange(1);
         DetectionRange = 3;
         break;
     case -1:
         setAttack(randd % 4 + 2);
         sethealth(randd % 4 + 2 + 0.0f);
-        setAttackRange(randd % 4 + 2);
+        setAttackRange(1);
         DetectionRange = 3;
         break;
     }
@@ -123,8 +124,8 @@ void CHuman::createType2RedHuman(int randd)
     case 0:
         setAttack(randd % 4 + 2);
         sethealth(randd % 4 + 2 + 0.0f);
-        setAttackRange(randd % 4 + 2);
-        DetectionRange = 3;
+        setAttackRange(1);
+        DetectionRange = 6;
         isEntityFollowingPlayer = false;
         isEntityShooter = true;
         isEntityPatrolling = false;
@@ -132,15 +133,15 @@ void CHuman::createType2RedHuman(int randd)
     case 1:
         setAttack(randd % 4 + 2);
         sethealth(randd % 4 + 2 + 0.0f);
-        setAttackRange(randd % 4 + 2);
-        DetectionRange = 3;
+        setAttackRange(1);
+        DetectionRange = 6;
         isEntityPatrolling = false;
         break;
     case -1:
         setAttack(randd % 4 + 2);
         sethealth(randd % 4 + 2 + 0.0f);
-        setAttackRange(randd % 4 + 2);
-        DetectionRange = 3;
+        setAttackRange(1);
+        DetectionRange = 6;
         isEntityFollowingPlayer = false;
         isEntityShooter = true;
         isEntityPatrolling = false;
@@ -206,9 +207,9 @@ void CHuman::increaseHumanID()
     currenthumanID++;
 }
 
-void CHuman::humanWander()
+void CHuman::humanWander() // add collision checks
 {
-    if (isEntityPatrolling == true) {
+    if ((isEntityPatrolling == true) and (hasFoundPlayer == false)) {
         int x = getCoordX();
         int y = getCoordY();
         switch (*getEnemyPatrolType()) {
@@ -231,6 +232,22 @@ void CHuman::humanWander()
             }
             break;
         case 2: // move left to right
+            if (*dirFlip == true) { // move up
+                if (getCoordX() < 25) {
+                    *dirFlip = false;
+                }
+                else {
+                    setCoordX(getCoordX() - 1);
+                }
+            }
+            else { // move down
+                if (getCoordX() > 50) {
+                    *dirFlip = true;
+                }
+                else {
+                    setCoordX(getCoordX() + 1);
+                }
+            }
             break;
         case 3: // move in an arc
             break;
@@ -238,6 +255,56 @@ void CHuman::humanWander()
     }
 }
 
-void CHuman::chaseEntity(CEntity* target)
+bool CHuman::detectPlayer(CEntity* target)
 {
+    // detect player starts chase entity so i dont have to call both 
+    int dx = abs(getCoordX() - target->getCoordX());
+    int dy = abs(getCoordY() - target->getCoordY());
+    int dr = DetectionRange;
+
+    if ((dx + dy) <= dr){
+        DetectionRange += 10; //increase detection by 10 so its hard to outrun
+        bool e = chaseEntity(target);
+        return e;  // summon vfx if entity is in attack range
+    }
+
+    return false;
+}
+
+bool CHuman::chaseEntity(CEntity* target)
+{
+    isEntityPatrolling = false;
+    hasFoundPlayer = true;
+
+    if (isEntityOutofBounds() == false) { //sets entity back in bounds
+        int dx = (getCoordX() - target->getCoordX());
+        int dy = (getCoordY() - target->getCoordY());
+       int moveAmt = 0;
+        if (abs(dx) >= abs(dy)) { // move x
+            if (dx != 0) {
+                moveAmt = dx / abs(dx); // 3 / -3 gives -1. 3/3 gives 1.
+            }
+            else {
+                setCoordX(getCoordX() + 1);
+            }
+            setCoordX(getCoordX() - moveAmt);
+        }
+        else { // mpve y
+            if (dx != 0) {
+                moveAmt = dy / abs(dy);
+            }
+            else {
+                setCoordY(getCoordY() + 1);
+            }
+
+            setCoordY(getCoordY() - moveAmt);
+        }
+    }
+
+  
+    if (isEntityInAttackRange(target)) {
+        return true;
+    }
+
+    return false;
 }

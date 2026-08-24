@@ -703,9 +703,6 @@ int main() {
 						std::cout << std::endl;
 						std::cout << std::endl;
 
-						std::cout << "You have fell to the nihilistic temptations offered by " << CCanTalk::getARandomName(random(generator)) << std::endl;
-
-						std::cout << std::endl;
 						std::cout << " -- Press Any Key to replay --" << std::endl;
 
 						int respawnKey = _getch();

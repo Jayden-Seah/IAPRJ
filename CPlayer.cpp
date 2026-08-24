@@ -12,14 +12,38 @@ CPlayer::CPlayer(int randv)
 		setCoordX(103);
 		break;
 	}
+	srand(static_cast<int>(time(0)));
+	int randomevent = rand() % 3;
+
 	karma = 50.0f;
-	sethealth(100.0f);
-	setAttack(20);
+	if (randomevent == 0) {
+		sethealth(150.0f);
+	}
+	else {
+		sethealth(100.0f);
+	}
+
+	if (randomevent == 1) {
+		setAttack(24);
+	}
+	else {
+		setAttack(20);
+	}
+	
+	if (randomevent == 2) {
+		setDefence(7);
+	}
+	else {
+		setDefence(5);
+	}
+
 	setAttackRange(1);
-	setDefence(5);
+
 	setBcoordX(0);
 	setBcoordY(0);
 }
+
+
 
 void CPlayer::attacking(CEntity* target)
 {

@@ -174,7 +174,6 @@ void statsInBoard(std::vector<std::vector<std::string>>& board, int hp, int atta
 
 int main() {
 	enableVirtualTerminal();
-
 	//Code starts here
 	//srand(static_cast<int>(time(0)));
 	bool boardState = true; // true = grid board. false = fighting/talking area
@@ -338,6 +337,23 @@ int main() {
 		}
 	}
 	while (playerHasEnded == false) { // create a new player manually when player dies
+		const int MAX_RANDOMEVENTS = 7;
+		bool isThisRandomEventActive[MAX_RANDOMEVENTS];
+		for (int i = 0; i < MAX_RANDOMEVENTS; i++) {
+			isThisRandomEventActive[i] = false;
+		}
+		isThisRandomEventActive[0/*random(generator) % MAX_RANDOMEVENTS*/] = true;
+		/*random Event:
+		0 - Fast 
+		1 - Tanky
+		2 - Aggressive
+		3 - Chaotic
+		4 - Vampiric
+		5 - Crowded
+		6 - Healing Winds
+		7 - Critical
+		8 -
+		*/
 		if (playerHasDied) {
 			Player = new CPlayer(random(generator) % 2);
 			playerHasDied = false;
@@ -487,11 +503,17 @@ int main() {
 
 					for (int i = 0; i < numberOfBoardenemies; i++) {
 						if (Human[i] != nullptr) {
-							if (Human[i]->detectPlayer(Player)) {
-								if (Human[i]->canEntityAttack) {
-									drawVFX(board, Human[i]->getCoordX(), Human[i]->getCoordY(), Human[i]->getAttack(), Human[i]->getAttackRange(), Player, "\033[31mO\033[0m", Human[i], 1);
+							int repeatTimes = 1;
+							if (isThisRandomEventActive[0] == true) {
+								repeatTimes = 2;
+							}
+							for (int j = 0; j < repeatTimes; j++) {
+								if (Human[i]->detectPlayer(Player)) {
+									if (Human[i]->canEntityAttack) {
+										drawVFX(board, Human[i]->getCoordX(), Human[i]->getCoordY(), Human[i]->getAttack(), Human[i]->getAttackRange(), Player, "\033[31mO\033[0m", Human[i], 1);
+									}
 								}
-						}
+							}
 							Human[i]->humanWander();
 						}
 					}
@@ -703,6 +725,9 @@ int main() {
 						std::cout << std::endl;
 						std::cout << std::endl;
 
+						std::cout << "You have fell to the nihilistic temptations offered by " << CCanTalk::getARandomName(random(generator)) << std::endl;
+
+						std::cout << std::endl;
 						std::cout << " -- Press Any Key to replay --" << std::endl;
 
 						int respawnKey = _getch();

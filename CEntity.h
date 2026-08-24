@@ -10,6 +10,8 @@ class CEntity :
     static int onLevel; // -1, 0 or 1. Default 0
 public:
 
+    std::atomic<bool> canEntityAttack{ true };
+
     CEntity();
     virtual ~CEntity();
     bool isEntityInAttackRange(CEntity* target);

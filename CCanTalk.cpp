@@ -144,3 +144,9 @@ void CCanTalk::setTalkStatus(bool e)
 {
 	hasAlreadyTalked = e;
 }
+
+std::string CCanTalk::getARandomName(int randv)
+{
+	
+	return (NameList[randv % MAX_NAMES]);
+}

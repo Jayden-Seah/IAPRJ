@@ -15,6 +15,7 @@
 #include <cctype>
 #include "Effects.h"
 #include <windows.h>//Windows library	
+#include <atomic>
 
 //Start program
 // DO WE HAVE ANY FUNCTIONS HERE!!! OR ARE THEY ALL IN CLASSES
@@ -24,11 +25,14 @@ std::default_random_engine generator(std::random_device{}());//default random en
 
 std::uniform_int_distribution<int> random(2, 1001);// uniform gives every num a equal chance, int is whole num, and distribution effectively says, give me a num from x to y
 
+
+
 //Group Data -> 
 struct DialogueInt {
 	std::string speaker;
 	std::string text;
 };
+
 
 //Allows ANSI color and cursor codes to work
 void enableVirtualTerminal() {
@@ -44,46 +48,52 @@ void clearScreen() {
 	std::cout << "\033[H\033[2J";
 }
 // func for aoe vfx, if you ahve time make it directional ig? its not that bad
-void drawVFX(std::vector<std::vector<std::string>>& board, int coorx, int coory, int atk, int atkr, CEntity *target, std::string vfxindicator) {
+void drawVFX(std::vector<std::vector<std::string>>& board, int coorx, int coory, int atk, int atkr, CEntity *target, std::string vfxindicator, CEntity *caller, int atkcd) {
 
-	
-	CEntity* VFX[8];
-	for (int i = 0; i < 4; i++) {
-		VFX[i] = new Effects(coorx, coory, cos((i * 90) * M_PI / 180), sin((i * 90) * M_PI / 180), atkr, atk); // 0, 90, 180, 270
-	}
-	for (int i = 0; i < 4; i++) {
-		int yd = 0;
-		int xd = 0;
-		switch (i) {
-		case 0:
-			yd = -1;
-			xd = 1;
-			break;
-		case 1:
-			xd = -1;
-			yd = -1;
-			break;
-		case 2:
-			yd = 1;
-			xd = 1;
-			break;
-		case 3:
-			xd = -1;
-			yd = 1;
-			break;
+	if (caller->canEntityAttack) {
+		CEntity* VFX[8];
+		for (int i = 0; i < 4; i++) {
+			VFX[i] = new Effects(coorx, coory, cos((i * 90) * M_PI / 180), sin((i * 90) * M_PI / 180), atkr, atk); // 0, 90, 180, 270
 		}
-		VFX[i + 4] = new Effects(coorx, coory, xd, yd, atkr, atk);
-	}
+		for (int i = 0; i < 4; i++) {
+			int yd = 0;
+			int xd = 0;
+			switch (i) {
+			case 0:
+				yd = -1;
+				xd = 1;
+				break;
+			case 1:
+				xd = -1;
+				yd = -1;
+				break;
+			case 2:
+				yd = 1;
+				xd = 1;
+				break;
+			case 3:
+				xd = -1;
+				yd = 1;
+				break;
+			}
+			VFX[i + 4] = new Effects(coorx, coory, xd, yd, atkr, atk);
+		}
 
-	for (int i = 0; i < 8; i++) {
-		board[VFX[i]->getCoordX()][VFX[i]->getCoordY()] = vfxindicator; // make this customizable ltr
-		if (VFX[i]->isEntityOverlapping(target)) {
-			target->sethealth(target->getHealth() - atk);
+		for (int i = 0; i < 8; i++) {
+			board[VFX[i]->getCoordX()][VFX[i]->getCoordY()] = vfxindicator; // make this customizable ltr
+			if (VFX[i]->isEntityOverlapping(target)) {
+				target->sethealth(target->getHealth() - atk);
+			}
+		}
+		for (int i = 0; i < 8; i++) {
+			delete VFX[i];
 		}
 	}
-	for (int i = 0; i < 8; i++) {
-		delete VFX[i];
-	}
+	caller->canEntityAttack = false;
+	std::thread([caller, atkcd]() {
+		std::this_thread::sleep_for(std::chrono::seconds(atkcd));
+		caller->canEntityAttack = true;
+		}).detach();
 	return;
 }
 
@@ -461,22 +471,26 @@ int main() {
 
 					if (currentDirCast == keybindings[1]) {
 						currentDirCast = ' ';
-						for (int i = 0; i < numberOfBoardenemies; i++) {
-							if (Human[i] != nullptr) {
-								drawVFX(board, Player->getCoordX(), Player->getCoordY(), Player->getAttack(), Player->getAttackRange(), Human[i], "\033[34m#\033[0m");
-								if (Human[i]->getHealth() <= 0) {
-									delete Human[i];
-									Human[i] = nullptr;
+						if (Player->canEntityAttack) {
+							for (int i = 0; i < numberOfBoardenemies; i++) {
+								if (Human[i] != nullptr) {
+									drawVFX(board, Player->getCoordX(), Player->getCoordY(), Player->getAttack(), Player->getAttackRange(), Human[i], "\033[34m#\033[0m", Player, 1);
+									if (Human[i]->getHealth() <= 0) {
+										delete Human[i];
+										Human[i] = nullptr;
+									}
 								}
 							}
+							std::this_thread::sleep_for(std::chrono::milliseconds(100));
 						}
-						std::this_thread::sleep_for(std::chrono::milliseconds(100));
 					}
 
 					for (int i = 0; i < numberOfBoardenemies; i++) {
 						if (Human[i] != nullptr) {
 							if (Human[i]->detectPlayer(Player)) {
-								drawVFX(board, Human[i]->getCoordX(), Human[i]->getCoordY(), Human[i]->getAttack(), Human[i]->getAttackRange(), Player, "\033[31mO\033[0m");
+								if (Human[i]->canEntityAttack) {
+									drawVFX(board, Human[i]->getCoordX(), Human[i]->getCoordY(), Human[i]->getAttack(), Human[i]->getAttackRange(), Player, "\033[31mO\033[0m", Human[i], 1);
+								}
 						}
 							Human[i]->humanWander();
 						}
@@ -673,7 +687,29 @@ int main() {
 						}
 						clearScreen();
 						std::this_thread::sleep_for(std::chrono::milliseconds(50));
+						// YOU DIED screen
 						// reset everything here ty
+					}
+					bool inDeathScreen = true;
+					while (inDeathScreen){
+						std::cout << "__   _______ _   _  ______ _____ ___________ " << std::endl;
+						std::cout << "\\ \\ / /  _  | | | | |  _  \\_   _|  ___|  _  \\" << std::endl;
+						std::cout << " \\ V /| | | | | | | | | | | | | | |__ | | | |" << std::endl;
+						std::cout << "  \\ / | | | | | | | | | | | | | |  __|| | | |" << std::endl;
+						std::cout << "  | | \\ \\_/ / |_| | | |/ / _| |_| |___| |/ / " << std::endl;
+						std::cout << "  \\_/  \\___/ \\___/  |___/  \\___/\\____/|___/" << std::endl;
+
+						std::cout << std::endl;
+						std::cout << std::endl;
+						std::cout << std::endl;
+
+						std::cout << " -- Press Any Key to replay --" << std::endl;
+
+						int respawnKey = _getch();
+						if (respawnKey >= 0) {
+							inDeathScreen = false;
+							clearScreen();
+						}
 					}
 					delete Player;
 					Player = nullptr;
@@ -685,7 +721,7 @@ int main() {
 							hasPlayerFinishedTile[i][y] = false;
 						}
 					}
-				}
+				}                                    
 
 			} while (boardState == false);
 		}

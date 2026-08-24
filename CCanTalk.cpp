@@ -3,12 +3,38 @@
 
 std::string CCanTalk::yh = "yh";
 std::string CCanTalk::NameList[] = {
-	"Alexander Harm-ilton",
-	"The Man who Hanged, Wrionil",
-	"John Yhick",
-	"Beaver Barker",
-	"Alloy Man",
-	"John Human"
+"Alexander Harm - ilton"
+"Wolfgang Von Beef - hoven",
+"The Man who Hanged, Wrionil",
+"John Yhick",
+"Yhohn Wick",
+"Beaver Barker",
+"Alloy Man",
+"Baller",
+"Johnathan Johnathan",
+"Guy",
+"Major Major",
+"Gemerl",
+"Maybe, Might Not Be, Always Will, Never Be",
+"Clark Kent",
+"If and May, Never Is, The Potential Yhorb",
+"Mr Trauma",
+"Homeless Man",
+"A Man That Has Fallen Into The River In Lego City",
+"Fighting General Daimos",
+"Hades, God Of The Underworld",
+"50 Shades of Grey",
+"Kratos",
+"Spider Hyphen Man",
+"Spooder - Man",
+"Black Panther",
+"A - Math",
+"Rowan Black",
+"Ni - Hee Hee - Ism",
+"Johnny Ridden",
+"Mr.Procrastination",
+
+
 };
 
 CCanTalk::CCanTalk(int randvalue, int ID, int lv)
@@ -77,6 +103,9 @@ CCanTalk::CCanTalk(int randvalue, int ID, int lv)
 		}
 		break;
 	case 3:
+		setAttack(0);
+		setAttackRange(0);
+		sethealth(1);
 		switch (lv) {
 		case 1:
 			actualDialogue[0] = "";
@@ -98,6 +127,9 @@ CCanTalk::CCanTalk(int randvalue, int ID, int lv)
 		actualDialogue[3] = "1. SPARE                                                  2. KILL";
 		break;
 	case 4:
+		setAttack(0);
+		setAttackRange(0);
+		sethealth(1);
 		switch (lv) {
 		case 1:
 			actualDialogue[0] = "";
@@ -143,4 +175,10 @@ bool CCanTalk::getTalkStatus()
 void CCanTalk::setTalkStatus(bool e)
 {
 	hasAlreadyTalked = e;
+}
+
+std::string CCanTalk::getARandomName(int randv)
+{
+	
+	return (NameList[randv % MAX_NAMES]);
 }

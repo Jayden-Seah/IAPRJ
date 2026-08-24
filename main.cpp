@@ -185,11 +185,13 @@ int main() {
 	bool isInOptions = true; // start screen v2 
 	bool hasPlayerUnlockedTile[7][7];
 	bool hasPlayerFinishedTile[7][7];
+	bool isThisanInaccessibleTile[7][7];
 	int getDialogueFromHumanNumber = 10;
 	for (int i = 0; i < 7; i++) {
 		for (int y = 0; y < 7; y++) {
 			hasPlayerUnlockedTile[i][y] = false;
 			hasPlayerFinishedTile[i][y] = false;
+			isThisanInaccessibleTile[i][y] = false;
 		}
 	}
 	// KEYBINDING HERE

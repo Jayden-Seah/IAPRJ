@@ -10,6 +10,7 @@ class CPlayer :
 	int boardcoordY;
 
 public:
+	CPlayer();
 	CPlayer(int randv);
 
 	void attacking(CEntity* target);

@@ -1,5 +1,6 @@
 #define _USE_MATH_DEFINES
 #include <iostream>
+
 #include <conio.h>
 #include <chrono>
 #include <cmath>
@@ -11,6 +12,7 @@
 #include "CItems.h"
 #include "CPlayer.h"
 #include "SpareOrKill.h"
+
 #include <random>//Random library
 #include <thread>
 #include <cctype>
@@ -24,7 +26,7 @@
 std::default_random_engine generator(std::random_device{}());//default random engine creates the random value, generator is just the name for it , std random device gives it a random starting point without it itll be the same evry time
 
 
-std::uniform_int_distribution<int> random(2, 1001);// uniform gives every num a equal chance, int is whole num, and distribution effectively says, give me a num from x to y
+std::uniform_int_distribution<int> random(0, 1000);// uniform gives every num a equal chance, int is whole num, and distribution effectively says, give me a num from x to y
 
 
 
@@ -43,9 +45,11 @@ void enableVirtualTerminal() {
 	SetConsoleMode(hOut, mode | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
 }
 
+void refreshScreen() { // mainly for switching boards
+	system("cls");
+}
 
-
-void clearScreen() {
+void clearScreen() { //mainly for textbox
 	std::cout << "\033[H\033[2J";
 }
 // func for aoe vfx, if you ahve time make it directional ig? its not that bad
@@ -90,11 +94,11 @@ void drawVFX(std::vector<std::vector<std::string>>& board, int coorx, int coory,
 			delete VFX[i];
 		}
 	}
-	caller->canEntityAttack = false;
+	/*caller->canEntityAttack = false;
 	std::thread([caller, atkcd]() {
 		std::this_thread::sleep_for(std::chrono::seconds(atkcd));
 		caller->canEntityAttack = true;
-		}).detach();
+		}).detach();*/
 	return;
 }
 
@@ -260,7 +264,7 @@ int main() {
 				isInStartScreen = false;
 				playerHasEnded = true;
 			}
-			clearScreen();
+			refreshScreen();
 		} while (isInStartScreen);
 
 		// options screen: NOT inStartScreen, playerHasEnded TRUE
@@ -333,7 +337,7 @@ int main() {
 				}
 				pointer[selectedStringNumber] = '>';
 
-				clearScreen();
+				refreshScreen();
 			} while (isInStartScreen == false and playerHasEnded == true);
 		}
 	}
@@ -550,7 +554,7 @@ int main() {
 					}
 					currentDirCast = ' ';
 					std::this_thread::sleep_for(std::chrono::milliseconds(250));
-					clearScreen();
+					refreshScreen();
 				}
 
 				// print ENEMIES
@@ -719,7 +723,7 @@ int main() {
 							}
 							std::cout << std::endl;
 						}
-						clearScreen();
+						refreshScreen();
 						std::this_thread::sleep_for(std::chrono::milliseconds(50));
 						// YOU DIED screen
 						// reset everything here ty
@@ -737,7 +741,7 @@ int main() {
 						std::cout << std::endl;
 						std::cout << std::endl;
 
-						//std::cout << "You have fell to the nihilistic temptations offered by " << CCanTalk::getARandomName(random(generator)) << std::endl;
+						std::cout << "You have fell to the nihilistic temptations offered by " << CCanTalk::getARandomName(random(generator)) << std::endl;
 
 						std::cout << std::endl;
 						std::cout << " -- Press Any Key to replay --" << std::endl;
@@ -745,7 +749,7 @@ int main() {
 						int respawnKey = _getch();
 						if (respawnKey >= 0) {
 							inDeathScreen = false;
-							clearScreen();
+							refreshScreen();
 						}
 					}
 					delete Player;
@@ -763,7 +767,7 @@ int main() {
 			} while (boardState == false);
 		}
 		if ((boardState == true) and (playerHasDied == false)) { // traversel board, when you finish a stage on boards false, flip boolean to end up here
-			clearScreen(); // clear current board
+			refreshScreen(); // clear current board
 			int rows = 0;
 			int cols = 0;
 			switch (CEntity::getLevel()) {
@@ -857,7 +861,7 @@ int main() {
 					boardState = false;
 					hasPlayerFinishedTile[static_cast<CPlayer*>(Player)->getBcoordX()][static_cast<CPlayer*>(Player)->getBcoordY()] = true; //assume player finishes bc if player dies resets anyways
 				}
-				clearScreen();
+				refreshScreen();
 				// randomized events dont happen consistently so you cant see it so i can despawn the board
 				// before player gets sent, play randomized event anims here or smth 
 

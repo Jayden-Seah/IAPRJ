@@ -12,38 +12,38 @@ CPlayer::CPlayer(int randv)
 		setCoordX(103);
 		break;
 	}
-	srand(static_cast<int>(time(0)));
-	int randomevent = rand() % 3;
-
 	karma = 50.0f;
-	if (randomevent == 0) {
-		sethealth(150.0f);
-	}
-	else {
-		sethealth(100.0f);
-	}
-
-	if (randomevent == 1) {
-		setAttack(24);
-	}
-	else {
-		setAttack(20);
-	}
-	
-	if (randomevent == 2) {
-		setDefence(7);
-	}
-	else {
-		setDefence(5);
-	}
-
+	sethealth(100.0f);
+	setAttack(20);
 	setAttackRange(1);
-
+	setDefence(5);
 	setBcoordX(0);
 	setBcoordY(0);
+	
+	for (int i = 0;i < 4; i++) {
+		// max lvl 1
+		boons[i].setBoons(1);
+	}
+	for (int i = 4;i < 7; i++) {
+		// max lvl 1
+		boons[i].setBoons(2);
+	}
+	for (int i = 7;i < 14; i++) {
+		// max lvl 1
+		boons[i].setBoons(3);
+	}
+	for (int i = 14;i < 16; i++) {
+		// max lvl 1
+		boons[i].setBoons(4);
+	}
+	for (int i = 16;i < 18; i++) {
+		// max lvl 1
+		boons[i].setBoons(5);
+	}
+	boons[18].setBoons(7);
+	boons[19].setBoons(4, 10);
+	boons[20].setBoons(3, 3);
 }
-
-
 
 void CPlayer::attacking(CEntity* target)
 {

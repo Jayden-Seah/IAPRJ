@@ -514,21 +514,34 @@ int main() {
 					}
 
 					for (int i = 0; i < numberOfBoardenemies; i++) {
+
 						if (Human[i] != nullptr) {
+							bool enemyCollide = true;
 							int repeatTimes = 1;
 							if (isThisRandomEventActive[0] == true) {
 								repeatTimes = 2;
 							}
 							for (int j = 0; j < repeatTimes; j++) {
+								if (Human[i]->getHumanTypeID() > 4) { //Check the human ID if it is legit or not
+									for (int p = 0; p < numberOfBlocks; p++) {
+										if (EnvironmentalObjects[p] != nullptr &&
+											Human[i]->isEntityGoingToOverlapInTheFuture(static_cast<CHuman*>(Human[i])->peekDirection(), EnvironmentalObjects[p])) {
+											enemyCollide = false;
+										}
+									}
+								}
 								if (Human[i]->detectPlayer(Player)) {
 									if (Human[i]->canEntityAttack) {
 										drawVFX(board, Human[i]->getCoordX(), Human[i]->getCoordY(), Human[i]->getAttack(), Human[i]->getAttackRange(), Player, "\033[31mO\033[0m", Human[i], 1);
 									}
 								}
+								if (enemyCollide) {
+									Human[i]->humanWander();
+								}
 							}
-							Human[i]->humanWander();
 						}
 					}
+
 					bool allowPlayerMovement = true;
 					int currentDirInt = 0;
 					if (currentDirCast == keybindings[2]) {
@@ -561,7 +574,7 @@ int main() {
 					}
 					currentDirCast = ' ';
 					std::this_thread::sleep_for(std::chrono::milliseconds(250));
-					clearScreen();
+					refreshScreen();
 				}
 
 				// print ENEMIES
@@ -674,6 +687,16 @@ int main() {
 							std::cin.get();
 							noOfDiag++;
 							if (noOfDiag == 4) {
+								int humanType = Human[getDialogueFromHumanNumber]->getHumanTypeID();
+								if (humanType == 3 || humanType == 4) {
+									char choice = _getch();
+									SpareOrKill::processInteraction(static_cast<CPlayer*>(Player), static_cast<CCanTalk*>(Human[getDialogueFromHumanNumber]), choice);
+									if (Human[getDialogueFromHumanNumber] != nullptr && Human[getDialogueFromHumanNumber]->getHealth() <= 0) {
+										delete Human[getDialogueFromHumanNumber];
+										Human[getDialogueFromHumanNumber] = nullptr;
+									}
+								}
+
 								isDialogueActive = false;
 							}
 						}
@@ -684,15 +707,6 @@ int main() {
 						//};
 						int unpausekey = _getch();
 						if (unpausekey == 27) {
-							int humanType = Human[getDialogueFromHumanNumber]->getHumanTypeID();
-							if (humanType == 3 || humanType == 4) {
-								char choice = _getch();
-								SpareOrKill::processInteraction(static_cast<CPlayer*>(Player), static_cast<CCanTalk*>(Human[getDialogueFromHumanNumber]), choice);
-								if (Human[getDialogueFromHumanNumber] != nullptr && Human[getDialogueFromHumanNumber]->getHealth() <= 0) {
-									delete Human[getDialogueFromHumanNumber];
-									Human[getDialogueFromHumanNumber] = nullptr;
-								}
-							}
 							isDialogueActive = false;
 							isPaused = false;
 						}
@@ -708,6 +722,8 @@ int main() {
 				}
 				// change this to smth else where it resets the board ya
 				if (CHuman::getKilledHumans() >= numberOfBoardenemies) {
+					Player->sethealth(Player->getHealth() + 15);
+					static_cast<CPlayer*>(Player);
 					for (int i = 0; i < numberOfBoardenemies; i++) {
 						if (Human[i] != nullptr) {
 							delete Human[i];
@@ -746,7 +762,7 @@ int main() {
 							}
 							std::cout << std::endl;
 						}
-						clearScreen();
+						refreshScreen();
 						std::this_thread::sleep_for(std::chrono::milliseconds(50));
 						// YOU DIED screen
 						// reset everything here ty
@@ -772,7 +788,7 @@ int main() {
 						int respawnKey = _getch();
 						if (respawnKey >= 0) {
 							inDeathScreen = false;
-							clearScreen();
+							refreshScreen();
 						}
 					}
 					delete Player;
@@ -790,7 +806,7 @@ int main() {
 			} while (boardState == false);
 		}
 		if ((boardState == true) and (playerHasDied == false)) { // traversel board, when you finish a stage on boards false, flip boolean to end up here
-			clearScreen(); // clear current board
+			refreshScreen(); // clear current board
 			int rows = 0;
 			int cols = 0;
 			switch (CEntity::getLevel()) {
@@ -1018,7 +1034,7 @@ int main() {
 					boardState = false;
 					hasPlayerFinishedTile[static_cast<CPlayer*>(Player)->getBcoordX()][static_cast<CPlayer*>(Player)->getBcoordY()] = true; //assume player finishes bc if player dies resets anyways
 				}
-				clearScreen();
+				refreshScreen();
 				// randomized events dont happen consistently so you cant see it so i can despawn the board
 				// before player gets sent, play randomized event anims here or smth 
 

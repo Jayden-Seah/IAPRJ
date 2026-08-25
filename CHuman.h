@@ -49,5 +49,7 @@ int* getEnemyPatrolType();
   void humanWander();
   bool detectPlayer(CEntity* target);
   bool chaseEntity(CEntity* target);
+
+  int peekDirection();
 };
 

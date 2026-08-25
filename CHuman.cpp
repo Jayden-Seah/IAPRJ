@@ -308,3 +308,29 @@ bool CHuman::chaseEntity(CEntity* target)
 
     return false;
 }
+
+int CHuman::peekDirection()
+{
+    switch (*getEnemyPatrolType()) {
+    case 1: // up/down patrol
+        if (*dirFlip == true) {
+            if (getCoordY() < 3) return 0; // about to flip, no real move this tick
+            return 1; // up
+        }
+        else {
+            if (getCoordY() > 9) return 0;
+            return 3; // down
+        }
+    case 2: // left/right patrol
+        if (*dirFlip == true) {
+            if (getCoordX() < 25) return 0;
+            return 2; // left
+        }
+        else {
+            if (getCoordX() > 50) return 0;
+            return 4; // right
+        }
+    default:
+        return 0;
+    }
+}

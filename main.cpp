@@ -1,5 +1,6 @@
 #define _USE_MATH_DEFINES
 #include <iostream>
+
 #include <conio.h>
 #include <chrono>
 #include <cmath>
@@ -10,6 +11,8 @@
 #include "CObject.h"
 #include "CItems.h"
 #include "CPlayer.h"
+#include "SpareOrKill.h"
+
 #include <random>//Random library
 #include <thread>
 #include <cctype>
@@ -23,7 +26,7 @@
 std::default_random_engine generator(std::random_device{}());//default random engine creates the random value, generator is just the name for it , std random device gives it a random starting point without it itll be the same evry time
 
 
-std::uniform_int_distribution<int> random(2, 1001);// uniform gives every num a equal chance, int is whole num, and distribution effectively says, give me a num from x to y
+std::uniform_int_distribution<int> random(0, 1000);// uniform gives every num a equal chance, int is whole num, and distribution effectively says, give me a num from x to y
 
 
 
@@ -42,13 +45,15 @@ void enableVirtualTerminal() {
 	SetConsoleMode(hOut, mode | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
 }
 
+void refreshScreen() { // mainly for switching boards
+	system("cls");
+}
 
-
-void clearScreen() {
+void clearScreen() { //mainly for textbox
 	std::cout << "\033[H\033[2J";
 }
 // func for aoe vfx, if you ahve time make it directional ig? its not that bad
-void drawVFX(std::vector<std::vector<std::string>>& board, int coorx, int coory, int atk, int atkr, CEntity *target, std::string vfxindicator, CEntity *caller, int atkcd) {
+void drawVFX(std::vector<std::vector<std::string>>& board, int coorx, int coory, int atk, int atkr, CEntity* target, std::string vfxindicator, CEntity* caller, int atkcd) {
 
 	if (caller->canEntityAttack) {
 		CEntity* VFX[8];
@@ -89,11 +94,11 @@ void drawVFX(std::vector<std::vector<std::string>>& board, int coorx, int coory,
 			delete VFX[i];
 		}
 	}
-	caller->canEntityAttack = false;
+	/*caller->canEntityAttack = false;
 	std::thread([caller, atkcd]() {
 		std::this_thread::sleep_for(std::chrono::seconds(atkcd));
 		caller->canEntityAttack = true;
-		}).detach();
+		}).detach();*/
 	return;
 }
 
@@ -679,6 +684,15 @@ int main() {
 						//};
 						int unpausekey = _getch();
 						if (unpausekey == 27) {
+							int humanType = Human[getDialogueFromHumanNumber]->getHumanTypeID();
+							if (humanType == 3 || humanType == 4) {
+								char choice = _getch();
+								SpareOrKill::processInteraction(static_cast<CPlayer*>(Player), static_cast<CCanTalk*>(Human[getDialogueFromHumanNumber]), choice);
+								if (Human[getDialogueFromHumanNumber] != nullptr && Human[getDialogueFromHumanNumber]->getHealth() <= 0) {
+									delete Human[getDialogueFromHumanNumber];
+									Human[getDialogueFromHumanNumber] = nullptr;
+								}
+							}
 							isDialogueActive = false;
 							isPaused = false;
 						}

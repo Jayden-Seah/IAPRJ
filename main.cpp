@@ -10,6 +10,7 @@
 #include "CObject.h"
 #include "CItems.h"
 #include "CPlayer.h"
+#include "SpareOrKill.h"
 #include <random>//Random library
 #include <thread>
 #include <cctype>
@@ -185,13 +186,11 @@ int main() {
 	bool isInOptions = true; // start screen v2 
 	bool hasPlayerUnlockedTile[7][7];
 	bool hasPlayerFinishedTile[7][7];
-	bool isThisanInaccessibleTile[7][7];
 	int getDialogueFromHumanNumber = 10;
 	for (int i = 0; i < 7; i++) {
 		for (int y = 0; y < 7; y++) {
 			hasPlayerUnlockedTile[i][y] = false;
 			hasPlayerFinishedTile[i][y] = false;
-			isThisanInaccessibleTile[i][y] = false;
 		}
 	}
 	// KEYBINDING HERE
@@ -664,8 +663,19 @@ int main() {
 							std::cin.get();
 							noOfDiag++;
 							if (noOfDiag == 4) {
+								int humanType = Human[getDialogueFromHumanNumber]->getHumanTypeID();
+								if (humanType == 3 || humanType == 4) {
+									char choice = _getch();
+									SpareOrKill::processInteraction(static_cast<CPlayer*>(Player), static_cast<CCanTalk*>(Human[getDialogueFromHumanNumber]), choice);
+									if (Human[getDialogueFromHumanNumber] != nullptr && Human[getDialogueFromHumanNumber]->getHealth() <= 0) {
+										delete Human[getDialogueFromHumanNumber];
+										Human[getDialogueFromHumanNumber] = nullptr;
+									}
+								}
 								isDialogueActive = false;
+								getDialogueFromHumanNumber = 10;
 							}
+
 						}
 					}
 					else { //PAUSE = TRUE
@@ -727,7 +737,7 @@ int main() {
 						std::cout << std::endl;
 						std::cout << std::endl;
 
-						std::cout << "You have fell to the nihilistic temptations offered by " << CCanTalk::getARandomName(random(generator)) << std::endl;
+						//std::cout << "You have fell to the nihilistic temptations offered by " << CCanTalk::getARandomName(random(generator)) << std::endl;
 
 						std::cout << std::endl;
 						std::cout << " -- Press Any Key to replay --" << std::endl;

@@ -1,9 +1,9 @@
 #pragma once
 #include <iostream>
 #include <string>
-#include "CCanTalk.h"
 
 class CPlayer;
+class CCanTalk;
 
 class SpareOrKill
 {
@@ -13,7 +13,7 @@ private:
 
 public:
     // Process interaction between CPlayer and a talkable CCanTalk NPC on the board grid
-    static void processInteraction(CPlayer* player, CCanTalk* npc, char board[10][104], int choice);
+    static void processInteraction(CPlayer* player, CCanTalk* npc, char choice);
 
     // Updates player Karma and recalculates stats
     static void applyKarmaChange(CPlayer* player, int karmaAmount);

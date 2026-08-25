@@ -13,14 +13,13 @@ CPlayer::CPlayer(int randv)
 		break;
 	}
 	karma = 50.0f;
-	previousKarma = 50.0f;
 	sethealth(100.0f);
 	setAttack(20);
 	setAttackRange(1);
 	setDefence(5);
 	setBcoordX(0);
 	setBcoordY(0);
-	PsetBoontext();
+	
 	for (int i = 0;i < 4; i++) {
 		// max lvl 1
 		boons[i].setBoons(1);
@@ -29,21 +28,21 @@ CPlayer::CPlayer(int randv)
 		// max lvl 1
 		boons[i].setBoons(2);
 	}
-	for (int i = 7;i < 13; i++) {
+	for (int i = 7;i < 14; i++) {
 		// max lvl 1
 		boons[i].setBoons(3);
 	}
-	for (int i = 13;i < 15; i++) {
+	for (int i = 14;i < 16; i++) {
 		// max lvl 1
 		boons[i].setBoons(4);
 	}
-	for (int i = 15;i < 17; i++) {
+	for (int i = 16;i < 18; i++) {
 		// max lvl 1
 		boons[i].setBoons(5);
 	}
-	boons[17].setBoons(7);
-	boons[18].setBoons(4, 10);
-	boons[19].setBoons(3, 3);
+	boons[18].setBoons(7);
+	boons[19].setBoons(4, 10);
+	boons[20].setBoons(3, 3);
 }
 
 void CPlayer::attacking(CEntity* target)

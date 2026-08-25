@@ -7,7 +7,20 @@ int Upgrade::killcount = 0;
 int Upgrade::pt = 5;
 
 
-void Upgrade::setBoons(int boonMaxLvl, int boonEffectChances = 0)
+Upgrade::Upgrade()
+{
+    upg1 = false;
+    upg2 = false;
+    upg3 = false;
+    upg4 = false;
+    upg5 = false;
+    boonLevel = 0;
+    boonMaxLevel = 0;
+    hasBoonEffectTriggered = false;
+    boonEffectChancesLeft = 0;
+}
+
+void Upgrade::setBoons(int boonMaxLvl, int boonEffectChances)
 {
     boonLevel = 0;
     boonMaxLevel = boonMaxLvl;
@@ -15,7 +28,49 @@ void Upgrade::setBoons(int boonMaxLvl, int boonEffectChances = 0)
     boonEffectChancesLeft = boonEffectChances;
 }
 
-void Upgrade::upgrade() {
+void Upgrade::setBoonlevel(int a)
+{
+    if (a <= boonMaxLevel) {
+        boonLevel = a;
+    }
+}
+
+void Upgrade::setBoonChances(int a)
+{
+    boonEffectChancesLeft = a;
+}
+
+void Upgrade::setBoonEffectStatus(bool a)
+{
+    hasBoonEffectTriggered = a;
+}
+
+void Upgrade::setBoontext(std::string a)
+{
+    boonFlavorText = a;
+}
+
+int Upgrade::getBoonLevel()
+{
+    return boonLevel;
+}
+
+int Upgrade::getBoonChances()
+{
+    return boonEffectChancesLeft;
+}
+
+bool Upgrade::getBoonEffectStatus()
+{
+    return hasBoonEffectTriggered;
+}
+
+std::string Upgrade::getBoonText()
+{
+    return boonFlavorText;
+}
+
+void Upgrade::upgrade(CEntity* target) {
     if (upg1 == false && killcount == 5) {
         //each upg will increase atk by 5, unless we want it to be a random thing then sure ig
         target->setAttack(25);

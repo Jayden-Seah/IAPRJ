@@ -1,8 +1,8 @@
 #pragma once
 #include <random>
+#include <iostream>
 #include <memory> // WHAT IS MEMORY
 #include "CEntity.h"
-#include "CPlayer.h"
 class Upgrade
 {
     static int killcount;
@@ -24,7 +24,7 @@ class Upgrade
     int boonMaxLevel;
     bool hasBoonEffectTriggered; //checks if boon effect has been procced
     int boonEffectChancesLeft; // for boon types requiring chances like Aptitude
-
+    std::string boonFlavorText; // include name \n quote and \n effect
 public:
     Upgrade();
 
@@ -49,5 +49,6 @@ public:
     void upgrade(CEntity* target);
 
     void unupgrade();
+
 
 };

@@ -5,8 +5,6 @@
 #include "CPlayer.h"
 class Upgrade
 {
-    CPlayer& Player;
-
     static int killcount;
 
     bool upg1 = false;
@@ -32,9 +30,24 @@ public:
 
     void setBoons(int boonMaxLvl, int boonEffectChances = 0);
 
-    void upgrade();
+    void setBoonlevel(int a);
+
+    void setBoonChances(int a);
+
+    void setBoonEffectStatus(bool a);
+
+    void setBoontext(std::string a);
+
+    int getBoonLevel();
+
+    int getBoonChances();
+
+    bool getBoonEffectStatus();
+
+    std::string getBoonText();
+
+    void upgrade(CEntity* target);
 
     void unupgrade();
-
 
 };

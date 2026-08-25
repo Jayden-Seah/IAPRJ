@@ -187,9 +187,9 @@ void CHuman::setHumanTypeID(int a)
     humanID = a;
 }
 
-void CHuman::resetkilledHumans()
+void CHuman::setkilledHumans(int a)
 {
-    numberOfKilledHumans = 0;
+    numberOfKilledHumans = a;
 }
 
 int CHuman::getKilledHumans()

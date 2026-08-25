@@ -6,7 +6,8 @@ class CPlayer :
 {
 	int defense;
 	float maxHP;
-	float karma;
+	float karma; // current, updating karma
+	float previousKarma; // last logged previous karma
 	int boardcoordX;
 	int boardcoordY;
 
@@ -46,6 +47,10 @@ public:
 
 	void setKarma(float k);
 
+	void setPreviousKarma(float k);
+
+	float getKarmaDifference();
+
 	void setmaxHP(float mhp);
 	float getmaxHP();
 
@@ -59,4 +64,21 @@ public:
 	int getBcoordY();
 	void setBcoordX(int f);
 	void setBcoordY(int f);
+
+	//boon stuff
+	void PsetBoonlevel(int a, int boonNumber);
+
+	void PsetBoonChances(int a, int boonNumber);
+
+	void PsetBoonEffectStatus(bool a, int boonNumber);
+
+	void PsetBoontext();
+
+	int PgetBoonLevel(int boonNumber);
+
+	int PgetBoonChances(int boonNumber);
+
+	bool PgetBoonEffectStatus(int boonNumber);
+
+	std::string PgetBoonText(int boonNumber);
 };

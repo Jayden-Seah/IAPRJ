@@ -56,6 +56,16 @@ void CPlayer::setKarma(float k) {
 	karma = k;
 }
 
+void CPlayer::setPreviousKarma(float k)
+{
+	previousKarma = k;
+}
+
+float CPlayer::getKarmaDifference()
+{
+	return karma - previousKarma;
+}
+
 void CPlayer::setDefence(int d)
 {
 	defense = d;
@@ -106,6 +116,67 @@ void CPlayer::setBcoordY(int f)
 {
 	boardcoordY = f;
 }
+
+void CPlayer::PsetBoonlevel(int a, int boonNumber)
+{
+	boons[boonNumber].setBoonlevel(a);
+}
+
+void CPlayer::PsetBoonChances(int a, int boonNumber)
+{
+	boons[boonNumber].setBoonChances(a);
+}
+
+void CPlayer::PsetBoonEffectStatus(bool a, int boonNumber)
+{
+	boons[boonNumber].setBoonEffectStatus(a);
+}
+
+void CPlayer::PsetBoontext()
+{
+		boons[0].setBoontext("\033[1mOde to Quietude, in Acceptance.\033[0m\n\033[3m“Peace, is that truly the color of your soul?”\033[0m\nThe first loss of HP you receive when entering the stage is nullified.");
+		boons[1].setBoontext("\033[1mNAME\033[0m\n\033[3mQUOTE\033[0m\nTEXT");
+		boons[2].setBoontext("\033[1mNAME\033[0m\n\033[3mQUOTE\033[0m\nTEXT");
+		boons[3].setBoontext("\033[1mNAME\033[0m\n\033[3mQUOTE\033[0m\nTEXT");
+		boons[4].setBoontext("\033[1mNAME\033[0m\n\033[3mQUOTE\033[0m\nTEXT");
+		boons[5].setBoontext("\033[1mNAME\033[0m\n\033[3mQUOTE\033[0m\nTEXT");
+		boons[6].setBoontext("\033[1mNAME\033[0m\n\033[3mQUOTE\033[0m\nTEXT");
+		boons[7].setBoontext("\033[1mNAME\033[0m\n\033[3mQUOTE\033[0m\nTEXT");
+		boons[8].setBoontext("\033[1mNAME\033[0m\n\033[3mQUOTE\033[0m\nTEXT");
+		boons[9].setBoontext("\033[1mNAME\033[0m\n\033[3mQUOTE\033[0m\nTEXT");
+		boons[10].setBoontext("\033[1mNAME\033[0m\n\033[3mQUOTE\033[0m\nTEXT");
+		boons[11].setBoontext("\033[1mNAME\033[0m\n\033[3mQUOTE\033[0m\nTEXT");
+		boons[12].setBoontext("\033[1mNAME\033[0m\n\033[3mQUOTE\033[0m\nTEXT");
+		boons[13].setBoontext("\033[1mNAME\033[0m\n\033[3mQUOTE\033[0m\nTEXT");
+		boons[14].setBoontext("\033[1mNAME\033[0m\n\033[3mQUOTE\033[0m\nTEXT");
+		boons[15].setBoontext("\033[1mNAME\033[0m\n\033[3mQUOTE\033[0m\nTEXT");
+		boons[16].setBoontext("\033[1mNAME\033[0m\n\033[3mQUOTE\033[0m\nTEXT");
+		boons[17].setBoontext("\033[1mNAME\033[0m\n\033[3mQUOTE\033[0m\nTEXT");
+		boons[18].setBoontext("\033[1mNAME\033[0m\n\033[3mQUOTE\033[0m\nTEXT");
+		boons[19].setBoontext("\033[1mNAME\033[0m\n\033[3mQUOTE\033[0m\nTEXT");
+}
+
+int CPlayer::PgetBoonLevel(int boonNumber)
+{
+	return boons[boonNumber].getBoonLevel();
+}
+
+int CPlayer::PgetBoonChances(int boonNumber)
+{
+	return boons[boonNumber].getBoonChances();
+}
+
+bool CPlayer::PgetBoonEffectStatus(int boonNumber)
+{
+	return boons[boonNumber].getBoonEffectStatus();
+}
+
+std::string CPlayer::PgetBoonText(int boonNumber)
+{
+	return boons[boonNumber].getBoonText();
+}
+
+
 
 
 

@@ -339,6 +339,7 @@ int main() {
 		}
 	}
 	while (playerHasEnded == false) { // create a new player manually when player dies
+		bool didPlayerGetaBoon = false;
 		const int MAX_RANDOMEVENTS = 7;
 		bool isThisRandomEventActive[MAX_RANDOMEVENTS];
 		for (int i = 0; i < MAX_RANDOMEVENTS; i++) {
@@ -474,6 +475,10 @@ int main() {
 				}
 				if (currentDirCast == 'O') {
 					Player->sethealth(0);
+				}
+				if (currentDirCast == 'P') { //instanly end current board
+					CHuman::setkilledHumans(100);
+					currentDirCast = ' ';
 				}
 				if (currentDirCast == keybindings[6]) {
 					isDialogueActive = true;
@@ -687,9 +692,27 @@ int main() {
 						std::cout << std::endl;
 					}
 				}
+				// change this to smth else where it resets the board ya
 				if (CHuman::getKilledHumans() >= numberOfBoardenemies) {
-					CHuman::resetkilledHumans();
+					for (int i = 0; i < numberOfBoardenemies; i++) {
+						if (Human[i] != nullptr) {
+							delete Human[i];
+							Human[i] = nullptr;
+						}
+					}
+					CHuman::setkilledHumans(0);
 					boardState = true;
+					// lets go boon gambling!
+					int randomizer = 0;
+					if (CPlayer::getLevel() == 0) {
+						randomizer = random(generator) % 3; // 1/3 chance
+					}
+					else {
+						randomizer = random(generator) % 5; // 1/5 chance
+					}
+					if (randomizer == 0) {
+						didPlayerGetaBoon = true;// later will check if player should get a boon
+				}
 					// FOR NOW since all enemies have to die you dont need to check to delete all enemies for prototype change ltr
 					for (int i = 0; i < numberOfBlocks; i++) {
 						delete EnvironmentalObjects[i];
@@ -770,6 +793,131 @@ int main() {
 				cols = 7;
 				break;
 			}
+			int boonID = 20;
+			// player receives boon here before moving/ascent/descent
+			if (didPlayerGetaBoon) {
+				bool typoboo = false;
+				if (static_cast<CPlayer*>(Player)->getKarmaDifference() > 0) { // positive
+					typoboo = true;
+				}
+				else {
+					typoboo = false;
+				}
+				switch (CPlayer::getLevel()) { // if lvl is not 0, means boon is active.
+				case 0:
+					switch (random(generator) % 3) {
+					case 0:
+						if (typoboo) { // positive
+							static_cast<CPlayer*>(Player)->PsetBoonlevel(static_cast<CPlayer*>(Player)->PgetBoonLevel(0) + 1, 0);
+							boonID = 0;
+						}
+						else {
+							static_cast<CPlayer*>(Player)->PsetBoonlevel(static_cast<CPlayer*>(Player)->PgetBoonLevel(7) + 1, 7);
+							boonID = 7;
+						}
+						break;
+					case 1:
+						if (typoboo) { // positive
+							static_cast<CPlayer*>(Player)->PsetBoonlevel(static_cast<CPlayer*>(Player)->PgetBoonLevel(18) + 1, 18);
+							boonID = 10;
+						}
+						else {
+							static_cast<CPlayer*>(Player)->PsetBoonlevel(static_cast<CPlayer*>(Player)->PgetBoonLevel(8) + 1, 8);
+							boonID = 8;
+						}
+						break;
+					case 2:
+						if (typoboo) { // positive
+							static_cast<CPlayer*>(Player)->PsetBoonlevel(static_cast<CPlayer*>(Player)->PgetBoonLevel(14) + 1, 14);
+							boonID = 14;
+						}
+						else {
+							static_cast<CPlayer*>(Player)->PsetBoonlevel(static_cast<CPlayer*>(Player)->PgetBoonLevel(9) + 1, 9);
+							boonID = 9;
+							break;
+						}
+					}
+					break;
+				case 1:
+					switch (random(generator) % 3) {
+					case 0:
+						if (typoboo) { // positive
+							static_cast<CPlayer*>(Player)->PsetBoonlevel(static_cast<CPlayer*>(Player)->PgetBoonLevel(13) + 1, 13);
+							boonID = 13;
+						}
+						else {
+							static_cast<CPlayer*>(Player)->PsetBoonlevel(static_cast<CPlayer*>(Player)->PgetBoonLevel(1) + 1, 1);
+							boonID = 1;
+						}
+						break;
+					case 1:
+						if (typoboo) { // positive
+							static_cast<CPlayer*>(Player)->PsetBoonlevel(static_cast<CPlayer*>(Player)->PgetBoonLevel(4) + 1, 4);
+							boonID = 4;
+						}
+						else {
+							static_cast<CPlayer*>(Player)->PsetBoonlevel(static_cast<CPlayer*>(Player)->PgetBoonLevel(2) + 1, 2);
+							boonID = 2;
+						}
+						break;
+					case 2:
+						if (typoboo) { // positive
+							static_cast<CPlayer*>(Player)->PsetBoonlevel(static_cast<CPlayer*>(Player)->PgetBoonLevel(10) + 1, 10);
+							boonID = 10;
+						}
+						else {
+							static_cast<CPlayer*>(Player)->PsetBoonlevel(static_cast<CPlayer*>(Player)->PgetBoonLevel(17) + 1, 17);
+							boonID = 17;
+						}
+						break;
+					}
+					break;
+				case -1:
+					switch (random(generator) % 4) {
+					case 0:
+						if (typoboo) { // positive
+							static_cast<CPlayer*>(Player)->PsetBoonlevel(static_cast<CPlayer*>(Player)->PgetBoonLevel(3) + 1, 3);
+							boonID = 3;
+						}
+						else {
+							static_cast<CPlayer*>(Player)->PsetBoonlevel(static_cast<CPlayer*>(Player)->PgetBoonLevel(11) + 1, 11);
+							boonID = 11;
+						}
+						break;
+					case 1:
+						if (typoboo) { // positive
+							static_cast<CPlayer*>(Player)->PsetBoonlevel(static_cast<CPlayer*>(Player)->PgetBoonLevel(12) + 1, 12);
+							boonID = 12;
+						}
+						else {
+							static_cast<CPlayer*>(Player)->PsetBoonlevel(static_cast<CPlayer*>(Player)->PgetBoonLevel(5) + 1, 5);
+							boonID = 5;
+						}
+						break;
+					case 2:
+						if (typoboo) { // positive
+							static_cast<CPlayer*>(Player)->PsetBoonlevel(static_cast<CPlayer*>(Player)->PgetBoonLevel(19) + 1, 19);
+							boonID = 19;
+						}
+						else {
+							static_cast<CPlayer*>(Player)->PsetBoonlevel(static_cast<CPlayer*>(Player)->PgetBoonLevel(6) + 1, 6);
+							boonID = 6;
+						}
+						break;
+					case 3:
+						if (typoboo) { // positive
+							static_cast<CPlayer*>(Player)->PsetBoonlevel(static_cast<CPlayer*>(Player)->PgetBoonLevel(16) + 1, 16);
+							boonID = 16;
+						}
+						else {
+							static_cast<CPlayer*>(Player)->PsetBoonlevel(static_cast<CPlayer*>(Player)->PgetBoonLevel(15) + 1, 15);
+							boonID = 15;
+						}
+						break;
+					}
+					break;
+				}
+			}
 			do {
 				// print board, level 0 5x5 grid, level 1 and -1 is a 7x7 grid
 
@@ -819,6 +967,15 @@ int main() {
 					}
 					std::cout << std::endl;
 				}
+				if (didPlayerGetaBoon) {
+					didPlayerGetaBoon = false;
+					std::cout << "--------------------------------" << std::endl;
+					std::cout << "    -- YOU HAVE RECEIVED --" << std::endl;
+					std::cout << "--------------------------------" << std::endl;
+					std::cout << static_cast<CPlayer*>(Player)->PgetBoonText(boonID) << std::endl;
+					boonID = 0;
+				}
+
 				char keydir = _getch();
 				keydir = (char)toupper(keydir);
 

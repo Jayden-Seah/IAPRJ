@@ -4,9 +4,19 @@
 #include "CObject.h"
 
 int Upgrade::killcount = 0;
+int Upgrade::pt = 5;
+
+
+void Upgrade::setBoons(int boonMaxLvl, int boonEffectChances = 0)
+{
+    boonLevel = 0;
+    boonMaxLevel = boonMaxLvl;
+    hasBoonEffectTriggered = false;
+    boonEffectChancesLeft = boonEffectChances;
+}
 
 void Upgrade::upgrade() {
-    if (upg1 = false && killcount == 5) {
+    if (upg1 == false && killcount == 5) {
         //each upg will increase atk by 5, unless we want it to be a random thing then sure ig
         Player.setAttack(25);
     }
@@ -23,6 +33,7 @@ void Upgrade::upgrade() {
         Player.setAttack(44);
     }
 }
+
 
 
 void Upgrade::unupgrade() {

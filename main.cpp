@@ -1,6 +1,5 @@
 #define _USE_MATH_DEFINES
 #include <iostream>
-
 #include <conio.h>
 #include <chrono>
 #include <cmath>
@@ -11,8 +10,6 @@
 #include "CObject.h"
 #include "CItems.h"
 #include "CPlayer.h"
-#include "SpareOrKill.h"
-
 #include <random>//Random library
 #include <thread>
 #include <cctype>
@@ -26,7 +23,7 @@
 std::default_random_engine generator(std::random_device{}());//default random engine creates the random value, generator is just the name for it , std random device gives it a random starting point without it itll be the same evry time
 
 
-std::uniform_int_distribution<int> random(0, 1000);// uniform gives every num a equal chance, int is whole num, and distribution effectively says, give me a num from x to y
+std::uniform_int_distribution<int> random(2, 1001);// uniform gives every num a equal chance, int is whole num, and distribution effectively says, give me a num from x to y
 
 
 
@@ -45,11 +42,9 @@ void enableVirtualTerminal() {
 	SetConsoleMode(hOut, mode | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
 }
 
-void refreshScreen() { // mainly for switching boards
-	system("cls");
-}
 
-void clearScreen() { //mainly for textbox
+
+void clearScreen() {
 	std::cout << "\033[H\033[2J";
 }
 // func for aoe vfx, if you ahve time make it directional ig? its not that bad
@@ -190,11 +185,13 @@ int main() {
 	bool isInOptions = true; // start screen v2 
 	bool hasPlayerUnlockedTile[7][7];
 	bool hasPlayerFinishedTile[7][7];
+	bool isThisanInaccessibleTile[7][7];
 	int getDialogueFromHumanNumber = 10;
 	for (int i = 0; i < 7; i++) {
 		for (int y = 0; y < 7; y++) {
 			hasPlayerUnlockedTile[i][y] = false;
 			hasPlayerFinishedTile[i][y] = false;
+			isThisanInaccessibleTile[i][y] = false;
 		}
 	}
 	// KEYBINDING HERE
@@ -264,7 +261,7 @@ int main() {
 				isInStartScreen = false;
 				playerHasEnded = true;
 			}
-			refreshScreen();
+			clearScreen();
 		} while (isInStartScreen);
 
 		// options screen: NOT inStartScreen, playerHasEnded TRUE
@@ -337,7 +334,7 @@ int main() {
 				}
 				pointer[selectedStringNumber] = '>';
 
-				refreshScreen();
+				clearScreen();
 			} while (isInStartScreen == false and playerHasEnded == true);
 		}
 	}
@@ -554,7 +551,7 @@ int main() {
 					}
 					currentDirCast = ' ';
 					std::this_thread::sleep_for(std::chrono::milliseconds(250));
-					refreshScreen();
+					clearScreen();
 				}
 
 				// print ENEMIES
@@ -667,19 +664,8 @@ int main() {
 							std::cin.get();
 							noOfDiag++;
 							if (noOfDiag == 4) {
-								int humanType = Human[getDialogueFromHumanNumber]->getHumanTypeID();
-								if (humanType == 3 || humanType == 4) {
-									char choice = _getch();
-									SpareOrKill::processInteraction(static_cast<CPlayer*>(Player), static_cast<CCanTalk*>(Human[getDialogueFromHumanNumber]), choice);
-									if (Human[getDialogueFromHumanNumber] != nullptr && Human[getDialogueFromHumanNumber]->getHealth() <= 0) {
-										delete Human[getDialogueFromHumanNumber];
-										Human[getDialogueFromHumanNumber] = nullptr;
-									}
-								}
 								isDialogueActive = false;
-								getDialogueFromHumanNumber = 10;
 							}
-
 						}
 					}
 					else { //PAUSE = TRUE
@@ -723,7 +709,7 @@ int main() {
 							}
 							std::cout << std::endl;
 						}
-						refreshScreen();
+						clearScreen();
 						std::this_thread::sleep_for(std::chrono::milliseconds(50));
 						// YOU DIED screen
 						// reset everything here ty
@@ -749,7 +735,7 @@ int main() {
 						int respawnKey = _getch();
 						if (respawnKey >= 0) {
 							inDeathScreen = false;
-							refreshScreen();
+							clearScreen();
 						}
 					}
 					delete Player;
@@ -767,7 +753,7 @@ int main() {
 			} while (boardState == false);
 		}
 		if ((boardState == true) and (playerHasDied == false)) { // traversel board, when you finish a stage on boards false, flip boolean to end up here
-			refreshScreen(); // clear current board
+			clearScreen(); // clear current board
 			int rows = 0;
 			int cols = 0;
 			switch (CEntity::getLevel()) {
@@ -861,7 +847,7 @@ int main() {
 					boardState = false;
 					hasPlayerFinishedTile[static_cast<CPlayer*>(Player)->getBcoordX()][static_cast<CPlayer*>(Player)->getBcoordY()] = true; //assume player finishes bc if player dies resets anyways
 				}
-				refreshScreen();
+				clearScreen();
 				// randomized events dont happen consistently so you cant see it so i can despawn the board
 				// before player gets sent, play randomized event anims here or smth 
 

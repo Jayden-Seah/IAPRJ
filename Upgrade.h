@@ -1,9 +1,9 @@
 #pragma once
 #include <random>
-#include <memory>
+#include <memory> // WHAT IS MEMORY
 #include "CEntity.h"
 #include "CPlayer.h"
-class Upgrade :public CPlayer
+class Upgrade
 {
     CPlayer& Player;
 
@@ -19,12 +19,18 @@ class Upgrade :public CPlayer
 
     bool upg5 = false;
 
-    int pt = 5;
-public:
+    static int pt;
 
-    Upgrade(CPlayer& Player) : Player(Player) {
-        
-    }
+    // boon related stuff
+    int boonLevel;
+    int boonMaxLevel;
+    bool hasBoonEffectTriggered; //checks if boon effect has been procced
+    int boonEffectChancesLeft; // for boon types requiring chances like Aptitude
+
+public:
+    Upgrade();
+
+    void setBoons(int boonMaxLvl, int boonEffectChances = 0);
 
     void upgrade();
 
@@ -32,4 +38,3 @@ public:
 
 
 };
-

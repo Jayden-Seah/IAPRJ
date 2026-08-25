@@ -417,7 +417,21 @@ int main() {
 				}
 			}
 
-
+			int boon9changer = 0;
+			switch (Player->PgetBoonLevel(9)) {//boon9 bloodthirsty, will trigger on one random enemy regardless and only at the start so effect chance bool doesnt need to be change
+			case 1:
+				boon9changer = 0.20;
+				break;
+			case 2:
+				boon9changer = 0.25;
+				break;
+			case 3:
+				boon9changer = 0.35;
+				break;
+			}
+			// pick a random human and subtract hp from boon9changer
+			int unluckyHuman = random(generator) % numberOfBoardenemies;
+			Human[unluckyHuman]->sethealth(Human[unluckyHuman]->getHealth() * (1 - boon9changer));
 
 			int rows = 120;
 			int cols = 17;

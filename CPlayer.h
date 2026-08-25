@@ -25,18 +25,18 @@ class CPlayer :
 	5 - Unreleased Agony 2 -1 -karma
 	6 - Claim of the Forsaken 2 -1 -karma
 	7 - Anti Asphyxiation 3 0 -karma
-	9 - radical inaction 3 0 -karma
-	10 - bloodthirsty fervor 3 0 -karma
-	11 - Disturbance of Lux 3 1 +karma
-	12 - cerominial sac 3 -1 -karma
-	13 - recreation 3 -1 +karma
-	14 - Alius 4 1 +karma
-	15 - beningly lies 4 0 +karma
-	16 - malevorance 5 -1 -karma
-	17 - Poise 5 -1 +karma
-	18 - pseudobulbar affect 7 1 -karma
-	19 - Frazzled Beginnings 4 0 +karma 10 MAX
-	20 - aptitude 3 -1 +karma 3 MAX
+	8 - radical inaction 3 0 -karma
+	9 - bloodthirsty fervor 3 0 -karma
+	10 - Disturbance of Lux 3 1 +karma
+	11 - cerominial sac 3 -1 -karma
+	12 - recreation 3 -1 +karma
+	13 - Alius 4 1 +karma
+	14 - beningly lies 4 0 +karma
+	15 - malevorance 5 -1 -karma
+	16 - Poise 5 -1 +karma
+	17 - pseudobulbar affect 7 1 -karma
+	18 - Frazzled Beginnings 4 0 +karma 10 MAX
+	19 - aptitude 3 -1 +karma 3 MAX
 	*/
 public:
 	CPlayer();

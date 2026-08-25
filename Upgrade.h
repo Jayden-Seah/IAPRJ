@@ -1,12 +1,10 @@
 #pragma once
 #include <random>
-#include <memory>
+#include <iostream>
+#include <memory> // WHAT IS MEMORY
 #include "CEntity.h"
-#include "CPlayer.h"
-class Upgrade :public CPlayer
+class Upgrade
 {
-    CPlayer& Player;
-
     static int killcount;
 
     bool upg1 = false;
@@ -19,17 +17,38 @@ class Upgrade :public CPlayer
 
     bool upg5 = false;
 
-    int pt = 5;
+    static int pt;
+
+    // boon related stuff
+    int boonLevel;
+    int boonMaxLevel;
+    bool hasBoonEffectTriggered; //checks if boon effect has been procced
+    int boonEffectChancesLeft; // for boon types requiring chances like Aptitude
+    std::string boonFlavorText; // include name \n quote and \n effect
 public:
+    Upgrade();
 
-    Upgrade(CPlayer& Player) : Player(Player) {
-        
-    }
+    void setBoons(int boonMaxLvl, int boonEffectChances = 0);
 
-    void upgrade();
+    void setBoonlevel(int a);
+
+    void setBoonChances(int a);
+
+    void setBoonEffectStatus(bool a);
+
+    void setBoontext(std::string a);
+
+    int getBoonLevel();
+
+    int getBoonChances();
+
+    bool getBoonEffectStatus();
+
+    std::string getBoonText();
+
+    void upgrade(CEntity* target);
 
     void unupgrade();
 
 
 };
-

@@ -1,6 +1,5 @@
 #define _USE_MATH_DEFINES
 #include <iostream>
-
 #include <conio.h>
 #include <chrono>
 #include <cmath>
@@ -11,8 +10,6 @@
 #include "CObject.h"
 #include "CItems.h"
 #include "CPlayer.h"
-#include "SpareOrKill.h"
-
 #include <random>//Random library
 #include <thread>
 #include <cctype>
@@ -26,7 +23,7 @@
 std::default_random_engine generator(std::random_device{}());//default random engine creates the random value, generator is just the name for it , std random device gives it a random starting point without it itll be the same evry time
 
 
-std::uniform_int_distribution<int> random(0, 1000);// uniform gives every num a equal chance, int is whole num, and distribution effectively says, give me a num from x to y
+std::uniform_int_distribution<int> random(2, 1001);// uniform gives every num a equal chance, int is whole num, and distribution effectively says, give me a num from x to y
 
 
 
@@ -45,11 +42,9 @@ void enableVirtualTerminal() {
 	SetConsoleMode(hOut, mode | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
 }
 
-void refreshScreen() { // mainly for switching boards
-	system("cls");
-}
 
-void clearScreen() { //mainly for textbox
+
+void clearScreen() {
 	std::cout << "\033[H\033[2J";
 }
 // func for aoe vfx, if you ahve time make it directional ig? its not that bad
@@ -190,11 +185,13 @@ int main() {
 	bool isInOptions = true; // start screen v2 
 	bool hasPlayerUnlockedTile[7][7];
 	bool hasPlayerFinishedTile[7][7];
+	bool isThisanInaccessibleTile[7][7];
 	int getDialogueFromHumanNumber = 10;
 	for (int i = 0; i < 7; i++) {
 		for (int y = 0; y < 7; y++) {
 			hasPlayerUnlockedTile[i][y] = false;
 			hasPlayerFinishedTile[i][y] = false;
+			isThisanInaccessibleTile[i][y] = false;
 		}
 	}
 	// KEYBINDING HERE
@@ -264,7 +261,7 @@ int main() {
 				isInStartScreen = false;
 				playerHasEnded = true;
 			}
-			refreshScreen();
+			clearScreen();
 		} while (isInStartScreen);
 
 		// options screen: NOT inStartScreen, playerHasEnded TRUE
@@ -337,11 +334,12 @@ int main() {
 				}
 				pointer[selectedStringNumber] = '>';
 
-				refreshScreen();
+				clearScreen();
 			} while (isInStartScreen == false and playerHasEnded == true);
 		}
 	}
 	while (playerHasEnded == false) { // create a new player manually when player dies
+		bool didPlayerGetaBoon = false;
 		const int MAX_RANDOMEVENTS = 7;
 		bool isThisRandomEventActive[MAX_RANDOMEVENTS];
 		for (int i = 0; i < MAX_RANDOMEVENTS; i++) {
@@ -478,6 +476,10 @@ int main() {
 				if (currentDirCast == 'O') {
 					Player->sethealth(0);
 				}
+				if (currentDirCast == 'P') { //instanly end current board
+					CHuman::setkilledHumans(100);
+					currentDirCast = ' ';
+				}
 				if (currentDirCast == keybindings[6]) {
 					isDialogueActive = true;
 					isPaused = true;
@@ -554,7 +556,7 @@ int main() {
 					}
 					currentDirCast = ' ';
 					std::this_thread::sleep_for(std::chrono::milliseconds(250));
-					refreshScreen();
+					clearScreen();
 				}
 
 				// print ENEMIES
@@ -667,19 +669,8 @@ int main() {
 							std::cin.get();
 							noOfDiag++;
 							if (noOfDiag == 4) {
-								int humanType = Human[getDialogueFromHumanNumber]->getHumanTypeID();
-								if (humanType == 3 || humanType == 4) {
-									char choice = _getch();
-									SpareOrKill::processInteraction(static_cast<CPlayer*>(Player), static_cast<CCanTalk*>(Human[getDialogueFromHumanNumber]), choice);
-									if (Human[getDialogueFromHumanNumber] != nullptr && Human[getDialogueFromHumanNumber]->getHealth() <= 0) {
-										delete Human[getDialogueFromHumanNumber];
-										Human[getDialogueFromHumanNumber] = nullptr;
-									}
-								}
 								isDialogueActive = false;
-								getDialogueFromHumanNumber = 10;
 							}
-
 						}
 					}
 					else { //PAUSE = TRUE
@@ -701,9 +692,27 @@ int main() {
 						std::cout << std::endl;
 					}
 				}
+				// change this to smth else where it resets the board ya
 				if (CHuman::getKilledHumans() >= numberOfBoardenemies) {
-					CHuman::resetkilledHumans();
+					for (int i = 0; i < numberOfBoardenemies; i++) {
+						if (Human[i] != nullptr) {
+							delete Human[i];
+							Human[i] = nullptr;
+						}
+					}
+					CHuman::setkilledHumans(0);
 					boardState = true;
+					// lets go boon gambling!
+					int randomizer = 0;
+					if (CPlayer::getLevel() == 0) {
+						randomizer = random(generator) % 3; // 1/3 chance
+					}
+					else {
+						randomizer = random(generator) % 5; // 1/5 chance
+					}
+					if (randomizer == 0) {
+						didPlayerGetaBoon = true;// later will check if player should get a boon
+				}
 					// FOR NOW since all enemies have to die you dont need to check to delete all enemies for prototype change ltr
 					for (int i = 0; i < numberOfBlocks; i++) {
 						delete EnvironmentalObjects[i];
@@ -723,7 +732,7 @@ int main() {
 							}
 							std::cout << std::endl;
 						}
-						refreshScreen();
+						clearScreen();
 						std::this_thread::sleep_for(std::chrono::milliseconds(50));
 						// YOU DIED screen
 						// reset everything here ty
@@ -749,7 +758,7 @@ int main() {
 						int respawnKey = _getch();
 						if (respawnKey >= 0) {
 							inDeathScreen = false;
-							refreshScreen();
+							clearScreen();
 						}
 					}
 					delete Player;
@@ -767,7 +776,7 @@ int main() {
 			} while (boardState == false);
 		}
 		if ((boardState == true) and (playerHasDied == false)) { // traversel board, when you finish a stage on boards false, flip boolean to end up here
-			refreshScreen(); // clear current board
+			clearScreen(); // clear current board
 			int rows = 0;
 			int cols = 0;
 			switch (CEntity::getLevel()) {
@@ -783,6 +792,131 @@ int main() {
 				rows = 7;
 				cols = 7;
 				break;
+			}
+			int boonID = 20;
+			// player receives boon here before moving/ascent/descent
+			if (didPlayerGetaBoon) {
+				bool typoboo = false;
+				if (static_cast<CPlayer*>(Player)->getKarmaDifference() > 0) { // positive
+					typoboo = true;
+				}
+				else {
+					typoboo = false;
+				}
+				switch (CPlayer::getLevel()) { // if lvl is not 0, means boon is active.
+				case 0:
+					switch (random(generator) % 3) {
+					case 0:
+						if (typoboo) { // positive
+							static_cast<CPlayer*>(Player)->PsetBoonlevel(static_cast<CPlayer*>(Player)->PgetBoonLevel(0) + 1, 0);
+							boonID = 0;
+						}
+						else {
+							static_cast<CPlayer*>(Player)->PsetBoonlevel(static_cast<CPlayer*>(Player)->PgetBoonLevel(7) + 1, 7);
+							boonID = 7;
+						}
+						break;
+					case 1:
+						if (typoboo) { // positive
+							static_cast<CPlayer*>(Player)->PsetBoonlevel(static_cast<CPlayer*>(Player)->PgetBoonLevel(18) + 1, 18);
+							boonID = 10;
+						}
+						else {
+							static_cast<CPlayer*>(Player)->PsetBoonlevel(static_cast<CPlayer*>(Player)->PgetBoonLevel(8) + 1, 8);
+							boonID = 8;
+						}
+						break;
+					case 2:
+						if (typoboo) { // positive
+							static_cast<CPlayer*>(Player)->PsetBoonlevel(static_cast<CPlayer*>(Player)->PgetBoonLevel(14) + 1, 14);
+							boonID = 14;
+						}
+						else {
+							static_cast<CPlayer*>(Player)->PsetBoonlevel(static_cast<CPlayer*>(Player)->PgetBoonLevel(9) + 1, 9);
+							boonID = 9;
+							break;
+						}
+					}
+					break;
+				case 1:
+					switch (random(generator) % 3) {
+					case 0:
+						if (typoboo) { // positive
+							static_cast<CPlayer*>(Player)->PsetBoonlevel(static_cast<CPlayer*>(Player)->PgetBoonLevel(13) + 1, 13);
+							boonID = 13;
+						}
+						else {
+							static_cast<CPlayer*>(Player)->PsetBoonlevel(static_cast<CPlayer*>(Player)->PgetBoonLevel(1) + 1, 1);
+							boonID = 1;
+						}
+						break;
+					case 1:
+						if (typoboo) { // positive
+							static_cast<CPlayer*>(Player)->PsetBoonlevel(static_cast<CPlayer*>(Player)->PgetBoonLevel(4) + 1, 4);
+							boonID = 4;
+						}
+						else {
+							static_cast<CPlayer*>(Player)->PsetBoonlevel(static_cast<CPlayer*>(Player)->PgetBoonLevel(2) + 1, 2);
+							boonID = 2;
+						}
+						break;
+					case 2:
+						if (typoboo) { // positive
+							static_cast<CPlayer*>(Player)->PsetBoonlevel(static_cast<CPlayer*>(Player)->PgetBoonLevel(10) + 1, 10);
+							boonID = 10;
+						}
+						else {
+							static_cast<CPlayer*>(Player)->PsetBoonlevel(static_cast<CPlayer*>(Player)->PgetBoonLevel(17) + 1, 17);
+							boonID = 17;
+						}
+						break;
+					}
+					break;
+				case -1:
+					switch (random(generator) % 4) {
+					case 0:
+						if (typoboo) { // positive
+							static_cast<CPlayer*>(Player)->PsetBoonlevel(static_cast<CPlayer*>(Player)->PgetBoonLevel(3) + 1, 3);
+							boonID = 3;
+						}
+						else {
+							static_cast<CPlayer*>(Player)->PsetBoonlevel(static_cast<CPlayer*>(Player)->PgetBoonLevel(11) + 1, 11);
+							boonID = 11;
+						}
+						break;
+					case 1:
+						if (typoboo) { // positive
+							static_cast<CPlayer*>(Player)->PsetBoonlevel(static_cast<CPlayer*>(Player)->PgetBoonLevel(12) + 1, 12);
+							boonID = 12;
+						}
+						else {
+							static_cast<CPlayer*>(Player)->PsetBoonlevel(static_cast<CPlayer*>(Player)->PgetBoonLevel(5) + 1, 5);
+							boonID = 5;
+						}
+						break;
+					case 2:
+						if (typoboo) { // positive
+							static_cast<CPlayer*>(Player)->PsetBoonlevel(static_cast<CPlayer*>(Player)->PgetBoonLevel(19) + 1, 19);
+							boonID = 19;
+						}
+						else {
+							static_cast<CPlayer*>(Player)->PsetBoonlevel(static_cast<CPlayer*>(Player)->PgetBoonLevel(6) + 1, 6);
+							boonID = 6;
+						}
+						break;
+					case 3:
+						if (typoboo) { // positive
+							static_cast<CPlayer*>(Player)->PsetBoonlevel(static_cast<CPlayer*>(Player)->PgetBoonLevel(16) + 1, 16);
+							boonID = 16;
+						}
+						else {
+							static_cast<CPlayer*>(Player)->PsetBoonlevel(static_cast<CPlayer*>(Player)->PgetBoonLevel(15) + 1, 15);
+							boonID = 15;
+						}
+						break;
+					}
+					break;
+				}
 			}
 			do {
 				// print board, level 0 5x5 grid, level 1 and -1 is a 7x7 grid
@@ -833,6 +967,15 @@ int main() {
 					}
 					std::cout << std::endl;
 				}
+				if (didPlayerGetaBoon) {
+					didPlayerGetaBoon = false;
+					std::cout << "--------------------------------" << std::endl;
+					std::cout << "    -- YOU HAVE RECEIVED --" << std::endl;
+					std::cout << "--------------------------------" << std::endl;
+					std::cout << static_cast<CPlayer*>(Player)->PgetBoonText(boonID) << std::endl;
+					boonID = 0;
+				}
+
 				char keydir = _getch();
 				keydir = (char)toupper(keydir);
 
@@ -861,7 +1004,7 @@ int main() {
 					boardState = false;
 					hasPlayerFinishedTile[static_cast<CPlayer*>(Player)->getBcoordX()][static_cast<CPlayer*>(Player)->getBcoordY()] = true; //assume player finishes bc if player dies resets anyways
 				}
-				refreshScreen();
+				clearScreen();
 				// randomized events dont happen consistently so you cant see it so i can despawn the board
 				// before player gets sent, play randomized event anims here or smth 
 

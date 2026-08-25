@@ -12,38 +12,39 @@ CPlayer::CPlayer(int randv)
 		setCoordX(103);
 		break;
 	}
-	srand(static_cast<int>(time(0)));
-	int randomevent = rand() % 3;
-
 	karma = 50.0f;
-	if (randomevent == 0) {
-		sethealth(150.0f);
-	}
-	else {
-		sethealth(100.0f);
-	}
-
-	if (randomevent == 1) {
-		setAttack(24);
-	}
-	else {
-		setAttack(20);
-	}
-	
-	if (randomevent == 2) {
-		setDefence(7);
-	}
-	else {
-		setDefence(5);
-	}
-
+	previousKarma = 50.0f;
+	sethealth(100.0f);
+	setAttack(20);
 	setAttackRange(1);
-
+	setDefence(5);
 	setBcoordX(0);
 	setBcoordY(0);
+	PsetBoontext();
+	for (int i = 0;i < 4; i++) {
+		// max lvl 1
+		boons[i].setBoons(1);
+	}
+	for (int i = 4;i < 7; i++) {
+		// max lvl 1
+		boons[i].setBoons(2);
+	}
+	for (int i = 7;i < 13; i++) {
+		// max lvl 1
+		boons[i].setBoons(3);
+	}
+	for (int i = 13;i < 15; i++) {
+		// max lvl 1
+		boons[i].setBoons(4);
+	}
+	for (int i = 15;i < 17; i++) {
+		// max lvl 1
+		boons[i].setBoons(5);
+	}
+	boons[17].setBoons(7);
+	boons[18].setBoons(4, 10);
+	boons[19].setBoons(3, 3);
 }
-
-
 
 void CPlayer::attacking(CEntity* target)
 {
@@ -54,6 +55,16 @@ void CPlayer::attacking(CEntity* target)
 
 void CPlayer::setKarma(float k) {
 	karma = k;
+}
+
+void CPlayer::setPreviousKarma(float k)
+{
+	previousKarma = k;
+}
+
+float CPlayer::getKarmaDifference()
+{
+	return karma - previousKarma;
 }
 
 void CPlayer::setDefence(int d)
@@ -106,6 +117,67 @@ void CPlayer::setBcoordY(int f)
 {
 	boardcoordY = f;
 }
+
+void CPlayer::PsetBoonlevel(int a, int boonNumber)
+{
+	boons[boonNumber].setBoonlevel(a);
+}
+
+void CPlayer::PsetBoonChances(int a, int boonNumber)
+{
+	boons[boonNumber].setBoonChances(a);
+}
+
+void CPlayer::PsetBoonEffectStatus(bool a, int boonNumber)
+{
+	boons[boonNumber].setBoonEffectStatus(a);
+}
+
+void CPlayer::PsetBoontext()
+{
+		boons[0].setBoontext("\033[1mOde to Quietude, in Acceptance.\033[0m\n\033[3m“Peace, is that truly the color of your soul?”\033[0m\nThe first loss of HP you receive when entering the stage is nullified.");
+		boons[1].setBoontext("\033[1mNAME\033[0m\n\033[3mQUOTE\033[0m\nTEXT");
+		boons[2].setBoontext("\033[1mNAME\033[0m\n\033[3mQUOTE\033[0m\nTEXT");
+		boons[3].setBoontext("\033[1mNAME\033[0m\n\033[3mQUOTE\033[0m\nTEXT");
+		boons[4].setBoontext("\033[1mNAME\033[0m\n\033[3mQUOTE\033[0m\nTEXT");
+		boons[5].setBoontext("\033[1mNAME\033[0m\n\033[3mQUOTE\033[0m\nTEXT");
+		boons[6].setBoontext("\033[1mNAME\033[0m\n\033[3mQUOTE\033[0m\nTEXT");
+		boons[7].setBoontext("\033[1mNAME\033[0m\n\033[3mQUOTE\033[0m\nTEXT");
+		boons[8].setBoontext("\033[1mNAME\033[0m\n\033[3mQUOTE\033[0m\nTEXT");
+		boons[9].setBoontext("\033[1mNAME\033[0m\n\033[3mQUOTE\033[0m\nTEXT");
+		boons[10].setBoontext("\033[1mNAME\033[0m\n\033[3mQUOTE\033[0m\nTEXT");
+		boons[11].setBoontext("\033[1mNAME\033[0m\n\033[3mQUOTE\033[0m\nTEXT");
+		boons[12].setBoontext("\033[1mNAME\033[0m\n\033[3mQUOTE\033[0m\nTEXT");
+		boons[13].setBoontext("\033[1mNAME\033[0m\n\033[3mQUOTE\033[0m\nTEXT");
+		boons[14].setBoontext("\033[1mNAME\033[0m\n\033[3mQUOTE\033[0m\nTEXT");
+		boons[15].setBoontext("\033[1mNAME\033[0m\n\033[3mQUOTE\033[0m\nTEXT");
+		boons[16].setBoontext("\033[1mNAME\033[0m\n\033[3mQUOTE\033[0m\nTEXT");
+		boons[17].setBoontext("\033[1mNAME\033[0m\n\033[3mQUOTE\033[0m\nTEXT");
+		boons[18].setBoontext("\033[1mNAME\033[0m\n\033[3mQUOTE\033[0m\nTEXT");
+		boons[19].setBoontext("\033[1mNAME\033[0m\n\033[3mQUOTE\033[0m\nTEXT");
+}
+
+int CPlayer::PgetBoonLevel(int boonNumber)
+{
+	return boons[boonNumber].getBoonLevel();
+}
+
+int CPlayer::PgetBoonChances(int boonNumber)
+{
+	return boons[boonNumber].getBoonChances();
+}
+
+bool CPlayer::PgetBoonEffectStatus(int boonNumber)
+{
+	return boons[boonNumber].getBoonEffectStatus();
+}
+
+std::string CPlayer::PgetBoonText(int boonNumber)
+{
+	return boons[boonNumber].getBoonText();
+}
+
+
 
 
 

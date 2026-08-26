@@ -153,8 +153,8 @@ void CHuman::createTypeExplodingHuman(int randd)
 {
     setAttack(9);
     sethealth(1);
-    setAttackRange(1);
-    DetectionRange = 10;
+    setAttackRange(3);
+    DetectionRange = 15;
     isEntityPatrolling = false;
 }
 
@@ -259,14 +259,16 @@ void CHuman::humanWander() // add collision checks
 bool CHuman::detectPlayer(CEntity* target)
 {
     // detect player starts chase entity so i dont have to call both 
-    int dx = abs(getCoordX() - target->getCoordX());
-    int dy = abs(getCoordY() - target->getCoordY());
-    int dr = DetectionRange;
+    if (getHumanTypeID() > 4) {
+        int dx = abs(getCoordX() - target->getCoordX());
+        int dy = abs(getCoordY() - target->getCoordY());
+        int dr = DetectionRange;
 
-    if ((dx + dy) <= dr) {
-        DetectionRange += 10; //increase detection by 10 so its hard to outrun
-        bool e = chaseEntity(target);
-        return e;  // summon vfx if entity is in attack range
+        if ((dx + dy) <= dr) {
+            DetectionRange += 10; //increase detection by 10 so its hard to outrun
+            bool e = chaseEntity(target);
+            return e;  // summon vfx if entity is in attack range
+        }
     }
 
     return false;
@@ -308,6 +310,37 @@ bool CHuman::chaseEntity(CEntity* target)
     }
 
     return false;
+}
+
+void CHuman::runFromEntity(CEntity* target)
+{
+    if (isEntityRunningFromPlayer) {
+        if (isEntityOutofBounds() == false) { //sets entity back in bounds
+            if (isEntityOverlapping(target) == false) {
+            int dx = (getCoordX() - target->getCoordX());
+            int dy = (getCoordY() - target->getCoordY());
+            if (abs(dx) >= abs(dy)) { // move x
+                if (dx > 0) { // if dx is positive, move negative
+                    setCoordX(getCoordX() + 1);
+                }
+                else {
+                    setCoordX(getCoordX() - 1);
+                }
+            }
+            else { // mpve y
+                if (dy > 0) {
+                    setCoordY(getCoordY() + 1);
+                }
+                else {
+                    setCoordY(getCoordY() - 1);
+                    if (getCoordY() < 2) {
+                        setCoordY(2);
+                    }
+                }
+            }
+            }
+        }
+    }
 }
 
 int CHuman::peekDirection()

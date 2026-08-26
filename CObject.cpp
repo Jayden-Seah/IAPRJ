@@ -1,5 +1,15 @@
 #include "CObject.h"
 
+CObject::CObject()
+{
+}
+
+CObject::CObject(int randv)
+{
+	coordX = randv % 100 + 1;
+	coordY = randv % 8 + 1;
+}
+
 int CObject::getCoordX()
 {
 	return coordX;

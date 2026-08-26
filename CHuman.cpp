@@ -151,9 +151,10 @@ void CHuman::createType2RedHuman(int randd)
 
 void CHuman::createTypeExplodingHuman(int randd)
 {
-    setAttack(90);
+    setAttack(9);
     sethealth(1);
-    setAttackRange(5);
+    setAttackRange(1);
+    DetectionRange = 10;
     isEntityPatrolling = false;
 }
 

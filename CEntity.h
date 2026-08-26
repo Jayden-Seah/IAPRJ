@@ -35,6 +35,7 @@ public:
  virtual void humanWander();
  virtual int getHumanTypeID();
  virtual int PgetBoonLevel(int boonNumber);
+ virtual void setRoamStatus(bool a);
 
 };
 

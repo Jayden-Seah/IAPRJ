@@ -16,40 +16,39 @@ class CHuman :
     bool isEntityShooter;
     static int numberOfKilledHumans;
 
-     
+
 public:
     CHuman();
     ~CHuman();
     CHuman(int randvalue, int randid);
 
     bool getFollowStatus();
-   bool getRoamStatus();
-   bool getRunningAwayStatus();
-   int getDetectionRange();
-int getHumantagID();
-int getHumanTypeID();
-int* getEnemyPatrolType();
+    bool getRoamStatus();
+    bool getRunningAwayStatus();
+    int getDetectionRange();
+    int getHumantagID();
+    int getHumanTypeID();
+    int* getEnemyPatrolType();
 
-   void createType1RedHuman(int randd);
-   void createType2RedHuman(int randd);
-   void createTypeExplodingHuman(int randd);
+    void createType1RedHuman(int randd);
+    void createType2RedHuman(int randd);
+    void createTypeExplodingHuman(int randd);
 
-   void setDetectionRange(int a);
-   void setFollowStatus(bool a);
-   void setRoamStatus(bool a);
-   void setRunningAwayStatus(bool a);
-   void setShooterStatus(bool a);
-   void setHumanTypeID(int a);
- 
+    void setDetectionRange(int a);
+    void setFollowStatus(bool a);
+    void setRoamStatus(bool a);
+    void setRunningAwayStatus(bool a);
+    void setShooterStatus(bool a);
+    void setHumanTypeID(int a);
 
-   static void setkilledHumans(int a);
-   static int getKilledHumans();
-   void resetHumanID();
-  void increaseHumanID();
-  void humanWander();
-  bool detectPlayer(CEntity* target);
-  bool chaseEntity(CEntity* target);
 
-  int peekDirection();
+    static void setkilledHumans(int a);
+    static int getKilledHumans();
+    void resetHumanID();
+    void increaseHumanID();
+    void humanWander();
+    bool detectPlayer(CEntity* target);
+    bool chaseEntity(CEntity* target);
+
+    int peekDirection();
 };
-

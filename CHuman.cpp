@@ -2,7 +2,7 @@
 #include "CCanTalk.h"
 #include <iostream>
 
-int CHuman::maxhumanID = 0; 
+int CHuman::maxhumanID = 0;
 int CHuman::numberOfKilledHumans = 0;
 
 
@@ -11,7 +11,7 @@ CHuman::CHuman()
     DetectionRange = 0;
     isEntityFollowingPlayer = false;
     isEntityRunningFromPlayer = false;
-    isEntityShooter = false; 
+    isEntityShooter = false;
     isEntityPatrolling = false;
     humanID = 0;
     currenthumanID = 0;
@@ -262,7 +262,7 @@ bool CHuman::detectPlayer(CEntity* target)
     int dy = abs(getCoordY() - target->getCoordY());
     int dr = DetectionRange;
 
-    if ((dx + dy) <= dr){
+    if ((dx + dy) <= dr) {
         DetectionRange += 10; //increase detection by 10 so its hard to outrun
         bool e = chaseEntity(target);
         return e;  // summon vfx if entity is in attack range
@@ -279,7 +279,7 @@ bool CHuman::chaseEntity(CEntity* target)
     if (isEntityOutofBounds() == false) { //sets entity back in bounds
         int dx = (getCoordX() - target->getCoordX());
         int dy = (getCoordY() - target->getCoordY());
-       int moveAmt = 0;
+        int moveAmt = 0;
         if (abs(dx) >= abs(dy)) { // move x
             if (dx != 0) {
                 moveAmt = dx / abs(dx); // 3 / -3 gives -1. 3/3 gives 1.
@@ -301,7 +301,7 @@ bool CHuman::chaseEntity(CEntity* target)
         }
     }
 
-  
+
     if (isEntityInAttackRange(target)) {
         return true;
     }

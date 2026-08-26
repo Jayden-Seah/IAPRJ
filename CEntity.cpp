@@ -114,3 +114,8 @@ void CEntity::setAttackRange(int atkr)
      return 0;
  }
 
+ int CEntity::PgetBoonLevel(int boonNumber)
+ {
+     return 0;
+ }
+

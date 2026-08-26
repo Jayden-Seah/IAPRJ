@@ -202,6 +202,8 @@ int main() {
 	bool isInStartScreen = true;
 	bool isPaused = false;
 	bool isInOptions = true; // start screen v2 
+	bool isInStoryScreen = false;
+	int numberOfStoryScenesFinished = 0; //use this to change story
 	bool hasPlayerUnlockedTile[7][7];
 	bool hasPlayerFinishedTile[7][7];
 	bool isThisanInaccessibleTile[7][7];
@@ -270,7 +272,7 @@ int main() {
 
 			if (yippeeKey == 13) {
 				isInStartScreen = false;
-				boardState = true;
+				isInStoryScreen = true;
 				playerHasEnded = false;
 				isInOptions = false;
 			}
@@ -379,6 +381,44 @@ int main() {
 		if (playerHasDied) {
 			Player = new CPlayer(random(generator) % 2);
 			playerHasDied = false;
+		}
+		if (isInStoryScreen == true) {
+			int pageno = 0;
+
+			while (pageno < 2) { // KEEP THIS THE SAME AS THE AMOUNT OF PAGES (pageno switch count) THANKS
+				switch (numberOfStoryScenesFinished) { //number of storyscenes is for EACH chapter
+				case 0:
+					switch (pageno) { //pageno is to break up large chunks of text to each "tab"
+					case 0:
+						clearScreen();
+						std::cout << "Page 1 Chapter 1" << std::endl;
+						break;
+					case 1:
+						clearScreen();
+						std::cout << "Page 2 Chapter 1" << std::endl;
+						break;
+					}
+					break;
+				case 1:
+					switch (pageno) { //pageno is to break up large chunks of text to each "tab"
+					case 0:
+						clearScreen();
+						std::cout << "Page 1 Chapter 2" << std::endl;
+						break;
+					case 1:
+						clearScreen();
+						std::cout << "Page 2 Chapter 2" << std::endl;
+						break;
+					}
+					break;
+				}
+				int waitk = _getch();
+				if (waitk != 0) {
+					pageno++;
+				}
+			}
+			boardState = true;
+			isInStoryScreen = false;
 		}
 		if (boardState == false) {
 			int numberOfBoardenemies;
@@ -723,7 +763,7 @@ int main() {
 									}
 								}
 								Human[i]->runFromEntity(Player);
-								if (Human[i]->detectPlayer(Player)) {
+								if ((Human[i]->detectPlayer(Player)) and (Human[i] != nullptr)) {
 									if (Human[i]->canEntityAttack) {
 										drawVFX(board, Human[i]->getCoordX(), Human[i]->getCoordY(), Human[i]->getAttack(), Human[i]->getAttackRange(), Player, "\033[91mO\033[0m", Human[i], 1000);
 										playerGotHit = true;
@@ -1061,6 +1101,7 @@ int main() {
 					playerHasDied = true;
 					boardState = true;
 					disableKeyPress = false;
+					numberOfStoryScenesFinished = 1;
 					for (int i = 0; i < 7; i++) {
 						for (int y = 0; y < 7; y++) {
 							hasPlayerUnlockedTile[i][y] = false;

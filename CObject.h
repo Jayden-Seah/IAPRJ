@@ -6,6 +6,8 @@ class CObject
 	int coordY;
 	int objectHeight;
 public:
+	CObject();
+	CObject(int randv);
 
 	int getCoordX();
 	int getCoordY();

@@ -119,3 +119,7 @@ void CEntity::setAttackRange(int atkr)
      return 0;
  }
 
+ void CEntity::setRoamStatus(bool a)
+ {
+ }
+

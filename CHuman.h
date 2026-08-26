@@ -49,6 +49,7 @@ public:
     void humanWander();
     bool detectPlayer(CEntity* target);
     bool chaseEntity(CEntity* target);
+    void runFromEntity(CEntity* target);
 
     int peekDirection();
 };

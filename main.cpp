@@ -30,6 +30,7 @@ std::uniform_int_distribution<int> random(0, 1000);// uniform gives every num a 
 
 
 std::atomic<bool> resetTime(false);
+std::atomic<bool> disableKeyPress(false);
 
 //Group Data -> 
 struct DialogueInt {
@@ -110,6 +111,10 @@ void timePlayerHasNotBeenHit(std::atomic<int>& timevariable) {
 		// if while loop ends (resetTime = true) timevariable is resetted
 		timevariable.store(0); // prevent detached thread from failing to run
 	}
+void countdown(int milliseconds, std::atomic<bool>& togglevariable) {
+	std::this_thread::sleep_for(std::chrono::milliseconds(milliseconds));
+	togglevariable = false; 
+}
 
 // Writes dialogue text into the bottom strip of the existing board grid
 // Bottom strip region: i (row) = 1..103, o (col) = 12..15
@@ -468,6 +473,16 @@ int main() {
 					}
 				}
 			}
+			if (Player->PgetBoonLevel(2) >= 1) {
+				for (int u = 0; u < numberOfBoardenemies; u++) {
+					if (Human[u]->getHumanTypeID() == 1 or Human[u]->getHumanTypeID() == 2) {
+						Human[u]->setRunningAwayStatus(true);
+					}
+				}
+			}
+
+
+
 			bool boon3Proc = false;
 			if (Player->PgetBoonLevel(3) >= 1) {
 				int df = static_cast<CPlayer*>(Player)->getKarmaDifference();
@@ -523,8 +538,21 @@ int main() {
 			std::thread b8(&timePlayerHasNotBeenHit, std::ref(boon8changer)); //ref so that boon8changer can update even while in a thread
 
 			b8.detach();
+
+
+
 			int stepsMultiplier = 1;
 
+			for (int l = 0; l < numberOfBoardenemies; l++) {
+				if (Human[l]->getHumanTypeID() == 7) {
+					switch (Player->PgetBoonLevel(6)) {
+					case 1:
+						Human[l]->setAttackRange(2);
+					case 2:
+						Human[l]->setAttackRange(1);
+					}
+				}
+			}
 			int rows = 120;
 			int cols = 17;
 
@@ -590,7 +618,22 @@ int main() {
 				// move objects and stuff here
 				if (_kbhit()) {   // only getch if a keys pressed so doesnt doom gameflow
 					currentDirCast = _getch();
-					currentDirCast = (char)toupper(currentDirCast);
+					if (Player->PgetBoonLevel(10) >= 1) {
+						int randomstop = random(generator) % 10;
+						if (randomstop == 0 && !disableKeyPress) {
+							disableKeyPress = true;
+							static_cast<CPlayer*>(Player)->PsetBoonEffectStatus(true, 10);
+							Player->setAttack(Player->getAttack() + ((Player->PgetBoonLevel(10) * 10) + 15));
+							std::thread b10(countdown, 1000, std::ref(disableKeyPress));
+							b10.detach();
+						}
+					}
+					if (disableKeyPress) {
+						currentDirCast = ' ';
+					}
+					else {
+						currentDirCast = (char)toupper(currentDirCast);
+					}
 				}
 
 				if (currentDirCast == keybindings[0]) {
@@ -642,6 +685,9 @@ int main() {
 						if (Player->canEntityAttack) {
 							for (int i = 0; i < numberOfBoardenemies; i++) {
 								if (Human[i] != nullptr) {
+									if (static_cast<CPlayer*>(Player)->PgetBoonEffectStatus(10) == true) {
+										Player->setAttack(Player->getAttack() - ((Player->PgetBoonLevel(10) * 10) + 15));
+									}
 									drawVFX(board, Player->getCoordX(), Player->getCoordY(), Player->getAttack(), Player->getAttackRange(), Human[i], "\033[34m#\033[0m", Player, attackcd);
 									if (Human[i]->getHealth() <= 0) {
 										if (Human[i]->getHumanTypeID() == 3 or Human[i]->getHumanTypeID() == 4) { //switch this to a case maybe
@@ -675,6 +721,7 @@ int main() {
 										}
 									}
 								}
+								Human[i]->runFromEntity(Player);
 								if (Human[i]->detectPlayer(Player)) {
 									if (Human[i]->canEntityAttack) {
 										drawVFX(board, Human[i]->getCoordX(), Human[i]->getCoordY(), Human[i]->getAttack(), Human[i]->getAttackRange(), Player, "\033[31mO\033[0m", Human[i], 1000);
@@ -794,8 +841,8 @@ int main() {
 							board[Human[i]->getCoordX()][Human[i]->getCoordY() - 1] = "\033[92mO\033[0m";
 							break;
 						case 3:
-							board[Human[i]->getCoordX()][Human[i]->getCoordY()] = "\033[33mO\033[0m";
-							board[Human[i]->getCoordX()][Human[i]->getCoordY() - 1] = "\033[33mA\033[0m";
+							board[Human[i]->getCoordX()][Human[i]->getCoordY()] = "\033[33mA\033[0m";
+							board[Human[i]->getCoordX()][Human[i]->getCoordY() - 1] = "\033[33mO\033[0m";
 							break;
 						case 4:
 							board[Human[i]->getCoordX()][Human[i]->getCoordY()] = "\033[33mA\033[0m";
@@ -968,6 +1015,7 @@ int main() {
 							std::cout << std::endl;
 						}
 						refreshScreen();
+
 						std::this_thread::sleep_for(std::chrono::milliseconds(50));
 						// YOU DIED screen
 						// reset everything here ty
@@ -1001,6 +1049,7 @@ int main() {
 					Player = nullptr;
 					playerHasDied = true;
 					boardState = true;
+					disableKeyPress = false;
 					for (int i = 0; i < 7; i++) {
 						for (int y = 0; y < 7; y++) {
 							hasPlayerUnlockedTile[i][y] = false;

@@ -31,11 +31,14 @@ public:
  void moveInput(int dir); //1234 (WASD)
  void attacking(CEntity* target);
 
+
+ // possibly reusable behaviour for non human entities in the future
  virtual bool detectPlayer(CEntity* target);
  virtual void humanWander();
  virtual int getHumanTypeID();
  virtual int PgetBoonLevel(int boonNumber);
  virtual void setRoamStatus(bool a);
-
+virtual void runFromEntity(CEntity* target);
+virtual void setRunningAwayStatus(bool a);
 };
 

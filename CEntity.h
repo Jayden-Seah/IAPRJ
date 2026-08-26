@@ -34,7 +34,7 @@ public:
  virtual bool detectPlayer(CEntity* target);
  virtual void humanWander();
  virtual int getHumanTypeID();
-
+ virtual int PgetBoonLevel(int boonNumber);
 
 };
 

@@ -553,6 +553,7 @@ int main() {
 					}
 				}
 			}
+			bool playerGotHit = false;
 			int rows = 120;
 			int cols = 17;
 
@@ -724,7 +725,8 @@ int main() {
 								Human[i]->runFromEntity(Player);
 								if (Human[i]->detectPlayer(Player)) {
 									if (Human[i]->canEntityAttack) {
-										drawVFX(board, Human[i]->getCoordX(), Human[i]->getCoordY(), Human[i]->getAttack(), Human[i]->getAttackRange(), Player, "\033[31mO\033[0m", Human[i], 1000);
+										drawVFX(board, Human[i]->getCoordX(), Human[i]->getCoordY(), Human[i]->getAttack(), Human[i]->getAttackRange(), Player, "\033[91mO\033[0m", Human[i], 1000);
+										playerGotHit = true;
 										if (boon3Proc) {
 											boon3Proc = false;
 											Player->sethealth(Player->getHealth() + Human[i]->getAttack());
@@ -913,7 +915,9 @@ int main() {
 							clearScreen();
 							for (int o = 0; o < 17; o++) {
 								for (int i = 0; i < 120; i++) {
-									std::cout << board[i][o];
+							
+										std::cout << board[i][o];
+								
 								}
 								std::cout << std::endl;
 								if (o == 11) {
@@ -921,6 +925,7 @@ int main() {
 								}
 							}
 
+								 
 							for (char c : line.text) {
 								revealedText += c;
 								drawDialogueInBoard(board, line.speaker, revealedText);
@@ -965,10 +970,16 @@ int main() {
 				else {
 					for (int o = 0; o < 17; o++) {
 						for (int i = 0; i < 120; i++) {
-							std::cout << board[i][o];
+							if (playerGotHit) {
+								std::cout << "\033[41m" << board[i][o] << "\033[0m";
+							}
+							else {
+								std::cout << board[i][o];
+							}
 						}
 						std::cout << std::endl;
 					}
+					playerGotHit = false;
 				}
 				// change this to smth else where it resets the board ya
 				if (CHuman::getKilledHumans() >= numberOfBoardenemies) {

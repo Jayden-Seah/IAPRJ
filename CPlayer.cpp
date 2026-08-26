@@ -42,7 +42,7 @@ CPlayer::CPlayer(int randv)
 		boons[i].setBoons(5);
 	}
 	boons[17].setBoons(7);
-	boons[18].setBoons(4, 10);
+	boons[18].setBoons(4, 0);
 	boons[19].setBoons(3, 3);
 }
 

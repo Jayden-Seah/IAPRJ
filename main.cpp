@@ -29,7 +29,6 @@ std::default_random_engine generator(std::random_device{}());//default random en
 std::uniform_int_distribution<int> random(0, 1000);// uniform gives every num a equal chance, int is whole num, and distribution effectively says, give me a num from x to y
 
 
-std::atomic<bool> resetTime(false);
 
 //Group Data -> 
 struct DialogueInt {
@@ -95,21 +94,13 @@ void drawVFX(std::vector<std::vector<std::string>>& board, int coorx, int coory,
 			delete VFX[i];
 		}
 	}
-	caller->canEntityAttack = false;
+	/*caller->canEntityAttack = false;
 	std::thread([caller, atkcd]() {
 		std::this_thread::sleep_for(std::chrono::seconds(atkcd));
 		caller->canEntityAttack = true;
-		}).detach();
+		}).detach();*/
 	return;
 }
-void timePlayerHasNotBeenHit(std::atomic<int>& timevariable) {
-		while (resetTime == false) {
-			timevariable.fetch_add(1);
-			std::this_thread::sleep_for(std::chrono::seconds(1));
-		}
-		// if while loop ends (resetTime = true) timevariable is resetted
-		timevariable.store(0); // prevent detached thread from failing to run
-	}
 
 // Writes dialogue text into the bottom strip of the existing board grid
 // Bottom strip region: i (row) = 1..103, o (col) = 12..15
@@ -361,7 +352,7 @@ int main() {
 		}
 		isThisRandomEventActive[0/*random(generator) % MAX_RANDOMEVENTS*/] = true;
 		/*random Event:
-		0 - Fast
+		0 - Fast 
 		1 - Tanky
 		2 - Aggressive
 		3 - Chaotic
@@ -431,29 +422,99 @@ int main() {
 				}
 			}
 
-			int boon9changer = 0;
-			switch (Player->PgetBoonLevel(9)) {//boon9 bloodthirsty, will trigger on one random enemy regardless and only at the start so effect chance bool doesnt need to be change
-			case 1:
-				boon9changer = 0.20;
-				break;
-			case 2:
-				boon9changer = 0.25;
-				break;
-			case 3:
-				boon9changer = 0.35;
-				break;
-			}
-			resetTime = false;
-			
-			// pick a random human and subtract hp from boon9changer
-			int unluckyHuman = random(generator) % numberOfBoardenemies;
-			Human[unluckyHuman]->sethealth(Human[unluckyHuman]->getHealth() * (1 - boon9changer));
-			std::atomic<int> boon8changer(0);
+				int lasthp = 75;
+				int curatk = Player->getAttack();
+				int curdef = static_cast<CPlayer*>(Player)->getDefence();
 
-			std::thread b8(&timePlayerHasNotBeenHit, std::ref(boon8changer)); //ref so that boon8changer can update even while in a thread
+				int boon17changer = 0;
 
-			b8.detach();
-			int stepsMultiplier = 1;
+				if (static_cast<CPlayer*>(Player)->PgetBoonLevel(17) && static_cast<CPlayer*>(Player)->PgetBoonEffectStatus(17) == false) {//boon16 pose, will trigger on one random enemy regardless and only at the start so effect chance bool doesnt need to be change
+						if (random(generator) <= 0 && random(generator) <= 150) {
+							if (random(generator) <= 500) {
+								Player->setAttack(Player->getAttack() * 0.54);
+								static_cast<CPlayer*>(Player)->setDefence((static_cast<CPlayer*>(Player)->getDefence() * 0.54));
+								static_cast<CPlayer*>(Player)->PsetBoonEffectStatus(true, 17);
+							}
+							else {
+								Player->setAttack(Player->getAttack() * 1.1);
+								static_cast<CPlayer*>(Player)->setDefence((static_cast<CPlayer*>(Player)->getDefence() * 1.1));
+								static_cast<CPlayer*>(Player)->PsetBoonEffectStatus(true, 17);
+							}
+						}
+						else if (random(generator) <= 151 && random(generator) <= 300) {
+							if (random(generator) <= 500) {
+								Player->setAttack(Player->getAttack() * 0.5);
+								static_cast<CPlayer*>(Player)->setDefence((static_cast<CPlayer*>(Player)->getDefence() * 0.5));
+								static_cast<CPlayer*>(Player)->PsetBoonEffectStatus(true, 17);
+							}
+							else {
+								Player->setAttack(Player->getAttack() * 1.5);
+								static_cast<CPlayer*>(Player)->setDefence((static_cast<CPlayer*>(Player)->getDefence() * 1.5));
+								static_cast<CPlayer*>(Player)->PsetBoonEffectStatus(true, 17);
+							}
+						}
+						else if (random(generator) <= 301 && random(generator) <= 450) {
+							if (random(generator) <= 500) {
+								Player->setAttack(Player->getAttack() * 0.44);
+								static_cast<CPlayer*>(Player)->setDefence((static_cast<CPlayer*>(Player)->getDefence() * 0.44));
+								static_cast<CPlayer*>(Player)->PsetBoonEffectStatus(true, 17);
+							}
+							else {
+								Player->setAttack(Player->getAttack() * 1.44);
+								static_cast<CPlayer*>(Player)->setDefence((static_cast<CPlayer*>(Player)->getDefence() * 1.44));
+								static_cast<CPlayer*>(Player)->PsetBoonEffectStatus(true, 17);
+							}
+						}
+						else if (random(generator) <= 451 && random(generator) <= 600) {
+							if (random(generator) <= 500) {
+								Player->setAttack(Player->getAttack() * 0.38);
+								static_cast<CPlayer*>(Player)->setDefence((static_cast<CPlayer*>(Player)->getDefence() * 0.38));
+								static_cast<CPlayer*>(Player)->PsetBoonEffectStatus(true, 17);
+							}
+							else {
+								Player->setAttack(Player->getAttack() * 1.38);
+								static_cast<CPlayer*>(Player)->setDefence((static_cast<CPlayer*>(Player)->getDefence() * 1.38));
+								static_cast<CPlayer*>(Player)->PsetBoonEffectStatus(true, 17);
+							}
+						}
+						else if (random(generator) <= 601 && random(generator) <= 750) {
+							if (random(generator) <= 500) {
+								Player->setAttack(Player->getAttack() * 0.3);
+								static_cast<CPlayer*>(Player)->setDefence((static_cast<CPlayer*>(Player)->getDefence() * 0.3));
+								static_cast<CPlayer*>(Player)->PsetBoonEffectStatus(true, 17);
+							}
+							else {
+								Player->setAttack(Player->getAttack() * 1.3);
+								static_cast<CPlayer*>(Player)->setDefence((static_cast<CPlayer*>(Player)->getDefence() * 1.3));
+								static_cast<CPlayer*>(Player)->PsetBoonEffectStatus(true, 17);
+							}
+						}
+						else if (random(generator) <= 751 && random(generator) <= 900) {
+							if (random(generator) <= 500) {
+								Player->setAttack(Player->getAttack() * 0.2);
+								static_cast<CPlayer*>(Player)->setDefence((static_cast<CPlayer*>(Player)->getDefence() * 0.2));
+								static_cast<CPlayer*>(Player)->PsetBoonEffectStatus(true, 17);
+							}
+							else {
+								Player->setAttack(Player->getAttack() * 1.2);
+								static_cast<CPlayer*>(Player)->setDefence((static_cast<CPlayer*>(Player)->getDefence() * 1.2));
+								static_cast<CPlayer*>(Player)->PsetBoonEffectStatus(true, 17);
+							}
+						}
+						else if (random(generator) <= 901 && random(generator) <= 1000) {
+							if (random(generator) <= 500) {
+								Player->setAttack(Player->getAttack() * 0.1);
+								static_cast<CPlayer*>(Player)->setDefence((static_cast<CPlayer*>(Player)->getDefence() * 0.1));
+								static_cast<CPlayer*>(Player)->PsetBoonEffectStatus(true, 17);
+							}
+							else {
+								Player->setAttack(Player->getAttack() * 1.54);
+								static_cast<CPlayer*>(Player)->setDefence((static_cast<CPlayer*>(Player)->getDefence() * 1.54));
+								static_cast<CPlayer*>(Player)->PsetBoonEffectStatus(true, 17);
+							}
+						}
+					}
+				
 
 			int rows = 120;
 			int cols = 17;
@@ -487,36 +548,6 @@ int main() {
 						}
 					}
 				}
-				int boon8threshold = (Player)->PgetBoonLevel(8);
-				int boon8Max = 0;
-				switch (boon8threshold) {
-				case 0:
-					boon8threshold = 0;
-					boon8Max = 1;
-					break;
-				case 1:
-					boon8threshold = 30;
-					boon8Max = 2;
-					break;
-				case 2:
-					boon8threshold = 15;
-					boon8Max = 2;
-					break;
-				case 3:
-					boon8threshold = 15;
-					boon8Max = 3;
-					break;
-				}
-				if ((boon8threshold <= boon8changer)) {
-					if (stepsMultiplier < boon8Max) {
-						stepsMultiplier++;
-						resetTime = true;
-					}
-					else {
-						resetTime = false;
-					}
-				}
-
 				// move objects and stuff here
 				if (_kbhit()) {   // only getch if a keys pressed so doesnt doom gameflow
 					currentDirCast = _getch();
@@ -550,6 +581,16 @@ int main() {
 					isDialogueActive = true;
 					isPaused = true;
 					currentDirCast = ' ';
+				}
+
+				if (currentDirCast == 'M') {
+					currentDirCast = ' ';
+					int tempboonid;
+					std::cout << "Enter Boon ID here." << std::endl;
+					std::cin >> tempboonid;
+					static_cast<CPlayer*>(Player)->PsetBoonlevel(static_cast<CPlayer*>(Player)->PgetBoonLevel(tempboonid) + 1, tempboonid);
+					std::cout << static_cast<CPlayer*>(Player)->PgetBoonText(tempboonid);
+					std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 				}
 
 				// MOVE ENEMIES AND CHECK FOR PLAYER KEY AND MOVE (define getch beforehand)
@@ -624,35 +665,55 @@ int main() {
 							}
 						}
 					}
-					for (int o = 0; o < numberOfBlocks; o++) {
+					for (int o = 0; o < numberOfBoardenemies; o++) {
 						if (Player->isEntityGoingToOverlapInTheFuture(currentDirInt, EnvironmentalObjects[o])) {
 							allowPlayerMovement = false;
 						}
 					}
 					if (allowPlayerMovement) {
-						for (int v = 0; v < stepsMultiplier; v++) {
-							Player->moveInput(currentDirInt);
-						}
-						// safety checks
+						Player->moveInput(currentDirInt);
 						Player->isEntityOutofBounds();
 					}
 					currentDirCast = ' ';
 					std::this_thread::sleep_for(std::chrono::milliseconds(250));
 					refreshScreen();
+				}int curhp = Player->getHealth();
+				int boon16changer = 0;
+				switch (static_cast<CPlayer*>(Player)->PgetBoonLevel(16)) {//boon16 pose, will trigger on one random enemy regardless and only at the start so effect chance bool doesnt need to be change
+				case 1:
 
-					for (int o = 0; o < numberOfBoardenemies; o++) {
-						if (Human[o] != nullptr) {
-							if (Player->isEntityOverlapping(Human[o])) {
-								Player->moveInput(currentDirInt);
-							}
-						}
+					if (curhp < lasthp) {
+						static_cast<CPlayer*>(Player)->setKarma(static_cast<CPlayer*>(Player)->getKarma() + 2);
+						lasthp = curhp;
 					}
-					for (int o = 0; o < numberOfBlocks; o++) {
-						if (Player->isEntityOverlapping(EnvironmentalObjects[o])) {
-							Player->moveInput(currentDirInt);
-						}
+					break;
+				case 2:
+					if (curhp < lasthp) {
+						static_cast<CPlayer*>(Player)->setKarma(static_cast<CPlayer*>(Player)->getKarma() + 3);
+						lasthp = curhp;
 					}
+					break;
+				case 3:
+					if (curhp < lasthp) {
+						static_cast<CPlayer*>(Player)->setKarma(static_cast<CPlayer*>(Player)->getKarma() + 4);
+						lasthp = curhp;
+					}
+					break;
+				case 4:
+					if (curhp < lasthp) {
+						static_cast<CPlayer*>(Player)->setKarma(static_cast<CPlayer*>(Player)->getKarma() + 6);
+						lasthp = curhp;
+					}
+					break;
+				case 5:
+					if (curhp < lasthp) {
+						static_cast<CPlayer*>(Player)->setKarma(static_cast<CPlayer*>(Player)->getKarma() + 7);
+						lasthp = curhp;
+					}
+					break;
 				}
+
+
 
 				// print ENEMIES
 				for (int i = 0; i < numberOfBoardenemies; i++) {
@@ -807,7 +868,6 @@ int main() {
 							Human[i] = nullptr;
 						}
 					}
-					resetTime = true;
 					CHuman::setkilledHumans(0);
 					boardState = true;
 					// lets go boon gambling!
@@ -820,7 +880,7 @@ int main() {
 					}
 					if (randomizer == 0) {
 						didPlayerGetaBoon = true;// later will check if player should get a boon
-					}
+				}
 					// FOR NOW since all enemies have to die you dont need to check to delete all enemies for prototype change ltr
 					for (int i = 0; i < numberOfBlocks; i++) {
 						delete EnvironmentalObjects[i];
@@ -846,7 +906,7 @@ int main() {
 						// reset everything here ty
 					}
 					bool inDeathScreen = true;
-					while (inDeathScreen) {
+					while (inDeathScreen){
 						std::cout << "__   _______ _   _  ______ _____ ___________ " << std::endl;
 						std::cout << "\\ \\ / /  _  | | | | |  _  \\_   _|  ___|  _  \\" << std::endl;
 						std::cout << " \\ V /| | | | | | | | | | | | | | |__ | | | |" << std::endl;
@@ -863,7 +923,6 @@ int main() {
 						std::cout << std::endl;
 						std::cout << " -- Press Any Key to replay --" << std::endl;
 
-						std::this_thread::sleep_for(std::chrono::seconds(1));
 						int respawnKey = _getch();
 						if (respawnKey >= 0) {
 							inDeathScreen = false;
@@ -880,7 +939,7 @@ int main() {
 							hasPlayerFinishedTile[i][y] = false;
 						}
 					}
-				}
+				}                                    
 
 			} while (boardState == false);
 		}
@@ -1084,7 +1143,6 @@ int main() {
 					std::cout << static_cast<CPlayer*>(Player)->PgetBoonText(boonID) << std::endl;
 					boonID = 0;
 				}
-				std::this_thread::sleep_for(std::chrono::seconds(1));
 
 				char keydir = _getch();
 				keydir = (char)toupper(keydir);

@@ -123,3 +123,11 @@ void CEntity::setAttackRange(int atkr)
  {
  }
 
+ void CEntity::runFromEntity(CEntity* target)
+ {
+ }
+
+ void CEntity::setRunningAwayStatus(bool a)
+ {
+ }
+

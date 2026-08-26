@@ -33,8 +33,8 @@ bool CSolidHitbox::isEntityOutofBounds() // if entity is out of bounds on either
 		return true;
 	}
 	for (int i = 0; i < 1; i++) {
-		if (getCoordY() >= 10) {
-			setCoordY(9);
+		if (getCoordY() >= 11) {
+			setCoordY(10);
 			return true;
 		}
 		else if (getCoordY() <= 0) {

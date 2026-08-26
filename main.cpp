@@ -426,6 +426,9 @@ int main() {
 				int curatk = Player->getAttack();
 				int curdef = static_cast<CPlayer*>(Player)->getDefence();
 
+				
+
+
 				int boon17changer = 0;
 
 				if (static_cast<CPlayer*>(Player)->PgetBoonLevel(17) && static_cast<CPlayer*>(Player)->PgetBoonEffectStatus(17) == false) {//boon16 pose, will trigger on one random enemy regardless and only at the start so effect chance bool doesnt need to be change
@@ -604,7 +607,35 @@ int main() {
 						if (Player->canEntityAttack) {
 							for (int i = 0; i < numberOfBoardenemies; i++) {
 								if (Human[i] != nullptr) {
+									int boon15changer = 0;
+									switch (static_cast<CPlayer*>(Player)->PgetBoonLevel(15)) {//boon9 bloodthirsty, will trigger on one random enemy regardless and only at the start so effect chance bool doesnt need to be change
+									case 1:
+										static_cast<CPlayer*>(Player)->setKarma(static_cast<CPlayer*>(Player)->getKarma() - 1);
+										boon15changer = 2;
+										break;
+
+									case 2:
+										static_cast<CPlayer*>(Player)->setKarma(static_cast<CPlayer*>(Player)->getKarma() - 2);
+										boon15changer = 3;
+										break;
+									case 3:
+										static_cast<CPlayer*>(Player)->setKarma(static_cast<CPlayer*>(Player)->getKarma() - 3);
+										boon15changer = 5;
+										break;
+									case 4:
+										static_cast<CPlayer*>(Player)->setKarma(static_cast<CPlayer*>(Player)->getKarma() - 4);
+										boon15changer = 7;
+										break;
+									case 5:
+										static_cast<CPlayer*>(Player)->setKarma(static_cast<CPlayer*>(Player)->getKarma() - 5);
+										boon15changer = 8;
+										break;
+									}
+									static_cast<CPlayer*>(Player)->setAttack(static_cast<CPlayer*>(Player)->getAttack() + boon15changer);
 									drawVFX(board, Player->getCoordX(), Player->getCoordY(), Player->getAttack(), Player->getAttackRange(), Human[i], "\033[34m#\033[0m", Player, 1);
+									
+									static_cast<CPlayer*>(Player)->setAttack(static_cast<CPlayer*>(Player)->getAttack() - boon15changer);
+
 									if (Human[i]->getHealth() <= 0) {
 										delete Human[i];
 										Human[i] = nullptr;

@@ -1,9 +1,10 @@
 #include "SpareOrKill.h"
 #include "CPlayer.h"
 #include "CCanTalk.h"
+#include <stdlib.h>
 
-int SpareOrKill::defaultKarmaGain = 5;      // can be changed later
-int SpareOrKill::defaultKarmaLoss = 10;     // can be changed later
+int SpareOrKill::defaultKarmaGain = 5;
+int SpareOrKill::defaultKarmaLoss = 5;
 
 void SpareOrKill::applyKarmaChange(CPlayer* player, int karmaAmount)
 {
@@ -23,15 +24,15 @@ void SpareOrKill::processInteraction(CPlayer* player, CCanTalk* npc, char choice
 
     if (choice == '1')
     {
-        // Spare: NPC stops and dies
+        // Spare: NPC Stops
         npc->setRoamStatus(false);
         npc->sethealth(0.0f);
         applyKarmaChange(player, defaultKarmaGain);
     }
     else if (choice == '2')
     {
-        // Kill
-        npc->sethealth(0.0f);
+        // Kill: turn NPC hostile and starts a fight
+        npc->becomeHostile(player);
         applyKarmaChange(player, -defaultKarmaLoss);
     }
 }

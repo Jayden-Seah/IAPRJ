@@ -11,7 +11,7 @@ private:
 public:
 	Effects();
 
-	Effects(int xpos, int ypos,int ydiff, int xdiff, int atkr, int atk); // Summon player/enemy attack vfx, use isentityoverlapping to check if entity is getting hit
+	Effects(int xpos, int ypos,double ydiff, double xdiff, int atkr, int atk); // Summon player/enemy attack vfx, use isentityoverlapping to check if entity is getting hit
 
 
 

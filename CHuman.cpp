@@ -14,7 +14,9 @@ CHuman::CHuman()
     isEntityShooter = false;
     isEntityPatrolling = false;
     humanID = 0;
-    currenthumanID = 0;
+    currenthumanID = 0; 
+    enemyPatrolType = nullptr;
+    hasFoundPlayer = false;
 
 }
 
@@ -29,7 +31,7 @@ CHuman::CHuman(int randvalue, int randid)
 {
     currenthumanID = maxhumanID;
     maxhumanID++;
-    int x = randvalue % 103 + 1;
+    int x = randvalue % 102 + 1;
     int y = randvalue % 8 + 2; // 2 to 9
     setObjectHeight(2);
     setCoordX(x);
@@ -95,22 +97,22 @@ void CHuman::createType1RedHuman(int randd) // default chaser
     int lvl = getLevel();
     switch (lvl) {
     case 0:
-        setAttack(randd % 4 + 9);
-        sethealth((randd % 20 + 21) + 0.0f);
+        setAttack(randd % 4 + 2);
+        sethealth((randd % 4 + 2) + 0.0f);
         setAttackRange(1);
         DetectionRange = 3;
         *enemyPatrolType = (randd % 2 + 1);
         *dirFlip = false;
         break;
     case 1:
-        setAttack(randd % 4 + 34);
-        sethealth(randd % 80 + 20 + 0.0f);
+        setAttack(randd % 4 + 2);
+        sethealth(randd % 4 + 2 + 0.0f);
         setAttackRange(1);
         DetectionRange = 3;
         break;
     case -1:
-        setAttack(randd % 8 + 17);
-        sethealth(randd % 40 + 30 + 0.0f);
+        setAttack(randd % 4 + 2);
+        sethealth(randd % 4 + 2 + 0.0f);
         setAttackRange(1);
         DetectionRange = 3;
         break;
@@ -122,8 +124,8 @@ void CHuman::createType2RedHuman(int randd)
     int lvl = getLevel();
     switch (lvl) {
     case 0:
-        setAttack(randd % 4 + 3);
-        sethealth(randd % 1 + 70 + 0.0f);
+        setAttack(randd % 4 + 2);
+        sethealth(randd % 4 + 2 + 0.0f);
         setAttackRange(1);
         DetectionRange = 6;
         isEntityFollowingPlayer = false;
@@ -131,15 +133,15 @@ void CHuman::createType2RedHuman(int randd)
         isEntityPatrolling = false;
         break;
     case 1:
-        setAttack(randd % 20 + 6);
-        sethealth(randd % 120 + 20 + 0.0f);
+        setAttack(randd % 4 + 2);
+        sethealth(randd % 4 + 2 + 0.0f);
         setAttackRange(1);
         DetectionRange = 6;
         isEntityPatrolling = false;
         break;
     case -1:
-        setAttack(randd % 1 + 13);
-        sethealth(randd % 20 + 50 + 0.0f);
+        setAttack(randd % 4 + 2);
+        sethealth(randd % 4 + 2 + 0.0f);
         setAttackRange(1);
         DetectionRange = 6;
         isEntityFollowingPlayer = false;
@@ -151,7 +153,7 @@ void CHuman::createType2RedHuman(int randd)
 
 void CHuman::createTypeExplodingHuman(int randd)
 {
-    setAttack(randd % 90 + 10);
+    setAttack(9);
     sethealth(1);
     setAttackRange(3);
     DetectionRange = 15;
@@ -211,6 +213,7 @@ void CHuman::increaseHumanID()
 void CHuman::humanWander() // add collision checks
 {
     if ((isEntityPatrolling == true) and (hasFoundPlayer == false)) {
+        if (enemyPatrolType == nullptr || dirFlip == nullptr) return;
         int x = getCoordX();
         int y = getCoordY();
         switch (*getEnemyPatrolType()) {
@@ -249,6 +252,8 @@ void CHuman::humanWander() // add collision checks
                     setCoordX(getCoordX() + 1);
                 }
             }
+            break;
+        case 3: // move in an arc
             break;
         }
     }

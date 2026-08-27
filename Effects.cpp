@@ -10,15 +10,16 @@ Effects::Effects()
 	upg2 = false;
 }
 
-Effects::Effects(int xpos, int ypos, int ydiff, int xdiff, int atkr, int atk) // math library cos angle -sin angle
+Effects::Effects(int xpos, int ypos, double ydiff, double xdiff, int atkr, int atk) // math library cos angle -sin angle
 {
 	upg1 = false;
 	upg2 = false;
-	int xDifference = xdiff * atkr; // ensure xdiff and ydiff is always -1 or 1 ty
-	int yDifference = ydiff * atkr;
+	double xDifference = xdiff * atkr; // ensure xdiff and ydiff is always -1 or 1 ty
+	double yDifference = ydiff * atkr;
 	setAttackRange(atkr);
-	setCoordX(xpos + xDifference);
-	setCoordY(ypos + yDifference);
+	setCoordX(xpos + static_cast<int>(xDifference));
+	setCoordY(ypos + static_cast<int>(yDifference));
+	isEntityOutofBounds();
 	setObjectHeight(1);
 	setAttack(atk);
 }

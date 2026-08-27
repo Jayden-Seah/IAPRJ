@@ -9,7 +9,7 @@ public:
 		karma = k;
 	}
 
-	int getKarma() {
+	float getKarma() {
 		return karma;
 	}
 };

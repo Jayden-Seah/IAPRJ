@@ -4,9 +4,9 @@
 class CEntity :
     public CSolidHitbox
 {
-    int attack;
-    float health;
-    int attackRange;
+    int attack = 0;
+    float health = 0.0f;
+    int attackRange = 0;
     static int onLevel; // -1, 0 or 1. Default 0
 public:
 

@@ -4,6 +4,9 @@ int CEntity::onLevel = 0;
 
 CEntity::CEntity()
 {
+    attack = 0;
+    health = 100.0f;
+    attackRange = 0;
 }
 
 CEntity::~CEntity()

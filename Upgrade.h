@@ -50,5 +50,9 @@ public:
 
     void unupgrade();
 
+    static void setkillcount(int ki);
+
+    static int getkillcount();
+
 
 };

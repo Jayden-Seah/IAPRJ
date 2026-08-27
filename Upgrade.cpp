@@ -73,19 +73,19 @@ std::string Upgrade::getBoonText()
 void Upgrade::upgrade(CEntity* target) {
     if (upg1 == false && killcount == 5) {
         //each upg will increase atk by 5, unless we want it to be a random thing then sure ig
-        target->setAttack(25);
+        target->setAttack(target->getAttack() + 5);
     }
     else if (upg1 && !upg2 && killcount == 10) {
-        target->setAttack(30);
+        target->setAttack(target->getAttack() + 5);
     }
     else if (upg1 && upg2 && !upg3 && killcount == 20) {
-        target->setAttack(35);
+        target->setAttack(target->getAttack() + 5);
     }
     else if (upg1 && upg2 && upg3 && !upg4 && killcount == 30) {
-        target->setAttack(40);
+        target->setAttack(target->getAttack() + 5);
     }
     else if (upg1 && upg2 && upg3 && upg4 && !upg5 && killcount == 44) {
-        target->setAttack(45);
+        target->setAttack(target->getAttack() + 5);
     }
 }
 
@@ -98,4 +98,15 @@ void Upgrade::unupgrade() {
     upg3 = false;
     upg4 = false;
     upg5 = false;
+}
+
+void Upgrade::setkillcount(int ki)
+{
+    ki++;
+    killcount = ki;
+}
+
+int Upgrade::getkillcount()
+{
+    return killcount;
 }

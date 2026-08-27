@@ -1,5 +1,15 @@
 #include "CPlayer.h"
 
+int CPlayer::numberOfTilesCleared = 0;
+void CPlayer::setTilesCleared(int g)
+{
+	numberOfTilesCleared = g;
+}
+int CPlayer::getTilesCleared()
+{
+	return numberOfTilesCleared;
+}
+
 CPlayer::CPlayer(int randv)
 {
 	setObjectHeight(1);
@@ -73,7 +83,7 @@ void CPlayer::setDefence(int d)
 }
 
 void CPlayer::setmaxHP(float mhp) {
-	mhp = 75 + (karma * 0.5);
+	mhp = 75 + static_cast<float>(karma * 0.5f);
 }
 
 int CPlayer::getDefence()
@@ -178,7 +188,15 @@ std::string CPlayer::PgetBoonText(int boonNumber)
 }
 
 
-
+void CPlayer::printReceivedBoons() {
+    std::cout << "\n=== Boons Received ===\n";
+    for (int i = 0; i < 20; i++) { // assuming 20 boons total
+        if (boons[i].getBoonEffectStatus()) { // only print active boons
+            std::cout << "- " << boons[i].getBoonText() << "\n"
+                      << "   Level: " << boons[i].getBoonLevel() << "\n\n";
+        }
+    }
+}
 
 
 float CPlayer::getmaxHP() {

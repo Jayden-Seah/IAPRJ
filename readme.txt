@@ -8,6 +8,7 @@ Pause game: B (Default)
 Progress Talking/Start Game in Main Menu: Enter
 Leave Customization of Keybinds in Main Menu/Unpause Key: Esc
 Settings Key: H
+Bullet Key: E
 
 
 How To Play:

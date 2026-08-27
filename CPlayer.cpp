@@ -1,5 +1,13 @@
 #include "CPlayer.h"
-
+int CPlayer::numberOfTilesCleared = 0;
+void CPlayer::setTilesCleared(int g)
+{
+	numberOfTilesCleared = g;
+}
+int CPlayer::getTilesCleared()
+{
+	return numberOfTilesCleared;
+}
 CPlayer::CPlayer(int randv)
 {
 	setObjectHeight(1);

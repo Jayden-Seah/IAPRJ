@@ -4,7 +4,6 @@
 class CCanTalk :
     public CHuman
 {
-
     static std::string yh;
     std::string actualDialogue[4];
     bool hasAlreadyTalked;
@@ -13,12 +12,14 @@ class CCanTalk :
     std::string entityName;
 
 public:
+    CCanTalk();
     CCanTalk(int randvalue, int ID, int lv);
     std::string getNames();
     std::string getDialogue(float karma, int dialogueNumber);
     bool getTalkStatus();
     void setTalkStatus(bool e);
     void becomeHostile(CEntity* target); // push back Player , then starts chasing Player
+    void setDialogue(int dialogueNumber, std::string dialogue);
     static std::string getARandomName(int randv);
 };
 

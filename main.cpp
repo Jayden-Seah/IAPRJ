@@ -12,7 +12,6 @@
 #include "CItems.h"
 #include "CPlayer.h"
 #include "SpareOrKill.h"
-
 #include <random>//Random library
 #include <thread>
 #include <cctype>
@@ -55,66 +54,117 @@ void clearScreen() { //mainly for textbox
 	std::cout << "\033[H\033[2J";
 }
 // func for aoe vfx, if you ahve time make it directional ig? its not that bad
-void drawVFX(std::vector<std::vector<std::string>>& board, int coorx, int coory, int atk, int atkr, CEntity* target, std::string vfxindicator, CEntity* caller, int atkcd) {
+void drawVFX(
+	std::vector<std::vector<std::string>>& board,
+	int coorx,
+	int coory,
+	int atk,
+	int atkr,
+	CEntity* target,
+	std::string vfxindicator,
+	CEntity* caller,
+	int atkcd
+) {
+	if (!caller->canEntityAttack)
+		return;
 
-	if (caller->canEntityAttack) {
-		CEntity* VFX[8];
-		for (int i = 0; i < 4; i++) {
-			VFX[i] = new Effects(coorx, coory, cos((i * 90) * M_PI / 180), sin((i * 90) * M_PI / 180), atkr, atk); // 0, 90, 180, 270
-		}
-		for (int i = 0; i < 4; i++) {
-			int yd = 0;
-			int xd = 0;
-			switch (i) {
-			case 0:
-				yd = -1;
-				xd = 1;
-				break;
-			case 1:
-				xd = -1;
-				yd = -1;
-				break;
-			case 2:
-				yd = 1;
-				xd = 1;
-				break;
-			case 3:
-				xd = -1;
-				yd = 1;
-				break;
-			}
-			VFX[i + 4] = new Effects(coorx, coory, xd, yd, atkr, atk);
+	CEntity* VFX[8];
+
+	// Create VFX
+	for (int i = 0; i < 4; i++) {
+		VFX[i] = new Effects(
+			coorx,
+			coory,
+			cos((i * 90) * M_PI / 180),
+			sin((i * 90) * M_PI / 180),
+			atkr,
+			atk
+		);
+	}
+
+	for (int i = 0; i < 4; i++) {
+		int yd = 0;
+		int xd = 0;
+
+		switch (i) {
+		case 0:
+			yd = -1;
+			xd = 1;
+			break;
+		case 1:
+			xd = -1;
+			yd = -1;
+			break;
+		case 2:
+			yd = 1;
+			xd = 1;
+			break;
+		case 3:
+			xd = -1;
+			yd = 1;
+			break;
 		}
 
-		for (int i = 0; i < 8; i++) {
-			board[VFX[i]->getCoordX()][VFX[i]->getCoordY()] = vfxindicator; // make this customizable ltr
-			if (VFX[i]->isEntityOverlapping(target)) {
-				target->sethealth(target->getHealth() - atk);
-			}
+		VFX[i + 4] = new Effects(
+			coorx,
+			coory,
+			xd,
+			yd,
+			atkr,
+			atk
+		);
+	}
+
+	// Check whether ANY VFX hits
+	bool hit = false;
+
+	for (int i = 0; i < 8; i++) {
+
+		board[VFX[i]->getCoordX()][VFX[i]->getCoordY()] = vfxindicator;
+
+		if (VFX[i]->isEntityOverlapping(target)) {
+			hit = true;
 		}
-		for (int i = 0; i < 8; i++) {
-			delete VFX[i];
+
+		for (int k = 0; k < 4; k++) {
+			if (VFX[i]->isEntityGoingToOverlapInTheFuture(k + 1, target)) {
+				hit = true;
+			}
 		}
 	}
+
+	if (hit) {
+		target->sethealth(target->getHealth() - atk);
+	}
+
+	for (int i = 0; i < 8; i++) {
+		delete VFX[i];
+	}
+
+	// Start cooldown
 	caller->canEntityAttack = false;
+
 	std::thread([caller, atkcd]() {
-		std::this_thread::sleep_for(std::chrono::milliseconds(atkcd));
+		std::this_thread::sleep_for(
+			std::chrono::milliseconds(atkcd)
+		);
+
 		caller->canEntityAttack = true;
 		}).detach();
-	return;
 }
+
 void timePlayerHasNotBeenHit(std::atomic<int>& timevariable) {
-		while (resetTime == false) {
-			timevariable.fetch_add(1);
-			std::this_thread::sleep_for(std::chrono::seconds(1));
-		}
-		// if while loop ends (resetTime = true) timevariable is resetted
-		timevariable.store(0); // prevent detached thread from failing to run
+	while (resetTime == false) {
+		timevariable.fetch_add(1);
+		std::this_thread::sleep_for(std::chrono::seconds(1));
 	}
+	// if while loop ends (resetTime = true) timevariable is resetted
+	timevariable.store(0); // prevent detached thread from failing to run
+}
 
 void countdown(int milliseconds, std::atomic<bool>& togglevariable) {
 	std::this_thread::sleep_for(std::chrono::milliseconds(milliseconds));
-	togglevariable = false; 
+	togglevariable = false;
 }
 
 // Writes dialogue text into the bottom strip of the existing board grid
@@ -189,7 +239,6 @@ void statsInBoard(std::vector<std::vector<std::string>>& board, int hp, int atta
 	for (int c = 0; c < static_cast<int>(karmatext.size()) && (statsStart + 1 + c) < statsEnd; c++) {//places each character accordingly into the array of spaces.
 		board[statsStart + 1 + c][statsTop + 4] = std::string(1, karmatext[c]);
 	}
-
 }
 
 int main() {
@@ -467,7 +516,7 @@ int main() {
 				for (int i = 0; i < fgen; i++) {
 					int thisID = random(generator) % 4 + 1;
 					Human[i] = new CCanTalk(random(generator), thisID, CEntity::getLevel());
-			}
+				}
 				if (generatemore) {
 					for (int i = 0; i < numberOfBoardenemies - fgen; i++) {
 						int thisID = random(generator) % 7 + 1;
@@ -517,6 +566,7 @@ int main() {
 					}
 				}
 			}
+
 
 			bool odeToQuietudeUsed = false; // Ode To Quietude 
 
@@ -595,8 +645,10 @@ int main() {
 					switch (Player->PgetBoonLevel(6)) {
 					case 1:
 						Human[l]->setAttackRange(2);
+						break;
 					case 2:
 						Human[l]->setAttackRange(1);
+						break;
 					}
 				}
 			}
@@ -829,7 +881,7 @@ int main() {
 						currentDirCast = ' ';
 						if (Player->canEntityAttack) {
 							for (int i = 0; i < numberOfBoardenemies; i++) {
-								if (Human[i] != nullptr) {	
+								if (Human[i] != nullptr) {
 									int boon15changer = 0;
 									switch (static_cast<CPlayer*>(Player)->PgetBoonLevel(15)) {//boon9 bloodthirsty, will trigger on one random enemy regardless and only at the start so effect chance bool doesnt need to be change
 									case 1:
@@ -854,11 +906,10 @@ int main() {
 										boon15changer = 8;
 										break;
 									}
-									drawVFX(board, Player->getCoordX(), Player->getCoordY(), Player->getAttack(), Player->getAttackRange(), Human[i], "\033[34m#\033[0m", Player, 1);
+									drawVFX(board, Player->getCoordX(), Player->getCoordY(), Player->getAttack(), Player->getAttackRange(), Human[i], "\033[34m#\033[0m", Player, attackcd);
 									if (static_cast<CPlayer*>(Player)->PgetBoonEffectStatus(10) == true) {
 										Player->setAttack(Player->getAttack() - ((Player->PgetBoonLevel(10) * 10) + 15));
 									}
-									drawVFX(board, Player->getCoordX(), Player->getCoordY(), Player->getAttack(), Player->getAttackRange(), Human[i], "\033[34m#\033[0m", Player, attackcd);
 									if (Human[i]->getHealth() <= 0) {
 										if (Human[i]->getHumanTypeID() == 3 or Human[i]->getHumanTypeID() == 4) { //switch this to a case maybe
 											if (Player->PgetBoonLevel(11) >= 1) {
@@ -885,7 +936,7 @@ int main() {
 							for (int j = 0; j < repeatTimes; j++) {
 								if ((Human[i]->getHumanTypeID() > 4) and ((Human[i] != nullptr))) { //Check the human ID 
 									for (int p = 0; p < numberOfBlocks; p++) {
-										if (EnvironmentalObjects[p] != nullptr &&
+										if (Human[p] != nullptr &&
 											Human[i]->isEntityGoingToOverlapInTheFuture(static_cast<CHuman*>(Human[i])->peekDirection(), EnvironmentalObjects[p])) {
 											enemyCollide = false;
 										}
@@ -939,7 +990,7 @@ int main() {
 
 					bool allowPlayerMovement = true;
 					int currentDirInt = 0;
-					
+
 					if (currentDirCast == keybindings[2]) {
 						currentDirInt = 1;
 						noOfMoves++;
@@ -1127,8 +1178,6 @@ int main() {
 						}
 					}
 				}
-
-
 				board[Player->getCoordX()][Player->getCoordY()] = "Y";
 
 				for (int i = 0; i < numberOfBlocks; i++) {
@@ -1168,15 +1217,15 @@ int main() {
 				if (wantsToShoot) {
 					bulletX = Player->getCoordX();
 					bulletY = Player->getCoordY();
-					
+
 					for (int i = 0;i <= bulletRange;i++) {
 						switch (facingDir) {
 						case 1:
-							bulletY --;
+							bulletY--;
 							std::cout << "'Hello" << std::endl;
 							break;
 						case 2:
-							bulletX --;
+							bulletX--;
 							break;
 						case 3:
 							bulletY++;
@@ -1186,7 +1235,7 @@ int main() {
 							break;
 						}
 
-						if(bulletX >= 0 && bulletX < rows && bulletY >= 0 && bulletY < cols)
+						if (bulletX >= 0 && bulletX < rows && bulletY >= 0 && bulletY < cols)
 						{
 							board[bulletX][bulletY] = bullet;
 						}
@@ -1268,9 +1317,9 @@ int main() {
 							clearScreen();
 							for (int o = 0; o < 17; o++) {
 								for (int i = 0; i < 120; i++) {
-							
-										std::cout << board[i][o];
-								
+
+									std::cout << board[i][o];
+
 								}
 								std::cout << std::endl;
 								if (o == 11) {
@@ -1278,7 +1327,7 @@ int main() {
 								}
 							}
 
-								 
+
 							for (char c : line.text) {
 								revealedText += c;
 								drawDialogueInBoard(board, line.speaker, revealedText);
@@ -1337,6 +1386,7 @@ int main() {
 				// change this to smth else where it resets the board ya
 				if (CHuman::getKilledHumans() >= numberOfBoardenemies) {
 					Player->sethealth(Player->getHealth() + 15);
+					static_cast<CPlayer*>(Player)->randomizePlayerStart(random(generator) % 2);
 					static_cast<CPlayer*>(Player)->PsetBoonChances(3, 19);
 					static_cast<CPlayer*>(Player);
 					for (int i = 0; i < numberOfBoardenemies; i++) {

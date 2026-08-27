@@ -11,6 +11,7 @@ class CPlayer :
 	int boardcoordX;
 	int boardcoordY;
 
+	static int numberOfTilesCleared;
 	static const int MAX_BOONS = 20;
 	Upgrade boons[MAX_BOONS];
 	/*
@@ -40,6 +41,10 @@ class CPlayer :
 	*/
 public:
 	CPlayer();
+
+	static void setTilesCleared(int g);
+
+	static int getTilesCleared();
 
 	CPlayer(int randv);
 

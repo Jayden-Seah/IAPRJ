@@ -8,14 +8,14 @@ CSolidHitbox::CSolidHitbox()
 
 CSolidHitbox::CSolidHitbox(int randv)
 {
-	setCoordX(randv % 103 + 1);
+	setCoordX(randv % 102 + 1);
 	setCoordY(randv % 8 + 2);
 	setObjectHeight(1);
 }
 bool CSolidHitbox::isEntityOverlapping(CSolidHitbox* target) // overlapping = true, not overlapping (good) = false
 {
-	for (int i = 0; i < target->getObjectHeight(); i++) { // 1
-		if ((getCoordX() == target->getCoordX()) and (getCoordY() == target->getCoordY()-i)) {
+	for (int i = 0; i < getObjectHeight(); i++) { // 1
+		if ((getCoordX() == target->getCoordX()) and (getCoordY()-i == target->getCoordY())) {
 			return true;
 		}
 	}

@@ -1,5 +1,4 @@
 #include "CPlayer.h"
-#include "RandomEvents.h"
 
 CPlayer::CPlayer(int randv)
 {
@@ -13,12 +12,12 @@ CPlayer::CPlayer(int randv)
 		setCoordX(103);
 		break;
 	}
-
-	RandomEvents event;
-	event.applyStartingStats(this);
-
 	karma = 50.0f;
+	previousKarma = 50.0f;
+	sethealth(100.0f);
+	setAttack(20);
 	setAttackRange(1);
+	setDefence(5);
 	setBcoordX(0);
 	setBcoordY(0);
 	PsetBoontext();
@@ -137,7 +136,7 @@ void CPlayer::PsetBoonEffectStatus(bool a, int boonNumber)
 void CPlayer::PsetBoontext()
 {
 	boons[0].setBoontext("\033[1mOde to Quietude, in Acceptance.\033[0m\n\033[3m“Peace, is that truly the color of your soul?”\033[0m\nThe first loss of HP you receive when entering the stage is nullified.");
-	boons[7].setBoontext("\033[1mBlessing of Anti-Asphyxiation\033[0m\n\033[3m“Need not feel guilt for your actions, yes? Let your will sink further into this Nightmarish Reverie….”\033[0m\nslowly heals your hp when you spawn in.");
+	boons[7].setBoontext("\033[1mBlessing of Anti-Asphyxiation\033[0m\n\033[3m“Need not feel guilt for your actions, yes? Let your will sink further into this Nightmarish Reverie….”\033[0m\nTaking damage and then killing an enemy within the next 3 seconds slowly heals your hp back.");
 	boons[8].setBoontext("\033[1mBoon of Radical Inaction\033[0m\n\033[3m“The world continues moving whether your existence fades away or not. That'must be what you were thinking, taking away innocent lives..”\033[0m\nEvery few seconds you are not attacked for, You move 1 step more. Up to a maximum of 3 steps at a time.");
 	boons[9].setBoontext("\033[1mStroke of Bloodthirstry Fervor\033[0m\n\033[3m“To light the flames of Humanity’s end is but a sacred duty of ours that no other can perform.”\033[0m\nOne Hostile enemy’s HP will immediately be reduced by a certain percent of their max hp upon the start of the stage.");
 	boons[18].setBoontext("\033[1mBlessing of The Frazzled Beginnings\033[0m\n\033[3m“You don’t even know where you are, or recall what truly horrid things you’ve done. Yet you remain steadfast in this nightmare. How admirable.”\033[0m\nEvery Human you talk to grants you a small amount of defensive stacks, up to 10. Removing 1 stack for each Human you kill.");

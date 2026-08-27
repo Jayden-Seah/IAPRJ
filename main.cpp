@@ -104,17 +104,17 @@ void drawVFX(std::vector<std::vector<std::string>>& board, int coorx, int coory,
 	return;
 }
 void timePlayerHasNotBeenHit(std::atomic<int>& timevariable) {
-		while (resetTime == false) {
-			timevariable.fetch_add(1);
-			std::this_thread::sleep_for(std::chrono::seconds(1));
-		}
-		// if while loop ends (resetTime = true) timevariable is resetted
-		timevariable.store(0); // prevent detached thread from failing to run
+	while (resetTime == false) {
+		timevariable.fetch_add(1);
+		std::this_thread::sleep_for(std::chrono::seconds(1));
 	}
+	// if while loop ends (resetTime = true) timevariable is resetted
+	timevariable.store(0); // prevent detached thread from failing to run
+}
 
 void countdown(int milliseconds, std::atomic<bool>& togglevariable) {
 	std::this_thread::sleep_for(std::chrono::milliseconds(milliseconds));
-	togglevariable = false; 
+	togglevariable = false;
 }
 
 // Writes dialogue text into the bottom strip of the existing board grid
@@ -167,10 +167,13 @@ void statsInBoard(std::vector<std::vector<std::string>>& board, int hp, int atta
 		}
 	}
 
+	int KarmaAsInt = std::ceil(karma);
+	int KarmaAmt1 = std::ceil((100 - KarmaAsInt) / 4);
+	int KarmaAmt2 = std::ceil((100 - KarmaAsInt) / 8);
 
 	std::string playerStats = "Stats: "; // Title
-	std::string hptext = "HP: " + std::to_string(hp);
-	std::string attacktext = "ATK: " + std::to_string(attack);
+	std::string hptext = "HP: " + std::to_string(hp + KarmaAmt1);
+	std::string attacktext = "ATK: " + std::to_string(attack + KarmaAmt2);
 	std::string deftext = "DEF: " + std::to_string(def);
 	std::string karmatext = "KARMA: " + std::to_string(karma);
 
@@ -467,7 +470,7 @@ int main() {
 				for (int i = 0; i < fgen; i++) {
 					int thisID = random(generator) % 4 + 1;
 					Human[i] = new CCanTalk(random(generator), thisID, CEntity::getLevel());
-			}
+				}
 				if (generatemore) {
 					for (int i = 0; i < numberOfBoardenemies - fgen; i++) {
 						int thisID = random(generator) % 7 + 1;
@@ -528,6 +531,40 @@ int main() {
 				Flower = new CObject(random(generator));
 			}
 			int boon13changer = 250;
+
+			float HealTickTimer = 0.0f;
+			float B7Duration = 0.0f;
+			const float HealTickInterval = 1.0f;
+			int HealingTime;
+			int HealingAmt;
+			bool HealingActive = false;
+			bool B7EnemyKilled = false;
+			switch (Player->PgetBoonLevel(7)) {
+			case 1:
+				HealingTime = 10; // Supposed to be 20 but need to add +1 for it to work
+				HealingAmt = 1;
+				HealingActive = true;
+				B7Duration = 0.0f; // only gets triggered when its active
+				HealTickTimer = 0.0f;
+
+				break;
+			case 2:
+				HealingTime = 18;
+				HealingAmt = 1;
+				HealingActive = true;
+				B7Duration = 0.0f;
+				HealTickTimer = 0.0f;
+
+				break;
+			case 3:
+				HealingTime = 25;
+				HealingAmt = 1;
+				HealingActive = true;
+				B7Duration = 0.0f;
+				HealTickTimer = 0.0f;
+
+				break;
+			}
 
 			int boon9changer = 0;
 			switch (Player->PgetBoonLevel(9)) {//boon9 bloodthirsty, will trigger on one random enemy regardless and only at the start so effect chance bool doesnt need to be change
@@ -595,8 +632,10 @@ int main() {
 					switch (Player->PgetBoonLevel(6)) {
 					case 1:
 						Human[l]->setAttackRange(2);
+						break;
 					case 2:
 						Human[l]->setAttackRange(1);
+						break;
 					}
 				}
 			}
@@ -701,7 +740,27 @@ int main() {
 			int rows = 120;
 			int cols = 17;
 
+			auto lastHealTime = std::chrono::steady_clock::now();
+
 			do {
+				auto nowHeal = std::chrono::steady_clock::now();
+				float TimeChange = std::chrono::duration<float>(nowHeal - lastHealTime).count();
+				lastHealTime = nowHeal;
+
+				if (HealingActive) {
+					HealTickTimer += TimeChange;
+					B7Duration += TimeChange;
+
+					if (B7Duration >= HealingTime) { // This part took me hours to make 
+						HealingActive = false;
+					}
+					else if (HealTickTimer >= HealTickInterval) {
+						HealTickTimer -= HealTickInterval;
+						Player->sethealth(Player->getHealth() + HealingAmt);
+					}
+				}
+
+
 				std::vector<std::vector<std::string>> board(rows, std::vector<std::string>(cols, { ' ' }));
 				// PLAYING area for fighting board is only 104 x 11
 				for (int o = 0; o < 17; o++) {
@@ -829,7 +888,7 @@ int main() {
 						currentDirCast = ' ';
 						if (Player->canEntityAttack) {
 							for (int i = 0; i < numberOfBoardenemies; i++) {
-								if (Human[i] != nullptr) {	
+								if (Human[i] != nullptr) {
 									int boon15changer = 0;
 									switch (static_cast<CPlayer*>(Player)->PgetBoonLevel(15)) {//boon9 bloodthirsty, will trigger on one random enemy regardless and only at the start so effect chance bool doesnt need to be change
 									case 1:
@@ -939,7 +998,7 @@ int main() {
 
 					bool allowPlayerMovement = true;
 					int currentDirInt = 0;
-					
+
 					if (currentDirCast == keybindings[2]) {
 						currentDirInt = 1;
 						noOfMoves++;
@@ -1168,15 +1227,15 @@ int main() {
 				if (wantsToShoot) {
 					bulletX = Player->getCoordX();
 					bulletY = Player->getCoordY();
-					
+
 					for (int i = 0;i <= bulletRange;i++) {
 						switch (facingDir) {
 						case 1:
-							bulletY --;
+							bulletY--;
 							std::cout << "'Hello" << std::endl;
 							break;
 						case 2:
-							bulletX --;
+							bulletX--;
 							break;
 						case 3:
 							bulletY++;
@@ -1186,7 +1245,7 @@ int main() {
 							break;
 						}
 
-						if(bulletX >= 0 && bulletX < rows && bulletY >= 0 && bulletY < cols)
+						if (bulletX >= 0 && bulletX < rows && bulletY >= 0 && bulletY < cols)
 						{
 							board[bulletX][bulletY] = bullet;
 						}
@@ -1268,9 +1327,9 @@ int main() {
 							clearScreen();
 							for (int o = 0; o < 17; o++) {
 								for (int i = 0; i < 120; i++) {
-							
-										std::cout << board[i][o];
-								
+
+									std::cout << board[i][o];
+
 								}
 								std::cout << std::endl;
 								if (o == 11) {
@@ -1278,7 +1337,7 @@ int main() {
 								}
 							}
 
-								 
+
 							for (char c : line.text) {
 								revealedText += c;
 								drawDialogueInBoard(board, line.speaker, revealedText);

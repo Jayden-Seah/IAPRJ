@@ -41,7 +41,6 @@ public:
     void setShooterStatus(bool a);
     void setHumanTypeID(int a);
 
-
     static void setkilledHumans(int a);
     static int getKilledHumans();
     void resetHumanID();

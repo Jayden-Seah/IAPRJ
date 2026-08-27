@@ -19,6 +19,7 @@ Effects::Effects(int xpos, int ypos, int ydiff, int xdiff, int atkr, int atk) //
 	setAttackRange(atkr);
 	setCoordX(xpos + xDifference);
 	setCoordY(ypos + yDifference);
+	isEntityOutofBounds();
 	setObjectHeight(1);
 	setAttack(atk);
 }

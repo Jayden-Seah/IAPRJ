@@ -37,10 +37,15 @@ std::string CCanTalk::NameList[] = {
 
 };
 
+
+CCanTalk::CCanTalk()
+{
+}
+
 CCanTalk::CCanTalk(int randvalue, int ID, int lv)
 {
 	hasAlreadyTalked = false;
-	int x = randvalue % 103 + 1;
+	int x = randvalue % 102 + 1;
 	int y = randvalue % 8 + 2; // 2 3 4 5 6 7 8 9
 	entityName = NameList[randvalue % MAX_NAMES];
 	setObjectHeight(2);
@@ -105,7 +110,7 @@ CCanTalk::CCanTalk(int randvalue, int ID, int lv)
 		break;
 	case 3:
 		setAttack(10);
-		setAttackRange(0);
+		setAttackRange(1);
 		sethealth(76);
 		switch (lv) {
 		case 1:
@@ -128,7 +133,7 @@ CCanTalk::CCanTalk(int randvalue, int ID, int lv)
 		break;
 	case 4:
 		setAttack(43);
-		setAttackRange(0);
+		setAttackRange(1);
 		sethealth(54);
 		switch (lv) {
 		case 1:
@@ -175,6 +180,33 @@ bool CCanTalk::getTalkStatus()
 void CCanTalk::setTalkStatus(bool e)
 {
 	hasAlreadyTalked = e;
+}
+
+void CCanTalk::becomeHostile(CEntity* target)
+{
+	int x = getCoordX();
+	int y = getCoordY();
+	int x2 = target->getCoordX();
+	int y2 = target->getCoordY();
+	for (int i = 1; i < 3;i++) {
+		if (x2 == (x-1 + i)) {
+			target->setCoordX((x - (4 * (1 + i))));
+			target->isEntityOutofBounds();
+
+		}
+	}
+	for (int i = 1; i < 3;i++) {
+		if (y2 == (y - 1 + i)) {
+			target->setCoordY((y - (4 * (1 + i))));
+			target->isEntityOutofBounds();
+		}
+	}
+	setDetectionRange(20);
+}
+
+void CCanTalk::setDialogue(int dialogueNumber, std::string dialogue)
+{
+
 }
 
 std::string CCanTalk::getARandomName(int randv)

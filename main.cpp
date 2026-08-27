@@ -396,22 +396,65 @@ int main() {
 					case 0:
 						clearScreen();
 						std::cout << "Page 1 Chapter 1" << std::endl;
+						std::cout << "You wake in this place again..." << std::endl;
+						std::cout << "This place is not real... Yet it feels so real." << std::endl;
+						std::cout << "They are out there..." << std::endl;
+						std::cout << "Somewhere in this world that always changes " << std::endl;
+						std::cout << "-- Press Any Key To Continue --" << std::endl;
+						std::cout << std::endl;
+
 						break;
 					case 1:
 						clearScreen();
 						std::cout << "Page 2 Chapter 1" << std::endl;
+						std::cout << "The only way out is through. And you must decide:" << std::endl;
+						std::cout << "Will you remember? Or will you forget them all?" << std::endl;
+						std::cout << "-- Press Any Key To Begin --" << std::endl;
 						break;
 					}
 					break;
 				case 1:
-					switch (pageno) { //pageno is to break up large chunks of text to each "tab"
+					switch (pageno) {
 					case 0:
 						clearScreen();
 						std::cout << "Page 1 Chapter 2" << std::endl;
+						std::cout << "The pattern slowly makes sense..." << std::endl;
+						std::cout << "You have walked these halls long enough to feel everything around you shift with your mood." << std::endl;
+						std::cout << "When you reach out, some flinch. Others lean in." << std::endl;
+						std::cout << "They are all pieces of the same broken mirror." << std::endl;
+						std::cout << "-- Press Any Key To Continue --" << std::endl;
 						break;
 					case 1:
 						clearScreen();
 						std::cout << "Page 2 Chapter 2" << std::endl;
+						std::cout << "The voices are clearer now. Not commands. Just memories trying to anchor you." << std::endl;
+						std::cout << "When you listened instead of attacking, something seems to change." << std::endl;
+						std::cout << "But the path behind you is stained either way." << std::endl;
+						std::cout << "Is there a right answer? Only you will find out..." << std::endl;
+						std::cout << "-- Press Any Key To Continue --" << std::endl;
+						break;
+					}
+					break;
+				case 2:
+					switch (pageno) {
+					case 0:
+						clearScreen();
+						std::cout << "Page 1 Chapter 3" << std::endl;
+						std::cout << "This is the center." << std::endl;
+						std::cout << "The place where everything you buried reveals itself here." << std::endl;
+						std::cout << "Green, orange, red, white all merging into one desperate soul" << std::endl;
+						std::cout << "Every spared fragment stayed to help carry your path forward." << std::endl;
+						std::cout << "-- Press Any Key To Continue --" << std::endl;
+						break;
+					case 1:
+						clearScreen();
+						std::cout << "Page 2 Chapter 3" << std::endl;
+						std::cout << "This is not a battle. It is a reckoning." << std::endl;
+						std::cout << "The easiest thing is to swing until nothing moves." << std::endl;
+						std::cout << "But the door out only truly opens when you start seeing the truth" << std::endl;
+						std::cout << "This is the final test" << std::endl;
+						std::cout << "Will you make it back home?" << std::endl;
+						std::cout << "-- Press Any Key To Continue --" << std::endl;
 						break;
 					}
 					break;
@@ -517,42 +560,6 @@ int main() {
 					}
 				}
 			}
-
-			bool odeToQuietudeUsed = false; // Ode To Quietude 
-
-			static_cast<CPlayer*>(Player)->setPreviousKarma(static_cast<CPlayer*>(Player)->getKarma());
-
-			// placing a STUPID flower, flower is passthrough so an enetity could be over it.
-			CObject* Flower = nullptr;
-			if (Player->PgetBoonLevel(13) >= 1) {
-				Flower = new CObject(random(generator));
-			}
-			int boon13changer = 250;
-
-			int boon9changer = 0;
-			switch (Player->PgetBoonLevel(9)) {//boon9 bloodthirsty, will trigger on one random enemy regardless and only at the start so effect chance bool doesnt need to be change
-			case 1:
-				boon9changer = 0.20;
-				break;
-			case 2:
-				boon9changer = 0.25;
-				break;
-			case 3:
-				boon9changer = 0.35;
-				break;
-			}
-			resetTime = false;
-
-			// pick a random human and subtract hp from boon9changer
-			int unluckyHuman = random(generator) % numberOfBoardenemies;
-			Human[unluckyHuman]->sethealth(Human[unluckyHuman]->getHealth() * (1 - boon9changer));
-			std::atomic<int> boon8changer(0);
-
-			std::thread b8(&timePlayerHasNotBeenHit, std::ref(boon8changer)); //ref so that boon8changer can update even while in a thread
-
-			b8.detach();
-
-
 			if (Player->PgetBoonLevel(2) >= 1) {
 				for (int u = 0; u < numberOfBoardenemies; u++) {
 					if (Human[u]->getHumanTypeID() == 1 or Human[u]->getHumanTypeID() == 2) {
@@ -588,6 +595,40 @@ int main() {
 				}
 			}
 
+			static_cast<CPlayer*>(Player)->setPreviousKarma(static_cast<CPlayer*>(Player)->getKarma());
+
+			// placing a STUPID flower, flower is passthrough so an enetity could be over it.
+			CObject* Flower = nullptr;
+			if (Player->PgetBoonLevel(13) >= 1) {
+				Flower = new CObject(random(generator));
+			}
+			int boon13changer = 250;
+
+			int boon9changer = 0;
+			switch (Player->PgetBoonLevel(9)) {//boon9 bloodthirsty, will trigger on one random enemy regardless and only at the start so effect chance bool doesnt need to be change
+			case 1:
+				boon9changer = 0.20;
+				break;
+			case 2:
+				boon9changer = 0.25;
+				break;
+			case 3:
+				boon9changer = 0.35;
+				break;
+			}
+			resetTime = false;
+			
+			// pick a random human and subtract hp from boon9changer
+			int unluckyHuman = random(generator) % numberOfBoardenemies;
+			Human[unluckyHuman]->sethealth(Human[unluckyHuman]->getHealth() * (1 - boon9changer));
+			std::atomic<int> boon8changer(0);
+
+			std::thread b8(&timePlayerHasNotBeenHit, std::ref(boon8changer)); //ref so that boon8changer can update even while in a thread
+
+			b8.detach();
+
+
+
 			int stepsMultiplier = 1;
 
 			for (int l = 0; l < numberOfBoardenemies; l++) {
@@ -601,103 +642,6 @@ int main() {
 				}
 			}
 			bool playerGotHit = false;
-
-			int lasthp = 75;
-			int curatk = Player->getAttack();
-			int curdef = static_cast<CPlayer*>(Player)->getDefence();
-
-
-
-
-			int boon17changer = 0;
-
-			if (static_cast<CPlayer*>(Player)->PgetBoonLevel(17) && static_cast<CPlayer*>(Player)->PgetBoonEffectStatus(17) == false) {//boon16 pose, will trigger on one random enemy regardless and only at the start so effect chance bool doesnt need to be change
-				if (random(generator) <= 0 && random(generator) <= 150) {
-					if (random(generator) <= 500) {
-						Player->setAttack(Player->getAttack() * 0.54);
-						static_cast<CPlayer*>(Player)->setDefence((static_cast<CPlayer*>(Player)->getDefence() * 0.54));
-						static_cast<CPlayer*>(Player)->PsetBoonEffectStatus(true, 17);
-					}
-					else {
-						Player->setAttack(Player->getAttack() * 1.1);
-						static_cast<CPlayer*>(Player)->setDefence((static_cast<CPlayer*>(Player)->getDefence() * 1.1));
-						static_cast<CPlayer*>(Player)->PsetBoonEffectStatus(true, 17);
-					}
-				}
-				else if (random(generator) <= 151 && random(generator) <= 300) {
-					if (random(generator) <= 500) {
-						Player->setAttack(Player->getAttack() * 0.5);
-						static_cast<CPlayer*>(Player)->setDefence((static_cast<CPlayer*>(Player)->getDefence() * 0.5));
-						static_cast<CPlayer*>(Player)->PsetBoonEffectStatus(true, 17);
-					}
-					else {
-						Player->setAttack(Player->getAttack() * 1.5);
-						static_cast<CPlayer*>(Player)->setDefence((static_cast<CPlayer*>(Player)->getDefence() * 1.5));
-						static_cast<CPlayer*>(Player)->PsetBoonEffectStatus(true, 17);
-					}
-				}
-				else if (random(generator) <= 301 && random(generator) <= 450) {
-					if (random(generator) <= 500) {
-						Player->setAttack(Player->getAttack() * 0.44);
-						static_cast<CPlayer*>(Player)->setDefence((static_cast<CPlayer*>(Player)->getDefence() * 0.44));
-						static_cast<CPlayer*>(Player)->PsetBoonEffectStatus(true, 17);
-					}
-					else {
-						Player->setAttack(Player->getAttack() * 1.44);
-						static_cast<CPlayer*>(Player)->setDefence((static_cast<CPlayer*>(Player)->getDefence() * 1.44));
-						static_cast<CPlayer*>(Player)->PsetBoonEffectStatus(true, 17);
-					}
-				}
-				else if (random(generator) <= 451 && random(generator) <= 600) {
-					if (random(generator) <= 500) {
-						Player->setAttack(Player->getAttack() * 0.38);
-						static_cast<CPlayer*>(Player)->setDefence((static_cast<CPlayer*>(Player)->getDefence() * 0.38));
-						static_cast<CPlayer*>(Player)->PsetBoonEffectStatus(true, 17);
-					}
-					else {
-						Player->setAttack(Player->getAttack() * 1.38);
-						static_cast<CPlayer*>(Player)->setDefence((static_cast<CPlayer*>(Player)->getDefence() * 1.38));
-						static_cast<CPlayer*>(Player)->PsetBoonEffectStatus(true, 17);
-					}
-				}
-				else if (random(generator) <= 601 && random(generator) <= 750) {
-					if (random(generator) <= 500) {
-						Player->setAttack(Player->getAttack() * 0.3);
-						static_cast<CPlayer*>(Player)->setDefence((static_cast<CPlayer*>(Player)->getDefence() * 0.3));
-						static_cast<CPlayer*>(Player)->PsetBoonEffectStatus(true, 17);
-					}
-					else {
-						Player->setAttack(Player->getAttack() * 1.3);
-						static_cast<CPlayer*>(Player)->setDefence((static_cast<CPlayer*>(Player)->getDefence() * 1.3));
-						static_cast<CPlayer*>(Player)->PsetBoonEffectStatus(true, 17);
-					}
-				}
-				else if (random(generator) <= 751 && random(generator) <= 900) {
-					if (random(generator) <= 500) {
-						Player->setAttack(Player->getAttack() * 0.2);
-						static_cast<CPlayer*>(Player)->setDefence((static_cast<CPlayer*>(Player)->getDefence() * 0.2));
-						static_cast<CPlayer*>(Player)->PsetBoonEffectStatus(true, 17);
-					}
-					else {
-						Player->setAttack(Player->getAttack() * 1.2);
-						static_cast<CPlayer*>(Player)->setDefence((static_cast<CPlayer*>(Player)->getDefence() * 1.2));
-						static_cast<CPlayer*>(Player)->PsetBoonEffectStatus(true, 17);
-					}
-				}
-				else if (random(generator) <= 901 && random(generator) <= 1000) {
-					if (random(generator) <= 500) {
-						Player->setAttack(Player->getAttack() * 0.1);
-						static_cast<CPlayer*>(Player)->setDefence((static_cast<CPlayer*>(Player)->getDefence() * 0.1));
-						static_cast<CPlayer*>(Player)->PsetBoonEffectStatus(true, 17);
-					}
-					else {
-						Player->setAttack(Player->getAttack() * 1.54);
-						static_cast<CPlayer*>(Player)->setDefence((static_cast<CPlayer*>(Player)->getDefence() * 1.54));
-						static_cast<CPlayer*>(Player)->PsetBoonEffectStatus(true, 17);
-					}
-				}
-			}
-
 			int rows = 120;
 			int cols = 17;
 
@@ -829,32 +773,7 @@ int main() {
 						currentDirCast = ' ';
 						if (Player->canEntityAttack) {
 							for (int i = 0; i < numberOfBoardenemies; i++) {
-								if (Human[i] != nullptr) {	
-									int boon15changer = 0;
-									switch (static_cast<CPlayer*>(Player)->PgetBoonLevel(15)) {//boon9 bloodthirsty, will trigger on one random enemy regardless and only at the start so effect chance bool doesnt need to be change
-									case 1:
-										static_cast<CPlayer*>(Player)->setKarma(static_cast<CPlayer*>(Player)->getKarma() - 1);
-										boon15changer = 2;
-										break;
-
-									case 2:
-										static_cast<CPlayer*>(Player)->setKarma(static_cast<CPlayer*>(Player)->getKarma() - 2);
-										boon15changer = 3;
-										break;
-									case 3:
-										static_cast<CPlayer*>(Player)->setKarma(static_cast<CPlayer*>(Player)->getKarma() - 3);
-										boon15changer = 5;
-										break;
-									case 4:
-										static_cast<CPlayer*>(Player)->setKarma(static_cast<CPlayer*>(Player)->getKarma() - 4);
-										boon15changer = 7;
-										break;
-									case 5:
-										static_cast<CPlayer*>(Player)->setKarma(static_cast<CPlayer*>(Player)->getKarma() - 5);
-										boon15changer = 8;
-										break;
-									}
-									drawVFX(board, Player->getCoordX(), Player->getCoordY(), Player->getAttack(), Player->getAttackRange(), Human[i], "\033[34m#\033[0m", Player, 1);
+								if (Human[i] != nullptr) {
 									if (static_cast<CPlayer*>(Player)->PgetBoonEffectStatus(10) == true) {
 										Player->setAttack(Player->getAttack() - ((Player->PgetBoonLevel(10) * 10) + 15));
 									}
@@ -883,7 +802,7 @@ int main() {
 								repeatTimes = 2;
 							}
 							for (int j = 0; j < repeatTimes; j++) {
-								if ((Human[i]->getHumanTypeID() > 4) and ((Human[i] != nullptr))) { //Check the human ID 
+								if ((Human[i]->getHumanTypeID() > 4) and ((Human[i] != nullptr))) { //Check the human ID if it is legit or not
 									for (int p = 0; p < numberOfBlocks; p++) {
 										if (EnvironmentalObjects[p] != nullptr &&
 											Human[i]->isEntityGoingToOverlapInTheFuture(static_cast<CHuman*>(Human[i])->peekDirection(), EnvironmentalObjects[p])) {
@@ -894,20 +813,13 @@ int main() {
 								Human[i]->runFromEntity(Player);
 								if ((Human[i]->detectPlayer(Player)) and (Human[i] != nullptr)) {
 									if (Human[i]->canEntityAttack) {
-										float starthp = Player->getHealth();
-										drawVFX(board, Human[i]->getCoordX(), Human[i]->getCoordY(), Human[i]->getAttack(), Human[i]->getAttackRange(), Player, "\033[31mO\033[0m", Human[i], 1);
-										// Ode To Quietude Boon: negate first damage received per stage
-										if (!odeToQuietudeUsed && Player->getHealth() < starthp) {
-											Player->sethealth(starthp);
-											odeToQuietudeUsed = true;
-											drawVFX(board, Human[i]->getCoordX(), Human[i]->getCoordY(), Human[i]->getAttack(), Human[i]->getAttackRange(), Player, "\033[91mO\033[0m", Human[i], 1000);
-											playerGotHit = true;
-											if (boon3Proc) {
-												boon3Proc = false;
-												Player->sethealth(Player->getHealth() + Human[i]->getAttack());
-												if (Player->PgetBoonLevel(0) >= 1) {
-													Player->sethealth(Player->getHealth() + 15);
-												}
+										drawVFX(board, Human[i]->getCoordX(), Human[i]->getCoordY(), Human[i]->getAttack(), Human[i]->getAttackRange(), Player, "\033[91mO\033[0m", Human[i], 1000);
+										playerGotHit = true;
+										if (boon3Proc) {
+											boon3Proc = false;
+											Player->sethealth(Player->getHealth() + Human[i]->getAttack());
+											if (Player->PgetBoonLevel(0) >= 1) {
+												Player->sethealth(Player->getHealth() + 15);
 											}
 										}
 										if ((Player->PgetBoonLevel(19) >= 1) and (static_cast<CPlayer*>(Player)->PgetBoonChances(19) >= 1)) {
@@ -966,6 +878,9 @@ int main() {
 					for (int o = 0; o < numberOfBlocks; o++) {
 						if (Player->isEntityGoingToOverlapInTheFuture(currentDirInt, EnvironmentalObjects[o])) {
 							allowPlayerMovement = false;
+							if (currentDirInt != 0) {
+								facingDir = currentDirInt;
+							}
 						}
 					}
 					if (allowPlayerMovement) {
@@ -973,50 +888,12 @@ int main() {
 							Player->moveInput(currentDirInt);
 							Player->isEntityOutofBounds();
 						}
-						if (currentDirInt != 0) {
-							facingDir = currentDirInt;
-						}
 						// safety checks
 					}
 					currentDirCast = ' ';
 					std::this_thread::sleep_for(std::chrono::milliseconds(boon13changer));
 					refreshScreen();
 
-					int curhp = Player->getHealth();
-					int boon16changer = 0;
-					switch (static_cast<CPlayer*>(Player)->PgetBoonLevel(16)) {//boon16 pose, will trigger on one random enemy regardless and only at the start so effect chance bool doesnt need to be change
-					case 1:
-
-						if (curhp < lasthp) {
-							static_cast<CPlayer*>(Player)->setKarma(static_cast<CPlayer*>(Player)->getKarma() + 2);
-							lasthp = curhp;
-						}
-						break;
-					case 2:
-						if (curhp < lasthp) {
-							static_cast<CPlayer*>(Player)->setKarma(static_cast<CPlayer*>(Player)->getKarma() + 3);
-							lasthp = curhp;
-						}
-						break;
-					case 3:
-						if (curhp < lasthp) {
-							static_cast<CPlayer*>(Player)->setKarma(static_cast<CPlayer*>(Player)->getKarma() + 4);
-							lasthp = curhp;
-						}
-						break;
-					case 4:
-						if (curhp < lasthp) {
-							static_cast<CPlayer*>(Player)->setKarma(static_cast<CPlayer*>(Player)->getKarma() + 6);
-							lasthp = curhp;
-						}
-						break;
-					case 5:
-						if (curhp < lasthp) {
-							static_cast<CPlayer*>(Player)->setKarma(static_cast<CPlayer*>(Player)->getKarma() + 7);
-							lasthp = curhp;
-						}
-						break;
-					}
 					for (int o = 0; o < numberOfBoardenemies; o++) {
 						if (Human[o] != nullptr) {
 							if (Player->isEntityOverlapping(Human[o])) {
@@ -1142,8 +1019,8 @@ int main() {
 				//SHoot
 				int bulletX, bulletY;
 				int bulletDMG = 6;
-				char bullet = '+';
 				int bulletRange = 4;
+				char bullet = '-';
 				bool boardUpdate = false;
 
 				int level = 0;// level = 1 / level = 2
@@ -1158,10 +1035,10 @@ int main() {
 				//Boon 5 -> left with the AOE thingy
 				switch (level) {
 				case 1:
-					bulletRange = bulletRange * 1.5;
+					bulletRange = bulletRange * 1.5f;
 					break;
 				case 2:
-					bulletRange = bulletRange * 2.0;
+					bulletRange = bulletRange * 2.0f;
 					break;
 				}
 
@@ -1170,19 +1047,23 @@ int main() {
 					bulletY = Player->getCoordY();
 					
 					for (int i = 0;i <= bulletRange;i++) {
+
 						switch (facingDir) {
 						case 1:
-							bulletY --;
-							std::cout << "'Hello" << std::endl;
+							bulletY -= 1;
+							bullet = '|';
 							break;
 						case 2:
-							bulletX --;
+							bulletX -= 1;
+							bullet = '-';
 							break;
 						case 3:
-							bulletY++;
+							bulletY += 1;
+							bullet = '|';
 							break;
 						case 4:
-							bulletX++;
+							bulletX += 1;
+							bullet = '-';
 							break;
 						}
 
@@ -1654,6 +1535,10 @@ int main() {
 							}
 						}
 					}
+					// added this to show the next story dialogue
+					numberOfStoryScenesFinished = 1;
+					isInStoryScreen = true;
+					break;
 
 				}
 				bool levelTwoComplete = true;
@@ -1675,6 +1560,10 @@ int main() {
 							hasPlayerFinishedTile[i][o] = false;
 						}
 					}
+					// added this to show the next story dialogue
+					numberOfStoryScenesFinished = 2;
+					isInStoryScreen = true;
+					break;
 				}
 
 				board[static_cast<CPlayer*>(Player)->getBcoordX()][static_cast<CPlayer*>(Player)->getBcoordY()] = " Y";

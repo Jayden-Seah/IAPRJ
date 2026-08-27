@@ -111,6 +111,7 @@ void timePlayerHasNotBeenHit(std::atomic<int>& timevariable) {
 		// if while loop ends (resetTime = true) timevariable is resetted
 		timevariable.store(0); // prevent detached thread from failing to run
 	}
+
 void countdown(int milliseconds, std::atomic<bool>& togglevariable) {
 	std::this_thread::sleep_for(std::chrono::milliseconds(milliseconds));
 	togglevariable = false; 
@@ -207,7 +208,10 @@ int main() {
 	bool hasPlayerUnlockedTile[7][7];
 	bool hasPlayerFinishedTile[7][7];
 	bool isThisanInaccessibleTile[7][7];
+	bool wantsToShoot = false;//TO check if the player wants to shoot 
 	int getDialogueFromHumanNumber = 10;
+	static int facingDir = 0;
+	int noOfMoves = 0;
 	for (int i = 0; i < 7; i++) {
 		for (int y = 0; y < 7; y++) {
 			hasPlayerUnlockedTile[i][y] = false;
@@ -547,6 +551,7 @@ int main() {
 					boon3Proc = true;
 				}
 			}
+
 			static_cast<CPlayer*>(Player)->setPreviousKarma(static_cast<CPlayer*>(Player)->getKarma());
 
 			// placing a STUPID flower, flower is passthrough so an enetity could be over it.
@@ -720,7 +725,7 @@ int main() {
 				// when we add that check later). Collision check also happens here but randomly, after a few seconds the program hangs and stops working.
 				// we suspect maybe theres an overload of something but we are unsure whats wrong
 				if (isDialogueActive == false) {
-
+					wantsToShoot = (currentDirCast == 'E');
 					if (currentDirCast == keybindings[1]) {
 						currentDirCast = ' ';
 						if (Player->canEntityAttack) {
@@ -806,15 +811,19 @@ int main() {
 					
 					if (currentDirCast == keybindings[2]) {
 						currentDirInt = 1;
+						noOfMoves++;
 					}
 					else if (currentDirCast == keybindings[3]) {
 						currentDirInt = 3;
+						noOfMoves++;
 					}
 					else if (currentDirCast == keybindings[5]) {
 						currentDirInt = 4;
+						noOfMoves++;
 					}
 					else if (currentDirCast == keybindings[4]) {
 						currentDirInt = 2;
+						noOfMoves++;
 					}
 					for (int o = 0; o < numberOfBoardenemies; o++) {
 						if (Human[o] != nullptr) {
@@ -826,6 +835,9 @@ int main() {
 					for (int o = 0; o < numberOfBlocks; o++) {
 						if (Player->isEntityGoingToOverlapInTheFuture(currentDirInt, EnvironmentalObjects[o])) {
 							allowPlayerMovement = false;
+							if (currentDirInt != 0) {
+								facingDir = currentDirInt;
+							}
 						}
 					}
 					if (allowPlayerMovement) {
@@ -863,13 +875,57 @@ int main() {
 							Flower = nullptr;
 						}
 					}
+
+					if (Player->PgetBoonLevel(14) >= 1) { // Boon 14 : Benignly Lies
+						int requiredMoves = 0;
+						int spaceMove = 0;
+
+						switch (Player->PgetBoonLevel(14)) {
+						case 1:
+							requiredMoves = 3;
+							spaceMove = 2;
+							break;
+						case 2:
+							requiredMoves = 2;
+							spaceMove = 2;
+							break;
+						case 3:
+							requiredMoves = 2;
+							spaceMove = 3;
+							break;
+						case 4:
+							requiredMoves = 1;
+							spaceMove = 3;
+							break;
+						}
+						if (noOfMoves == requiredMoves) {
+							std::cout << "Hello" << std::endl;
+							switch (currentDirInt) {
+							case 1:
+								// Up
+								Player->setCoordY(Player->getCoordY() + spaceMove);
+								break;
+
+							case 2:
+								// Down
+								Player->setCoordY(Player->getCoordY() - spaceMove);
+								break;
+
+							case 3:
+								// Left
+								Player->setCoordX(Player->getCoordX() - spaceMove);
+								break;
+
+							case 4:
+								// Right
+								Player->setCoordX(Player->getCoordX() + spaceMove);
+								break;
+							}
+						}
+						noOfMoves = 0;
+					}
 				}
 				// print ENEMIES
-				// print flower first
-				if (Flower != nullptr) {
-					board[Flower->getCoordX()][Flower->getCoordY()] = "\033[92mi\033[0m";
-				}
-
 				for (int i = 0; i < numberOfBoardenemies; i++) {
 					if (Human[i] != nullptr) {
 						int kl = (Human[i])->getHumanTypeID();
@@ -883,12 +939,12 @@ int main() {
 							board[Human[i]->getCoordX()][Human[i]->getCoordY() - 1] = "\033[92mO\033[0m";
 							break;
 						case 3:
-							board[Human[i]->getCoordX()][Human[i]->getCoordY()] = "\033[33mA\033[0m";
-							board[Human[i]->getCoordX()][Human[i]->getCoordY() - 1] = "\033[33mO\033[0m";
+							board[Human[i]->getCoordX()][Human[i]->getCoordY()] = "\033[31mA\033[0m";
+							board[Human[i]->getCoordX()][Human[i]->getCoordY() - 1] = "\033[31mA\033[0m";
 							break;
 						case 4:
-							board[Human[i]->getCoordX()][Human[i]->getCoordY()] = "\033[33mA\033[0m";
-							board[Human[i]->getCoordX()][Human[i]->getCoordY() - 1] = "\033[33mO\033[0m";
+							board[Human[i]->getCoordX()][Human[i]->getCoordY()] = "\033[31mA\033[0m";
+							board[Human[i]->getCoordX()][Human[i]->getCoordY() - 1] = "\033[31mO\033[0m";
 							break;
 						case 5:
 							board[Human[i]->getCoordX()][Human[i]->getCoordY()] = "\033[91mA\033[0m";
@@ -916,6 +972,101 @@ int main() {
 				//Stats board:
 
 				statsInBoard(board, Player->getHealth(), Player->getAttack(), static_cast<CPlayer*>(Player)->getDefence(), static_cast<CPlayer*>(Player)->getKarma());
+
+				//SHoot
+				int bulletX, bulletY;
+				int bulletDMG = 6;
+				int bulletRange = 4;
+				char bullet = '-';
+				bool boardUpdate = false;
+
+				int level = 0;// level = 1 / level = 2
+
+				if (Player->getHealth() == 20) {
+					level = 1;
+				}
+				if (Player->getHealth() == 5) {
+					level = 2;
+				}
+
+				//Boon 5 -> left with the AOE thingy
+				switch (level) {
+				case 1:
+					bulletRange = bulletRange * 1.5f;
+					break;
+				case 2:
+					bulletRange = bulletRange * 2.0f;
+					break;
+				}
+
+				if (wantsToShoot) {
+					bulletX = Player->getCoordX();
+					bulletY = Player->getCoordY();
+					
+					for (int i = 0;i <= bulletRange;i++) {
+
+						switch (facingDir) {
+						case 1:
+							bulletY -= 1;
+							bullet = '|';
+							break;
+						case 2:
+							bulletX -= 1;
+							bullet = '-';
+							break;
+						case 3:
+							bulletY += 1;
+							bullet = '|';
+							break;
+						case 4:
+							bulletX += 1;
+							bullet = '-';
+							break;
+						}
+
+						if(bulletX >= 0 && bulletX < rows && bulletY >= 0 && bulletY < cols)
+						{
+							board[bulletX][bulletY] = bullet;
+						}
+
+						for (int i = 0;i < numberOfBoardenemies;i++) {
+							if (Human[i] != nullptr && Human[i]->getCoordX() == bulletX && Human[i]->getCoordY() == bulletY) {
+								Human[i]->sethealth(Human[i]->getHealth() - bulletDMG);
+
+								if (Human[i]->getHealth() <= 0) {
+									delete Human[i];
+									Human[i] = nullptr;
+								}
+							}
+						}
+
+						refreshScreen();
+
+						// Print current frame
+						for (int o = 0; o < 17; o++)
+						{
+							for (int i = 0; i < 120; i++)
+							{
+								std::cout << board[i][o];
+							}
+							std::cout << std::endl;
+						}
+
+						std::cout.flush();
+
+						std::this_thread::sleep_for(
+							std::chrono::milliseconds(20)
+						);
+
+						// Erase bullet before next frame
+						if (bulletX >= 0 && bulletX < rows && bulletY >= 0 && bulletY < cols)
+						{
+							board[bulletX][bulletY] = " ";
+						}
+					}
+					wantsToShoot = false;
+					boardUpdate = true;
+				}
 
 				if (isDialogueActive) {
 					//TextBox
@@ -1289,6 +1440,77 @@ int main() {
 						}
 						if (hasPlayerFinishedTile[i][o]) {
 							board[i][o] = " o";
+						}
+					}
+				}
+
+				bool levelOneComplete = true;
+				for (int o = 0; o < cols;o++) {
+					for (int i = 0; i < rows; i++) {
+						if (!hasPlayerFinishedTile[i][o]) {
+							levelOneComplete = false;
+						}
+					}
+				}
+
+				if (levelOneComplete)
+				{
+					CEntity::setPsychosisLevel(1);
+
+					rows = 7;
+					cols = 7;
+
+					// Reset minimap
+					for (int o = 0; o < 7; o++)
+					{
+						for (int i = 0; i < 7; i++)
+						{
+							hasPlayerUnlockedTile[i][o] = false;
+							hasPlayerFinishedTile[i][o] = false;
+						}
+					}
+					// Create new 7x7 board
+					board = std::vector<std::vector<std::string>>(
+						rows,
+						std::vector<std::string>(cols, " ")
+					);
+					// Draw new 7x7 board
+					for (int o = 0; o < cols; o++)
+					{
+						for (int i = 0; i < rows; i++)
+						{
+							board[i][o] = " #";
+
+							if (hasPlayerUnlockedTile[i][o])
+							{
+								board[i][o] = " .";
+							}
+
+							if (hasPlayerFinishedTile[i][o])
+							{
+								board[i][o] = " o";
+							}
+						}
+					}
+
+				}
+				bool levelTwoComplete = true;
+				for (int o = 0; o < cols;o++) {
+					for (int i = 0; i < rows; i++) {
+						if (!hasPlayerFinishedTile[i][o]) {
+							levelTwoComplete = false;
+						}
+					}
+				}
+
+				if (levelTwoComplete) {
+					//Just need reset board
+					for (int o = 0; o < 7; o++)
+					{
+						for (int i = 0; i < 7; i++)
+						{
+							hasPlayerUnlockedTile[i][o] = false;
+							hasPlayerFinishedTile[i][o] = false;
 						}
 					}
 				}
